@@ -1,0 +1,109 @@
+@startuml
+
+skinparam Shadowing false               /' Désactive l'effet d'ombre sur les éléments '/
+skinparam classAttributeIconSize 0      /' Taille des icônes d'attribut de classe (ici 0 pour les cacher) '/
+skinparam defaultFontName Consolas      /' Utilisation de la police Consolas par défaut '/
+!pragma useIntermediatePackages false   /' Désactive l'utilisation de packages intermédiaires '/
+
+class Program {
+     - ActionList
+     + up() : void
+     + down() : void
+     + duplicate() : Action
+     + delete() : Action
+     + deleteAll() : void
+}
+
+class ActionList{
+    -List<Action>
+    + add() : void
+}
+
+
+class Catalogue {
+    -Set<Action>
+    + addToProgram() : boolean
+}
+
+abstract class Action {
+    - nom : String
+    - value : double
+    + execute(Cursor) : Line
+}
+
+class Move_Forward {
+}
+
+abstract class Turn {
+}
+
+class Turn_Right {
+}
+
+class Turn_Left {
+}
+
+abstract class Pen {
+
+}
+
+class Pen_Up {
+}
+
+class Pen_Down {
+}
+
+
+class Scene {
+    - canevas : Canevas
+    - cursor : Cursor
+    - lineList
+    - ActionList
+    + repaint() : void
+    + suivant() : void
+    + charger() : void
+    + reinitialiser() : void
+}
+
+class Cursor {
+    - origine: Point
+    - radius = 90 : double
+    - writing=true : boolean
+}
+
+class Point {
+    - x : double
+    - y : double
+}
+
+class LineList {
+    - List<Line>
+}
+
+class Line {
+    - toAdd : boolean;
+}
+
+Program "1"*->"1" ActionList : > contains
+ActionList "1"*-->"many" Action : > contains
+Catalogue "1"o-->"many" Action : > has
+Move_Forward --|> Action : is
+Turn --|> Action : is
+Turn_Right --|> Turn : is
+Turn_Left --|> Turn : is
+Pen --|> Action : is
+Pen_Up --|> Pen : is
+Pen_Down --|> Pen : is
+
+Scene "many"o->"1" Cursor : > contains
+Scene "1"*->"1" LineList : > contains
+LineList "1"*->"many" Line : > contains
+Cursor "1"*->"1" Point : > contains
+Line "1"*->"2" Point : > contains
+
+Action --> Cursor : > uses
+ActionList --> Catalogue : >  gets Actions from
+Scene --> Program : > gets ActionList from
+Action --> Line : > instantiates
+
+@enduml
