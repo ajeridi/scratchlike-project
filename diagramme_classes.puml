@@ -53,6 +53,7 @@ class Pen_Up {
 class Pen_Down {
 }
 
+
 class Scene {
     - canevas : Canevas
     - cursor : Cursor
@@ -65,10 +66,14 @@ class Scene {
 }
 
 class Cursor {
-    - x = 0 : double
-    - y = 0 : double
+    - origine: Point
     - radius = 90 : double
     - writing=true : boolean
+}
+
+class Point {
+    - x : double
+    - y : double
 }
 
 class LineList {
@@ -93,6 +98,8 @@ Pen_Down --|> Pen : is
 Scene "many"o->"1" Cursor : > contains
 Scene "1"*->"1" LineList : > contains
 LineList "1"*->"many" Line : > contains
+Cursor "1"*->"1" Point : > contains
+Line "1"*->"2" Point : > contains
 
 Action --> Cursor : > uses
 ActionList --> Catalogue : >  gets Actions from
