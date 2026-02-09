@@ -5,6 +5,7 @@ skinparam classAttributeIconSize 0      /' Taille des icônes d'attribut de clas
 skinparam defaultFontName Consolas      /' Utilisation de la police Consolas par défaut '/
 !pragma useIntermediatePackages false   /' Désactive l'utilisation de packages intermédiaires '/
 
+
 class Program {
      - ActionList
      + up() : void
@@ -71,11 +72,6 @@ class Cursor {
     - writing=true : boolean
 }
 
-class Point {
-    - x : double
-    - y : double
-}
-
 class LineList {
     - List<Line>
 }
@@ -84,6 +80,15 @@ class Line {
     - toAdd : boolean;
 }
 
+class Point {
+    - x : double
+    - y : double
+}
+
+Program -[hidden]l LineList
+Point -[hidden]r Cursor
+LineList -[hidden]r Scene
+Scene --> Program : > gets ActionList from
 Program "1"*->"1" ActionList : > contains
 ActionList "1"*-->"many" Action : > contains
 Catalogue "1"o-->"many" Action : > has
@@ -103,7 +108,7 @@ Line "1"*->"2" Point : > contains
 
 Action --> Cursor : > uses
 ActionList --> Catalogue : >  gets Actions from
-Scene --> Program : > gets ActionList from
+
 Action --> Line : > instantiates
 
 @enduml
