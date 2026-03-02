@@ -17,13 +17,13 @@ class Program {
 
 class ActionList{
     -List<Action>
-    + add() : void
+    + add(Action) : boolean
 }
 
 
 class Catalogue {
     -Set<Action>
-    + addToCatalogue : boolean
+    + addToCatalogue() : boolean
     + addToProgram() : boolean
 }
 

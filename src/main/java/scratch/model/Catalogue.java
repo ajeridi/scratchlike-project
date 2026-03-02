@@ -1,11 +1,12 @@
 package scratch.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Catalogue {
-    private Set<Action> catalogue;
+    private final Set<Action> catalogue = new HashSet<>();
 
-    public boolean addToCatalogue(Action action){
+    public boolean add(Action action){
         return catalogue.add(action);
     }
 
