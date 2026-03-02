@@ -1,0 +1,47 @@
+package scratch.model;
+
+public class Cursor {
+    private Point origine;
+    private double direction = 90;
+    private boolean writing = true;
+
+    public Cursor(Point origine){ // constructeur par défaut
+        this.origine = origine;
+    }
+
+    public Cursor(Point origine, double direction, boolean writing) {
+        this(origine);
+        this.direction = direction;
+        this.writing = writing;
+    }
+
+    public Point getOrigine() {
+        return origine;
+    }
+
+    public void setOrigine(Point origine) {
+        this.origine = origine;
+    }
+
+    public double getDirection() {
+        return direction;
+    }
+
+    public void setDirection(double direction) {
+        this.direction = direction;
+    }
+
+    public boolean isWriting() {
+        return writing;
+    }
+
+    public void setWriting(boolean writing) {
+        this.writing = writing;
+    }
+
+    public double getNorm() {
+        double x = origine.getX();
+        double y = origine.getY();
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    }
+}

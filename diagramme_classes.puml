@@ -68,7 +68,7 @@ class Scene {
 
 class Cursor {
     - origine: Point
-    - radius = 90 : double
+    - direction = 90 : double
     - writing=true : boolean
 }
 
