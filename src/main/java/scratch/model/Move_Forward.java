@@ -20,8 +20,8 @@ public class Move_Forward extends Action{
     private Point createEnd(Cursor cursor) {
         double angle = Math.toRadians(cursor.getDirection());
         Point origin = cursor.getOrigine();
-        double x = origin.getX() + getValue() * Math.cos(angle);
-        double y = origin.getY() + getValue() * Math.sin(angle);
-        return new Point(x, y);
+        double dx = getValue() * Math.cos(angle);
+        double dy = getValue() * Math.sin(angle);
+        return origin.translate(dx, dy);
     }
 }

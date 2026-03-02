@@ -84,6 +84,7 @@ class Line {
 class Point {
     - x : double
     - y : double
+    + translate() : Point
 }
 
 Program -[hidden]l LineList

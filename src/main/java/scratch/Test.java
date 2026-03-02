@@ -24,10 +24,13 @@ public class Test {
         // turn right
         System.out.println(turnRight.execute(cursor));
         System.out.println(cursor); // 0°
+        turnRight.setValue(100);
+        turnRight.execute(cursor);
+        System.out.println(cursor); // -100°
 
         //turn left
         System.out.println(turnLeft.execute(cursor));
-        System.out.println(cursor); // 90°
+        System.out.println(cursor); // -10°
 
 
     }

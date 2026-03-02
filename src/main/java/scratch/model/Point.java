@@ -29,4 +29,8 @@ public class Point {
     public String toString() {
         return "(" + x + "," + y + ")";
     }
+
+    public Point translate(double translateX, double translateY){
+        return new Point(x + translateX, y + translateY);
+    }
 }
