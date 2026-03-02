@@ -75,6 +75,7 @@ class Cursor {
 
 class LineList {
     - List<Line>
+    + add(Line) : boolean
 }
 
 class Line {
