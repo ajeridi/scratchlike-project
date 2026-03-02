@@ -23,6 +23,7 @@ class ActionList{
 
 class Catalogue {
     -Set<Action>
+    + addToCatalogue : boolean
     + addToProgram() : boolean
 }
 
