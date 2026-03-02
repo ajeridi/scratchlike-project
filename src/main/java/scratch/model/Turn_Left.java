@@ -8,6 +8,7 @@ public class Turn_Left extends Turn {
 
     @Override
     void turnCursor(Cursor cursor) {
-        cursor.setDirection(-1 * (getValue()));
+        double currentDirection = cursor.getDirection();
+        cursor.setDirection(currentDirection + getValue());
     }
 }

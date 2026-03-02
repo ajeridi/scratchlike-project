@@ -21,6 +21,13 @@ public class MyLine extends Line {
         this.setEndY(arrivee.getY());
     }
 
+    public Point getStart(){
+        return new Point(getStartX(), getStartY());
+    }
+
+    public Point getEnd(){
+        return new Point(getEndX(), getEndY());
+    }
 
     public boolean isToAdd() {
         return toAdd;
@@ -28,5 +35,10 @@ public class MyLine extends Line {
 
     public void setToAdd(boolean toAdd) {
         this.toAdd = toAdd;
+    }
+
+    @Override
+    public String toString() {
+        return "Line starts at " + getStart() + " and ends at " + getEnd();
     }
 }

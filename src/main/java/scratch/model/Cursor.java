@@ -44,4 +44,9 @@ public class Cursor {
         double y = origine.getY();
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
+
+    @Override
+    public String toString() {
+        return "Cursor is at position " + this.origine + " with a direction of " + this.direction + " degrees and a norm of " + getNorm();
+    }
 }
