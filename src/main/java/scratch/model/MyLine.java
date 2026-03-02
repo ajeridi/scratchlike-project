@@ -5,9 +5,10 @@ import javafx.scene.shape.Line;
 public class MyLine extends Line {
     private boolean toAdd = true;
 
-    public MyLine(Point origine, Point arrivee) {
+    public MyLine(Point origine, Point arrivee, boolean toAdd) {
         setStart(origine);
         setEnd(arrivee);
+        this.toAdd = toAdd;
     }
 
     private void setStart(Point origine) {

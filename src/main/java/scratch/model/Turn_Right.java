@@ -2,8 +2,8 @@ package scratch.model;
 
 public class Turn_Right extends Turn {
 
-    public Turn_Right(String nom) {
-        super(nom);
+    public Turn_Right() {
+        super("Tourner à droite de");
     }
 
     @Override

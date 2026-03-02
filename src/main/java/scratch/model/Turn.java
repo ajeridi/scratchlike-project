@@ -13,6 +13,6 @@ public abstract class Turn extends Action {
     @Override
     public MyLine execute(Cursor cursor) {
         turnCursor(cursor);
-        return new MyLine(cursor.getOrigine(), cursor.getOrigine());
+        return new MyLine(cursor.getOrigine(), cursor.getOrigine(), cursor.isWriting());
     }
 }
