@@ -2,7 +2,6 @@ package scratch.view;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -28,7 +27,7 @@ public class SceneView extends VBox {
 
     public SceneView() {
         HBox buttons = makeButtonsHbox();
-        makeSceneCanvas();
+        drawCanvas();
 
         this.getChildren().addAll(titleLbl, canvasHolder, buttons);
 
@@ -37,7 +36,7 @@ public class SceneView extends VBox {
         buttons.setAlignment(Pos.CENTER);
     }
 
-    private void makeSceneCanvas() {
+    private void drawCanvas() {
         // graphics context
         GraphicsContext gc =
                 sceneCanvas.getGraphicsContext2D();
