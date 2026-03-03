@@ -2,7 +2,6 @@ package scratch.view;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -14,11 +13,13 @@ import javafx.scene.paint.Color;
 
 public class SceneView extends VBox {
 
+    private final double CANVAS_DIMENSION = 600;
+
     private final Label titleLbl = new Label("Scène");
 
-    private final StackPane canvasHolder = new StackPane();
+    private final StackPane canvasHolder = new StackPane(); // va tenir le canvas
 
-    private final Canvas sceneCanvas = new Canvas(500, 500);
+    private final Canvas sceneCanvas = new Canvas(CANVAS_DIMENSION, CANVAS_DIMENSION);
 
     private final Button loadBtn = new Button("Charger");
 
@@ -26,7 +27,7 @@ public class SceneView extends VBox {
 
     public SceneView() {
         HBox buttons = makeButtonsHbox();
-        makeSceneCanvas();
+        drawCanvas();
 
         this.getChildren().addAll(titleLbl, canvasHolder, buttons);
 
@@ -35,26 +36,31 @@ public class SceneView extends VBox {
         buttons.setAlignment(Pos.CENTER);
     }
 
-    private void makeSceneCanvas() {
-        // les dessins sont à des fins de tests, ils seront supprimés
-
+    private void drawCanvas() {
         // graphics context
-        GraphicsContext graphics_context =
+        GraphicsContext gc =
                 sceneCanvas.getGraphicsContext2D();
-
-        // set fill for rectangle
-        graphics_context.setFill(Color.RED);
-        graphics_context.fillRect(20, 20, 70, 70);
-
-        // set fill for oval
-        graphics_context.setFill(Color.BLUE);
-        graphics_context.fillOval(30, 30, 70, 70);
-
+        // dessin du quadrillage
+        drawGrid(gc);
 
         canvasHolder.getChildren().add(sceneCanvas);
         canvasHolder.setStyle("-fx-background-color: white");
+    }
 
+    private void drawGrid(GraphicsContext gc) {
+        double step = CANVAS_DIMENSION / 10; // largeur entre deux lignes
+        // Set a stroke color, and width
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2.0);
 
+        // dessine les lignes pour avoir 10
+        for (double row = 0; row <= CANVAS_DIMENSION; row += step){
+            gc.strokeLine(0, row, CANVAS_DIMENSION, row);
+        }
+        // dessine les colonnes
+        for (double col = 0; col <= CANVAS_DIMENSION; col += step){
+            gc.strokeLine(col, 0, col, CANVAS_DIMENSION);
+        }
     }
 
     public HBox makeButtonsHbox() {
