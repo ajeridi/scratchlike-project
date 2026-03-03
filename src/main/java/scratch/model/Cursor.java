@@ -9,6 +9,7 @@ public class Cursor {
         this.origine = origine;
     }
 
+    // peut etre inutile, a voir
     public Cursor(Point origine, double direction, boolean writing) {
         this(origine);
         this.direction = direction;
