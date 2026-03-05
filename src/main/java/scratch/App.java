@@ -29,18 +29,16 @@ public class App extends Application {
         var program = new Program();
         var sceneModel = new scratch.model.Scene();
 
-        // vm
-        var catalogueViewModel = new CatalogueViewModel(catalogue);
-        var programViewModel = new ProgramViewModel(program);
-        var sceneViewModel = new SceneViewModel(sceneModel);
+        // view model principal regroupant tous les viewModels
+        var mainViewModel = new MainViewModel(catalogue, program, sceneModel);
 
         // vues
-        var catalogueView = new CatalogueView(catalogueViewModel);
-        var programView = new ProgramView(programViewModel);
-        var sceneView = new SceneView(sceneViewModel);
+        var catalogueView = new CatalogueView(mainViewModel.getCatalogueViewModel());
+        var programView = new ProgramView(mainViewModel.getProgramViewModel());
+        var sceneView = new SceneView(mainViewModel.getSceneViewModel());
 
 
-        var mainViewModel = new MainViewModel(catalogueViewModel, programViewModel, sceneViewModel);
+
 
         MainView mainView = new MainView(mainViewModel, catalogueView, programView, sceneView);
 

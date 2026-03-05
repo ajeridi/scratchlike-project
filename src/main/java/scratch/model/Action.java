@@ -38,6 +38,8 @@ public abstract class Action {
 
     abstract public MyLine execute(Cursor cursor);
 
+    abstract public Action copy();
+
     public void setColor(String color) {
         this.color = color;
     };
@@ -48,6 +50,6 @@ public abstract class Action {
 
     @Override
     public String toString() {
-        return nom + (value.getValue() == 0 ? "" : value.getValue());
+        return nom + (value.getValue() == 0 ? "" : " " + value.getValue());
     }
 }

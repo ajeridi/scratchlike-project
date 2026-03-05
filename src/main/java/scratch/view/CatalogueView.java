@@ -1,9 +1,11 @@
 package scratch.view;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
 import scratch.model.Action;
@@ -16,13 +18,35 @@ public class CatalogueView extends VBox {
 
     private final Button addBtn = new Button("Ajouter au programme");
 
-    private final CatalogueViewModel vm;
+    private final CatalogueViewModel catalogueViewModel;
 
     public CatalogueView(CatalogueViewModel vm){
-        this.vm = vm;
+        this.catalogueViewModel = vm;
         configureListView(vm);
         setMargins();
+        setActions();
         this.getChildren().addAll(titleLbl, actionListView, addBtn);
+    }
+
+    private void setActions() {
+        addBtn.setOnAction(event -> addToProgram(getSelectedAction()));
+
+        actionListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2){
+                    addToProgram(getSelectedAction());
+                }
+            }
+        });
+    }
+
+    private boolean addToProgram(Action selectedAction){
+        return catalogueViewModel.addToProgram(selectedAction);
+    }
+
+    private Action getSelectedAction() {
+        return actionListView.getSelectionModel().getSelectedItem();
     }
 
     private void setMargins() {
@@ -35,6 +59,7 @@ public class CatalogueView extends VBox {
     }
 
 
+    // definition de l'affichage de chaque action dans la liste
     private void setCellFactory(){
         actionListView.setCellFactory(list -> new ListCell<Action>() {
             @Override
