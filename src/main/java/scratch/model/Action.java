@@ -1,11 +1,14 @@
 package scratch.model;
 
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+
 public abstract class Action {
     private String nom;
-    private double value;
+    private SimpleDoubleProperty value = new SimpleDoubleProperty();
 
     public Action(double value, String nom) {
-        this.value = value;
+        this.value.set(value);
         this.nom = nom;
     }
 
@@ -18,11 +21,15 @@ public abstract class Action {
     }
 
     public double getValue() {
+        return value.getValue();
+    }
+
+    public ReadOnlyDoubleProperty valueProperty() {
         return value;
     }
 
     public void setValue(double value) {
-        this.value = value;
+        this.value.set(value);
     }
 
     abstract public MyLine execute(Cursor cursor);
