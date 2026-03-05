@@ -1,9 +1,15 @@
 package scratch.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
 import scratch.model.Action;
 import scratch.viewmodel.ProgramViewModel;
 
@@ -18,6 +24,13 @@ public class ProgramView extends VBox {
     private final Button deleteAllBtn = new Button("Vider tout");
     private final Accordion accordion = new Accordion();
 
+    private final TitledPane detailActionPane = new TitledPane();
+    private final Label detailActionLabel = new Label();
+    private final Label detailActionUnitLabel = new Label();
+    private final TextField detailActionValueTextField = new TextField();
+
+    private Action currentBindedAction;
+
 
     private final ProgramViewModel programViewModel;
 
@@ -30,9 +43,58 @@ public class ProgramView extends VBox {
 
         setMargins();
 
+        setBindings();
+
+        setActions();
+
         this.getChildren().addAll(titleLbl, actions, accordion);
 
     }
+
+    private void setActions() {
+        actions.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                // converter pour rendre la property de l'action compatible avec la property de textField
+                StringConverter<Number> doubleConverter = new NumberStringConverter();
+                // afin de ne pas binder tous les actions au meme textfield, il faut unbind le precedent
+                if (currentBindedAction != null)
+                    Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty());
+                currentBindedAction = getSelectedAction();
+                Bindings.bindBidirectional(detailActionValueTextField.textProperty(), getSelectedAction().valueProperty(), doubleConverter );
+            }
+        });
+    }
+
+    private void setBindings() {
+        detailActionLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                    var selectedAction = getSelectedAction();
+                    if (selectedAction != null)
+                        return selectedAction.getNom();
+                    return "aucune action selectionnee";
+                },
+                actions.getSelectionModel().selectedIndexProperty()
+        ));
+
+        detailActionUnitLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                    var selectedAction = getSelectedAction();
+                    if (selectedAction != null)
+                        return selectedAction.valueUnit();
+                    return "";
+                },
+                actions.getSelectionModel().selectedIndexProperty()
+        ));
+
+    }
+
+    private Action getSelectedAction() {
+        return actions.getSelectionModel().getSelectedItem();
+    }
+
+
+
 
     private void setMargins() {
         setMargin(actions, new Insets(10, 0, 10, 0));
@@ -46,9 +108,23 @@ public class ProgramView extends VBox {
     }
 
     private void createAccordion(){
-        TitledPane pane1 = new TitledPane("Detail de l'action" , new HBox(new Label("(aucune action sélectionnée)"), new TextField()));
-        accordion.getPanes().add(pane1);
-        accordion.setExpandedPane(pane1);
+        HBox actionPaneBox = new HBox();
+
+        setActionPaneBox(actionPaneBox);
+
+        detailActionPane.setText("Detail de l'action");
+        detailActionValueTextField.setPrefWidth(40);
+
+       actionPaneBox.getChildren().addAll(detailActionLabel, detailActionValueTextField, detailActionUnitLabel);
+        detailActionPane.setContent(actionPaneBox);
+        detailActionPane.setAlignment(Pos.BASELINE_LEFT);
+        accordion.getPanes().add(detailActionPane);
+        accordion.setExpandedPane(detailActionPane);
+    }
+
+    private static void setActionPaneBox(HBox actionPaneBox) {
+        actionPaneBox.setSpacing(10.0);
+        actionPaneBox.setAlignment(Pos.CENTER_LEFT);
     }
 
 
