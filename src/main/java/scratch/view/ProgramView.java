@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import scratch.model.Action;
+import scratch.model.Pen;
 import scratch.viewmodel.ProgramViewModel;
 
 public class ProgramView extends VBox {
@@ -67,16 +68,24 @@ public class ProgramView extends VBox {
     }
 
     private void setBindings() {
-        detailActionLabel.textProperty().bind(Bindings.createStringBinding(
+        setDetailActionLabelBindings();
+        setDetailActionUnitLabelBindings();
+        setDetailActionValueTextFieldBindings();
+
+    }
+
+    private void setDetailActionValueTextFieldBindings() {
+        detailActionValueTextField.disableProperty().bind(Bindings.createBooleanBinding(
                 () -> {
-                    var selectedAction = getSelectedAction();
-                    if (selectedAction != null)
-                        return selectedAction.getNom();
-                    return "aucune action selectionnee";
+                    if (getSelectedAction() == null || getSelectedAction() instanceof Pen)
+                        return true;
+                    return false;
                 },
                 actions.getSelectionModel().selectedIndexProperty()
         ));
+    }
 
+    private void setDetailActionUnitLabelBindings() {
         detailActionUnitLabel.textProperty().bind(Bindings.createStringBinding(
                 () -> {
                     var selectedAction = getSelectedAction();
@@ -86,7 +95,18 @@ public class ProgramView extends VBox {
                 },
                 actions.getSelectionModel().selectedIndexProperty()
         ));
+    }
 
+    private void setDetailActionLabelBindings() {
+        detailActionLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                    var selectedAction = getSelectedAction();
+                    if (selectedAction != null)
+                        return selectedAction.getNom();
+                    return "aucune action selectionnee";
+                },
+                actions.getSelectionModel().selectedIndexProperty()
+        ));
     }
 
     private Action getSelectedAction() {
