@@ -18,6 +18,7 @@ public class ProgramView extends VBox {
 
     private final Label titleLbl = new Label("Programme");
     private final ListView<Action> actions = new ListView<>();
+    private final HBox buttons = new HBox();
     private final Button upBtn = new Button("Monter");
     private final Button downBtn = new Button("Descendre");
     private final Button duplicateBtn = new Button("Dupliquer");
@@ -38,6 +39,8 @@ public class ProgramView extends VBox {
     public ProgramView(ProgramViewModel vm) {
         this.programViewModel = vm;
 
+        configureButtonsBox();
+
         createAccordion();
 
         setActionsListView();
@@ -48,8 +51,13 @@ public class ProgramView extends VBox {
 
         setActions();
 
-        this.getChildren().addAll(titleLbl, actions, accordion);
+        this.getChildren().addAll(titleLbl, actions, buttons, accordion);
 
+    }
+
+    private void configureButtonsBox() {
+        buttons.getChildren().addAll(upBtn, downBtn, duplicateBtn, deleteBtn, deleteAllBtn);
+        buttons.setSpacing(20);
     }
 
     private void setActions() {
@@ -118,6 +126,7 @@ public class ProgramView extends VBox {
 
     private void setMargins() {
         setMargin(actions, new Insets(10, 0, 10, 0));
+        setMargin(buttons, new Insets(10,10,20,10));
     }
 
 
