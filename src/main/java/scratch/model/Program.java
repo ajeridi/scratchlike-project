@@ -1,5 +1,8 @@
 package scratch.model;
 
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.collections.ObservableList;
 
 public class Program {
@@ -8,6 +11,14 @@ public class Program {
 
     public ObservableList<Action> getActions() {
         return actionList.getActions();
+    }
+
+    public IntegerBinding getSizeProperty() {
+        return actionList.getSizeProperty();
+    }
+
+    public BooleanBinding actionsIsEmptyProperty() {
+        return actionList.isEmptyProperty();
     }
 
     public boolean addToActionList(Action action){

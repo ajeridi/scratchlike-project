@@ -1,6 +1,11 @@
 package scratch.view;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -64,21 +69,41 @@ public class ProgramView extends VBox {
         actions.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                // converter pour rendre la property de l'action compatible avec la property de textField
-                StringConverter<Number> doubleConverter = new NumberStringConverter();
-                // afin de ne pas binder tous les actions au meme textfield, il faut unbind le precedent
-                if (currentBindedAction != null)
-                    Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty());
-                currentBindedAction = getSelectedAction();
-                Bindings.bindBidirectional(detailActionValueTextField.textProperty(), getSelectedAction().valueProperty(), doubleConverter );
+                bindTextFieldToActionValue();
             }
         });
+
+        upBtn.setOnAction(actionEvent -> {
+            changeSelectedIndex(-1);
+        });
+
+        downBtn.setOnAction(actionEvent -> {
+            changeSelectedIndex(+1);
+        });
+    }
+
+    private void changeSelectedIndex(int increment) {
+        actions.getSelectionModel().select(getSelectedIndex() + increment);
+        bindTextFieldToActionValue(); // faire le binding entre le textField et la value property de l'action
+    }
+
+    private void bindTextFieldToActionValue() {
+        // converter pour rendre la property de l'action compatible avec la property de textField
+        StringConverter<Number> doubleConverter = new NumberStringConverter();
+        // afin de ne pas binder tous les actions au meme textfield, il faut unbind le precedent
+        if (currentBindedAction != null)
+            Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty());
+        currentBindedAction = getSelectedAction();
+        Bindings.bindBidirectional(detailActionValueTextField.textProperty(), getSelectedAction().valueProperty(), doubleConverter );
     }
 
     private void setBindings() {
         setDetailActionLabelBindings();
         setDetailActionUnitLabelBindings();
         setDetailActionValueTextFieldBindings();
+
+        upBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(0))); // desactivation du bouton Monter si on ne selectionne rien, ou si on est tout en haut de la liste
+        downBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(getActionsSizeProperty().subtract(1)))); // desactivation du bouton descendre si on ne selectionne rien ou bien si on est tout en bas de la liste
 
     }
 
@@ -93,7 +118,7 @@ public class ProgramView extends VBox {
         ));
     }
 
-    private void setDetailActionUnitLabelBindings() {
+    private void setDetailActionUnitLabelBindings() { // fait le binding entre le label de l'unite de la valeur de l'action et le string valueUNit de action
         detailActionUnitLabel.textProperty().bind(Bindings.createStringBinding(
                 () -> {
                     var selectedAction = getSelectedAction();
@@ -121,7 +146,30 @@ public class ProgramView extends VBox {
         return actions.getSelectionModel().getSelectedItem();
     }
 
+    private ReadOnlyIntegerProperty getActionsSelectedIndexProperty() {
+        return actions.getSelectionModel().selectedIndexProperty();
+    }
 
+    private int getSelectedIndex(){
+        return actions.getSelectionModel().getSelectedIndex();
+    }
+
+    private IntegerBinding getActionsSizeProperty() {
+        return programViewModel.getActionsSizeProperty();
+    }
+
+    private BooleanBinding actionsIsEmptyProperty(){
+        return programViewModel.actionIsEmptyProperty();
+    }
+
+    private BooleanBinding isSelectedProperty() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    return getSelectedIndex() >= 0 && getSelectedIndex() <= getActionsSizeProperty().getValue();
+                },
+                getActionsSelectedIndexProperty()
+        );
+    }
 
 
     private void setMargins() {

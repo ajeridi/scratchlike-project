@@ -1,5 +1,8 @@
 package scratch.viewmodel;
 
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.collections.ObservableList;
 import scratch.model.Action;
 import scratch.model.Program;
@@ -19,5 +22,13 @@ public class ProgramViewModel {
 
     public ObservableList<Action> getActions() {
         return program.getActions();
+    }
+
+    public IntegerBinding getActionsSizeProperty(){
+        return program.getSizeProperty();
+    }
+
+    public BooleanBinding actionIsEmptyProperty() {
+        return program.actionsIsEmptyProperty();
     }
 }
