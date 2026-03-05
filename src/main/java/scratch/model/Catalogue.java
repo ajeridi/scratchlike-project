@@ -27,6 +27,10 @@ public class Catalogue {
         return catalogue.add(action);
     }
 
+    public ObservableList<Action> getCatalogue() {
+        return catalogue;
+    }
+
     public boolean addToProgram(){
         return true;
     }

@@ -5,7 +5,7 @@ public abstract class Turn extends Action {
     private static final double DEFAULT_ROTATION  = 90;
 
     public Turn(String nom) {
-        super(DEFAULT_ROTATION, nom);
+        super(nom, "red");
     }
 
     abstract void turnCursor(Cursor cursor);

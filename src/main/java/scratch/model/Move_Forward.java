@@ -6,7 +6,7 @@ public class Move_Forward extends Action{
     private static final double DEFAULT_MOVE_FORWARD_VALUE = 30;
 
     public Move_Forward() {
-        super(DEFAULT_MOVE_FORWARD_VALUE, "Avancer de");
+        super("Avancer de", "blue");
     }
 
     @Override

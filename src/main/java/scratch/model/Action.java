@@ -4,21 +4,25 @@ import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
 public abstract class Action {
-    private String nom;
-    private SimpleDoubleProperty value = new SimpleDoubleProperty();
+    private final String nom;
+    private final SimpleDoubleProperty value = new SimpleDoubleProperty();
+    private static final double DEFAULT_ACTION_VALUE = 0;
+    private  String color;
 
-    public Action(double value, String nom) {
+    public Action(double value, String nom, String color) {
         this.value.set(value);
         this.nom = nom;
+        this.color = color;
+    }
+
+    public Action(String nom, String color) {
+        this(DEFAULT_ACTION_VALUE, nom, color);
     }
 
     public String getNom() {
         return nom;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
 
     public double getValue() {
         return value.getValue();
@@ -33,4 +37,17 @@ public abstract class Action {
     }
 
     abstract public MyLine execute(Cursor cursor);
+
+    public void setColor(String color) {
+        this.color = color;
+    };
+
+    public String getColor(){
+        return color;
+    }
+
+    @Override
+    public String toString() {
+        return nom + (value.getValue() == 0 ? "" : value.getValue());
+    }
 }

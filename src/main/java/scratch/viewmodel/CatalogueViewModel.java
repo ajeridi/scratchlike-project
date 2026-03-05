@@ -16,5 +16,8 @@ public class CatalogueViewModel {
         this.catalogue = catalogue;
     }
 
+    public ObservableList<Action> getCatalogue() {
+        return catalogue.getCatalogue();
+    }
 
 }
