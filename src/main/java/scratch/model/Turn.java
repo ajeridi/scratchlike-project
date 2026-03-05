@@ -20,4 +20,9 @@ public abstract class Turn extends Action {
         turnCursor(cursor);
         return new MyLine(cursor.getOrigine(), cursor.getOrigine(), cursor.isWriting());
     }
+
+    @Override
+    public String valueUnit() {
+        return "degres";
+    }
 }

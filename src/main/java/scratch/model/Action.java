@@ -1,5 +1,6 @@
 package scratch.model;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
@@ -28,7 +29,7 @@ public abstract class Action {
         return value.getValue();
     }
 
-    public ReadOnlyDoubleProperty valueProperty() {
+    public SimpleDoubleProperty valueProperty() {
         return value;
     }
 
@@ -39,6 +40,8 @@ public abstract class Action {
     abstract public MyLine execute(Cursor cursor);
 
     abstract public Action copy();
+
+    abstract public String valueUnit();
 
     public void setColor(String color) {
         this.color = color;

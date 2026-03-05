@@ -13,4 +13,9 @@ public  abstract class Pen extends Action {
         movePen(cursor);
         return new MyLine(cursor.getOrigine(), cursor.getOrigine(), cursor.isWriting()); // sur place
     }
+
+    @Override
+    public String valueUnit() {
+        return "";
+    }
 }
