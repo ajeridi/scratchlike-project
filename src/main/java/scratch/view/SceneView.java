@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import scratch.viewmodel.SceneViewModel;
 
 public class SceneView extends VBox {
 
@@ -25,7 +26,10 @@ public class SceneView extends VBox {
 
     private final Button executeBtn = new Button("Exécuter");
 
-    public SceneView() {
+    private final SceneViewModel vm;
+
+    public SceneView(SceneViewModel vm) {
+        this.vm = vm;
         HBox buttons = makeButtonsHbox();
         drawCanvas();
 
@@ -50,8 +54,8 @@ public class SceneView extends VBox {
     private void drawGrid(GraphicsContext gc) {
         double step = CANVAS_DIMENSION / 10; // largeur entre deux lignes
         // Set a stroke color, and width
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(2.0);
+        gc.setStroke(Color.GRAY);
+        gc.setLineWidth(1.0);
 
         // dessine les lignes pour avoir 10
         for (double row = 0; row <= CANVAS_DIMENSION; row += step){

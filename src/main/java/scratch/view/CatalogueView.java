@@ -6,6 +6,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
 import scratch.model.Action;
+import scratch.viewmodel.CatalogueViewModel;
 
 public class CatalogueView extends VBox {
     private final Label titleLbl = new Label("Palette d'actions");
@@ -14,9 +15,15 @@ public class CatalogueView extends VBox {
 
     private final Button addBtn = new Button("Ajouter au programme");
 
-    public CatalogueView(){
+    private final CatalogueViewModel vm;
+
+    public CatalogueView(CatalogueViewModel vm){
+        this.vm = vm;
+
         setMargin(actionListView, new Insets(10, 0, 10, 0));
         this.getChildren().addAll(titleLbl, actionListView, addBtn);
+
+
     }
 
 }

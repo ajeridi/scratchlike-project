@@ -5,15 +5,10 @@ import javafx.scene.shape.Line;
 import java.util.List;
 
 public class Scene {
-    private final Cursor cursor;
-    private final LineList lines;
-    private final ActionList actions;
+    private final Cursor cursor = new Cursor(new Point(0,0));
+    private final LineList lines = new LineList();
+    private final ActionList actions = new ActionList();
 
-    public Scene(Cursor cursor, LineList lines, ActionList actions) {
-        this.cursor = cursor;
-        this.lines = lines;
-        this.actions = actions;
-    }
 
     public Cursor getCursor() {
         return cursor;

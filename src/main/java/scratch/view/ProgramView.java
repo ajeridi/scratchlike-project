@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import scratch.model.Action;
+import scratch.viewmodel.ProgramViewModel;
 
 public class ProgramView extends VBox {
 
@@ -17,7 +18,10 @@ public class ProgramView extends VBox {
     private final Button deleteAllBtn = new Button("Vider tout");
     private final Accordion accordion = new Accordion();
 
-    public ProgramView() {
+    private final ProgramViewModel vm;
+
+    public ProgramView(ProgramViewModel vm) {
+        this.vm = vm;
         createAccordion();
         setMargin(actions, new Insets(10, 0, 10, 0));
         actions.setMinWidth(500);
