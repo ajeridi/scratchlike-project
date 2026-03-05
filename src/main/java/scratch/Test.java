@@ -32,6 +32,5 @@ public class Test {
         System.out.println(turnLeft.execute(cursor));
         System.out.println(cursor); // -10°
 
-
     }
 }

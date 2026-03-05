@@ -15,11 +15,11 @@ public class MainView extends HBox {
     private final SceneView sceneView;
     private final MainViewModel vm;
 
-    public MainView(MainViewModel vm, CatalogueView catalogueView, ProgramView programView, SceneView sceneView){
+    public MainView(MainViewModel vm){
         this.vm = vm;
-        this.catalogueView = catalogueView;
-        this.programView = programView;
-        this.sceneView = sceneView;
+        this.catalogueView = new CatalogueView(vm.getCatalogueViewModel());
+        this.programView = new ProgramView(vm.getProgramViewModel());
+        this.sceneView = new SceneView(vm.getSceneViewModel());
         setMargins();
         this.getChildren().addAll(catalogueView, programView, sceneView);
     }
