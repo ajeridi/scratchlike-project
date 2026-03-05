@@ -3,9 +3,14 @@ package scratch.model;
 public abstract class Turn extends Action {
 
     private static final double DEFAULT_ROTATION  = 90;
+    private static final String DEFAULT_TURN_COLOR  = "red";
 
     public Turn(String nom) {
-        super(DEFAULT_ROTATION, nom);
+        super(nom, DEFAULT_TURN_COLOR);
+    }
+
+    public Turn(Turn original){
+        super(DEFAULT_ROTATION, original.getNom(), DEFAULT_TURN_COLOR);
     }
 
     abstract void turnCursor(Cursor cursor);
