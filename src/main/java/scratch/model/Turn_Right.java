@@ -10,6 +10,15 @@ public class Turn_Right extends Turn {
         super (original);
     }
 
+    public Turn_Right(double value, String nom, String color){
+        super(value, nom, color);
+    }
+
+    @Override
+    public Turn_Right create_default() {
+        return new Turn_Right(getDefaultRotation(), this.getNom(), this.getColor());
+    }
+
     @Override
     void turnCursor(Cursor cursor) {
         double currentDirection = cursor.getDirection();

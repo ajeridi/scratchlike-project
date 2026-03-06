@@ -16,7 +16,14 @@ public class Pen_Down extends Pen {
     }
 
     @Override
+    public Pen_Down create_default() {
+        return new Pen_Down();
+    }
+
+    @Override
     public Action copy() {
         return new Pen_Down(this);
     }
+
+
 }

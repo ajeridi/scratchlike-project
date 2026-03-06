@@ -37,7 +37,7 @@ public class ProgramViewModel {
     }
 
     public void duplicate(Action action){
-        addToActionList(action);
+        program.duplicate(action);
     }
 
     public void deleteAction(Action action){

@@ -10,7 +10,11 @@ public abstract class Turn extends Action {
     }
 
     public Turn(Turn original){
-        super(DEFAULT_ROTATION, original.getNom(), DEFAULT_TURN_COLOR);
+        super(original.getValue(), original.getNom(), DEFAULT_TURN_COLOR);
+    }
+
+    public Turn(double value, String nom, String color) {
+        super(value, nom, color);
     }
 
     abstract void turnCursor(Cursor cursor);
@@ -24,5 +28,9 @@ public abstract class Turn extends Action {
     @Override
     public String valueUnit() {
         return "degres";
+    }
+
+    public static double getDefaultRotation() {
+        return DEFAULT_ROTATION;
     }
 }

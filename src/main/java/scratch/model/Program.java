@@ -22,9 +22,9 @@ public class Program {
     }
 
     public boolean addToActionList(Action action){
-        // faire une copie de l'action
-        var copy = action.copy();
-        return actionList.add(copy);
+        // creer une action avec une valeur par defaut
+        Action default_action = action.create_default();
+        return actionList.add(default_action);
     }
 
     public void swapActions(int index1, int index2){
@@ -43,7 +43,8 @@ public class Program {
 
     public void duplicate(Action action){
         //dupliquer une action
-        addToActionList(action);
+        Action copy = action.copy();
+        actionList.add(copy);
     }
 
     public void delete(Action action){

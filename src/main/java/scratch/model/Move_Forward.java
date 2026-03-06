@@ -11,7 +11,11 @@ public class Move_Forward extends Action{
     }
 
     public Move_Forward(Move_Forward original){
-        super(DEFAULT_MOVE_FORWARD_VALUE, original.getNom(), original.getColor());
+        super(original.getValue(), original.getNom(), original.getColor());
+    }
+
+    public Move_Forward(double value, String nom, String color){
+        super(value, nom, color);
     }
 
     @Override
@@ -20,6 +24,11 @@ public class Move_Forward extends Action{
         Point end = createEnd(cursor);
         cursor.setOrigine(end);
         return new MyLine(start, end, cursor.isWriting());
+    }
+
+    @Override
+    public Move_Forward create_default() {
+        return new Move_Forward(DEFAULT_MOVE_FORWARD_VALUE, this.getNom(), this.getColor());
     }
 
     @Override
