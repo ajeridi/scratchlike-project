@@ -4,6 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -65,7 +66,7 @@ public class ProgramView extends VBox {
 
     private void setActions() {
 
-        getActionsSelectedIndexProperty().addListener( // binding vers l'action selectionnee
+        getSelectedItemProperty().addListener( // binding vers l'action selectionnee
                 (obs, o, n) -> {
                     bindTextFieldToActionValue();
                 }
@@ -85,6 +86,10 @@ public class ProgramView extends VBox {
 
         deleteBtn.setOnAction(actionEvent -> {
             deleteAction(getSelectedAction());
+        });
+
+        deleteAllBtn.setOnAction(actionEvent -> {
+            deleteAllActions();
         });
     }
 
@@ -117,6 +122,10 @@ public class ProgramView extends VBox {
         programViewModel.deleteAction(action);
     }
 
+    private void deleteAllActions(){
+        programViewModel.deleteAllActions();
+    }
+
     private void bindTextFieldToActionValue() {
         // converter pour rendre la property de l'action compatible avec la property de textField
         StringConverter<Number> doubleConverter = new NumberStringConverter();
@@ -140,6 +149,7 @@ public class ProgramView extends VBox {
         downBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(getActionsSizeProperty().subtract(1)))); // desactivation du bouton descendre si on ne selectionne rien ou bien si on est tout en bas de la liste
         duplicateBtn.disableProperty().bind(isSelectedProperty().not()); // desactivation du bouton dupliquer si rien n'est selectionne
         deleteBtn.disableProperty().bind(isSelectedProperty().not()); // desactivation du bouton supprimer si rien n'est selectionne
+        deleteAllBtn.disableProperty().bind(actionsIsEmptyProperty()); // desactivation du bouton deleteAll si liste vide
     }
 
     private void setDetailActionValueTextFieldBindings() {
@@ -147,7 +157,7 @@ public class ProgramView extends VBox {
                 () -> {
                     return actionsIsEmptyProperty().getValue() || getSelectedAction() == null || getSelectedAction() instanceof Pen;
                 },
-                actions.getSelectionModel().selectedIndexProperty()
+                getSelectedItemProperty()
         ));
     }
 
@@ -159,7 +169,7 @@ public class ProgramView extends VBox {
                         return selectedAction.valueUnit();
                     return "";
                 },
-                actions.getSelectionModel().selectedIndexProperty()
+                getSelectedItemProperty()
         ));
     }
 
@@ -171,7 +181,7 @@ public class ProgramView extends VBox {
                         return selectedAction.getNom();
                     return "aucune action selectionnee";
                 },
-                actions.getSelectionModel().selectedIndexProperty()
+                getSelectedItemProperty()
         ));
     }
 
@@ -181,6 +191,10 @@ public class ProgramView extends VBox {
 
     private ReadOnlyIntegerProperty getActionsSelectedIndexProperty() {
         return actions.getSelectionModel().selectedIndexProperty();
+    }
+
+    private ReadOnlyObjectProperty<Action> getSelectedItemProperty() {
+        return actions.getSelectionModel().selectedItemProperty();
     }
 
     private int getSelectedIndex(){

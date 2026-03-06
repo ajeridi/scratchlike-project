@@ -48,4 +48,8 @@ public class ActionList {
     public void delete(Action action){
         actions.remove(action);
     }
+
+    public void deleteAll() {
+        actions.clear();
+    }
 }

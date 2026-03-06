@@ -54,5 +54,6 @@ public class Program {
 
     public void deleteAll() {
         // supprimer toutes les actions
+        actionList.deleteAll();
     }
 }
