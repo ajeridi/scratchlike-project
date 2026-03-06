@@ -64,12 +64,12 @@ public class ProgramView extends VBox {
     }
 
     private void setActions() {
-        actions.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                bindTextFieldToActionValue();
-            }
-        });
+
+        getActionsSelectedIndexProperty().addListener( // binding vers l'action selectionnee
+                (obs, o, n) -> {
+                    bindTextFieldToActionValue();
+                }
+        );
 
         upBtn.setOnAction(actionEvent -> {
             moveAction("up");
@@ -81,8 +81,6 @@ public class ProgramView extends VBox {
 
         duplicateBtn.setOnAction(actionEvent -> {
             duplicateAction(getSelectedAction()); // ajouter l'action selectionnee a la liste d'action
-            selectAction(getActionsSizeProperty().intValue() - 1); // diriger l'index vers le dernier element de la liste
-            bindTextFieldToActionValue(); // binder l'action avec le text area
         });
 
         deleteBtn.setOnAction(actionEvent -> {
@@ -112,6 +110,7 @@ public class ProgramView extends VBox {
 
     private void duplicateAction(Action action){
         programViewModel.duplicate(action);
+        selectAction(getActionsSizeProperty().intValue() - 1); // diriger l'index vers le dernier element de la list
     }
 
     private void deleteAction(Action action){
@@ -122,10 +121,14 @@ public class ProgramView extends VBox {
         // converter pour rendre la property de l'action compatible avec la property de textField
         StringConverter<Number> doubleConverter = new NumberStringConverter();
         // afin de ne pas binder tous les actions au meme textfield, il faut unbind le precedent
-        if (currentBindedAction != null)
-            Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty());
-        currentBindedAction = getSelectedAction();
-        Bindings.bindBidirectional(detailActionValueTextField.textProperty(), getSelectedAction().valueProperty(), doubleConverter );
+        if (currentBindedAction != null) { // si j'ai une action bindee
+            Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty()); // on l'unbind de textField
+            detailActionValueTextField.textProperty().setValue(""); // nettoyer le textField
+        }
+        if (actionsIsEmptyProperty().not().getValue()) { // si ma liste n'est pas vide, on rebind avec le nouveau selectedAction
+            currentBindedAction = getSelectedAction();
+            Bindings.bindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty(), doubleConverter);
+        }
     }
 
     private void setBindings() {
@@ -142,9 +145,7 @@ public class ProgramView extends VBox {
     private void setDetailActionValueTextFieldBindings() {
         detailActionValueTextField.disableProperty().bind(Bindings.createBooleanBinding(
                 () -> {
-                    if (getSelectedAction() == null || getSelectedAction() instanceof Pen)
-                        return true;
-                    return false;
+                    return actionsIsEmptyProperty().getValue() || getSelectedAction() == null || getSelectedAction() instanceof Pen;
                 },
                 actions.getSelectionModel().selectedIndexProperty()
         ));
