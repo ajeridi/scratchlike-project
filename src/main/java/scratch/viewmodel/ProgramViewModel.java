@@ -31,4 +31,28 @@ public class ProgramViewModel {
     public BooleanBinding actionIsEmptyProperty() {
         return program.actionsIsEmptyProperty();
     }
+
+    public void swapActions(int index1, int index2){
+        program.swapActions(index1, index2);
+    }
+
+    public void duplicate(Action action){
+        program.duplicate(action);
+    }
+
+    public void deleteAction(Action action){
+        program.delete(action);
+    }
+
+    public void deleteAllActions(){
+        program.deleteAll();
+    }
+
+    public void moveUp(int selectedIndex){
+        program.up(selectedIndex);
+    }
+
+    public void moveDown(int selectedIndex){
+        program.down(selectedIndex);
+    }
 }

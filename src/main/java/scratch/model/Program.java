@@ -22,28 +22,38 @@ public class Program {
     }
 
     public boolean addToActionList(Action action){
-        // faire une copie de l'action
-        var copy = action.copy();
-        return actionList.add(copy);
+        // creer une action avec une valeur par defaut
+        Action default_action = action.create_default();
+        return actionList.add(default_action);
     }
 
-    public void up() {
+    public void swapActions(int index1, int index2){
+        actionList.swap(index1, index2);
+    }
+
+    public void up(int selectedIndex) {
         // monter la liste d'actions
+        actionList.swap(selectedIndex, selectedIndex - 1);
     }
 
-    public void down(){
+    public void down(int selectedIndex){
         //  descendre la liste d'actions
+        actionList.swap(selectedIndex, selectedIndex+1);
     }
 
-    public void duplicate(){
+    public void duplicate(Action action){
         //dupliquer une action
+        Action copy = action.copy();
+        actionList.add(copy);
     }
 
-    public void delete(){
+    public void delete(Action action){
         // supprimer une action
+        actionList.delete(action);
     }
 
     public void deleteAll() {
         // supprimer toutes les actions
+        actionList.deleteAll();
     }
 }

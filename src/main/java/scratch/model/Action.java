@@ -39,6 +39,7 @@ public abstract class Action {
 
     abstract public MyLine execute(Cursor cursor);
 
+    abstract public Action create_default();
     abstract public Action copy();
 
     abstract public String valueUnit();

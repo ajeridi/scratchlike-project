@@ -38,4 +38,18 @@ public class ActionList {
                 actions
         );
     }
+
+    public void swap(int index1, int index2){
+        Action temp = actions.get(index1);
+        actions.set(index1, actions.get(index2));
+        actions.set(index2, temp);
+    }
+
+    public void delete(Action action){
+        actions.remove(action);
+    }
+
+    public void deleteAll() {
+        actions.clear();
+    }
 }

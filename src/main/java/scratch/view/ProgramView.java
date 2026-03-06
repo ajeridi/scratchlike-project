@@ -3,9 +3,8 @@ package scratch.view;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -66,35 +65,79 @@ public class ProgramView extends VBox {
     }
 
     private void setActions() {
-        actions.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                bindTextFieldToActionValue();
-            }
-        });
+
+        getSelectedItemProperty().addListener( // binding vers l'action selectionnee
+                (obs, o, n) -> {
+                    bindTextFieldToActionValue();
+                }
+        );
 
         upBtn.setOnAction(actionEvent -> {
-            changeSelectedIndex(-1);
+            moveAction("up");
         });
 
         downBtn.setOnAction(actionEvent -> {
-            changeSelectedIndex(+1);
+            moveAction("down");
+        });
+
+        duplicateBtn.setOnAction(actionEvent -> {
+            duplicateAction(getSelectedAction()); // ajouter l'action selectionnee a la liste d'action
+        });
+
+        deleteBtn.setOnAction(actionEvent -> {
+            deleteAction(getSelectedAction());
+        });
+
+        deleteAllBtn.setOnAction(actionEvent -> {
+            deleteAllActions();
         });
     }
 
-    private void changeSelectedIndex(int increment) {
-        actions.getSelectionModel().select(getSelectedIndex() + increment);
-        bindTextFieldToActionValue(); // faire le binding entre le textField et la value property de l'action
+    private void selectAction(int index){
+        actions.getSelectionModel().select(index);
+    }
+
+    private void moveAction(String way) {
+        int selectedIndex = getSelectedIndex();
+        int increment = 0;
+        switch (way){
+            case "up" :
+                programViewModel.moveUp(selectedIndex);
+                increment--;
+                break;
+            case "down" :
+                programViewModel.moveDown(selectedIndex);
+                increment++;
+                break;
+        }
+        selectAction(selectedIndex + increment); // selectionner le nouvel index de l'action
+    }
+
+    private void duplicateAction(Action action){
+        programViewModel.duplicate(action);
+        selectAction(getActionsSizeProperty().intValue() - 1); // diriger l'index vers le dernier element de la list
+    }
+
+    private void deleteAction(Action action){
+        programViewModel.deleteAction(action);
+    }
+
+    private void deleteAllActions(){
+        programViewModel.deleteAllActions();
     }
 
     private void bindTextFieldToActionValue() {
         // converter pour rendre la property de l'action compatible avec la property de textField
         StringConverter<Number> doubleConverter = new NumberStringConverter();
         // afin de ne pas binder tous les actions au meme textfield, il faut unbind le precedent
-        if (currentBindedAction != null)
-            Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty());
-        currentBindedAction = getSelectedAction();
-        Bindings.bindBidirectional(detailActionValueTextField.textProperty(), getSelectedAction().valueProperty(), doubleConverter );
+        if (currentBindedAction != null) { // si j'ai une action bindee
+            Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty()); // on l'unbind de textField
+            detailActionValueTextField.textProperty().setValue(""); // nettoyer le textField
+        }
+        if (actionsIsEmptyProperty().not().getValue()) { // si ma liste n'est pas vide, on rebind avec le nouveau selectedAction
+            currentBindedAction = getSelectedAction();
+            Bindings.bindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty(), doubleConverter);
+        }
     }
 
     private void setBindings() {
@@ -104,17 +147,17 @@ public class ProgramView extends VBox {
 
         upBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(0))); // desactivation du bouton Monter si on ne selectionne rien, ou si on est tout en haut de la liste
         downBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(getActionsSizeProperty().subtract(1)))); // desactivation du bouton descendre si on ne selectionne rien ou bien si on est tout en bas de la liste
-
+        duplicateBtn.disableProperty().bind(isSelectedProperty().not()); // desactivation du bouton dupliquer si rien n'est selectionne
+        deleteBtn.disableProperty().bind(isSelectedProperty().not()); // desactivation du bouton supprimer si rien n'est selectionne
+        deleteAllBtn.disableProperty().bind(actionsIsEmptyProperty()); // desactivation du bouton deleteAll si liste vide
     }
 
     private void setDetailActionValueTextFieldBindings() {
         detailActionValueTextField.disableProperty().bind(Bindings.createBooleanBinding(
                 () -> {
-                    if (getSelectedAction() == null || getSelectedAction() instanceof Pen)
-                        return true;
-                    return false;
+                    return actionsIsEmptyProperty().getValue() || getSelectedAction() == null || getSelectedAction() instanceof Pen;
                 },
-                actions.getSelectionModel().selectedIndexProperty()
+                getSelectedItemProperty()
         ));
     }
 
@@ -126,7 +169,7 @@ public class ProgramView extends VBox {
                         return selectedAction.valueUnit();
                     return "";
                 },
-                actions.getSelectionModel().selectedIndexProperty()
+                getSelectedItemProperty()
         ));
     }
 
@@ -138,7 +181,7 @@ public class ProgramView extends VBox {
                         return selectedAction.getNom();
                     return "aucune action selectionnee";
                 },
-                actions.getSelectionModel().selectedIndexProperty()
+                getSelectedItemProperty()
         ));
     }
 
@@ -148,6 +191,10 @@ public class ProgramView extends VBox {
 
     private ReadOnlyIntegerProperty getActionsSelectedIndexProperty() {
         return actions.getSelectionModel().selectedIndexProperty();
+    }
+
+    private ReadOnlyObjectProperty<Action> getSelectedItemProperty() {
+        return actions.getSelectionModel().selectedItemProperty();
     }
 
     private int getSelectedIndex(){
