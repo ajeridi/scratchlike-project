@@ -3,9 +3,7 @@ package scratch.view;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -74,20 +72,30 @@ public class ProgramView extends VBox {
         });
 
         upBtn.setOnAction(actionEvent -> {
-            changeSelectedIndex(-1);
+            moveAction(-1);
         });
 
         downBtn.setOnAction(actionEvent -> {
-            changeSelectedIndex(+1);
+            moveAction(+1);
+        });
+
+        duplicateBtn.setOnAction(actionEvent -> {
+            programViewModel.addToActionList(getSelectedAction()); // ajouter l'action selectionnee a la liste d'action
+            selectAction(getActionsSizeProperty().intValue() - 1); // diriger l'index vers le dernier element de la liste
+            bindTextFieldToActionValue(); // binder l'action avec le text area
         });
     }
 
-    private void changeSelectedIndex(int increment) {
+    private void selectAction(int index){
+        actions.getSelectionModel().select(index);
+    }
+
+    private void moveAction(int increment) {
         int currentIndex = getSelectedIndex();
         int destination = currentIndex + increment;
 
         programViewModel.swapActions(currentIndex, destination); // faire un swap
-        actions.getSelectionModel().select(destination); // selectionner le nouvel index de l'action
+        selectAction(destination); // selectionner le nouvel index de l'action
 
     }
 
@@ -108,6 +116,7 @@ public class ProgramView extends VBox {
 
         upBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(0))); // desactivation du bouton Monter si on ne selectionne rien, ou si on est tout en haut de la liste
         downBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(getActionsSizeProperty().subtract(1)))); // desactivation du bouton descendre si on ne selectionne rien ou bien si on est tout en bas de la liste
+        duplicateBtn.disableProperty().bind(isSelectedProperty().not()); // desactivation du bouton dupliquer si rien n'est selectionne
 
     }
 
