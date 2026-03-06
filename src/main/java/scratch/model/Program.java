@@ -27,6 +27,10 @@ public class Program {
         return actionList.add(copy);
     }
 
+    public void swapActions(int index1, int index2){
+        actionList.swap(index1, index2);
+    }
+
     public void up() {
         // monter la liste d'actions
     }

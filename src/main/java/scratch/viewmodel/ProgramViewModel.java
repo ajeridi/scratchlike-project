@@ -31,4 +31,8 @@ public class ProgramViewModel {
     public BooleanBinding actionIsEmptyProperty() {
         return program.actionsIsEmptyProperty();
     }
+
+    public void swapActions(int index1, int index2){
+        program.swapActions(index1, index2);
+    }
 }

@@ -83,8 +83,12 @@ public class ProgramView extends VBox {
     }
 
     private void changeSelectedIndex(int increment) {
-        actions.getSelectionModel().select(getSelectedIndex() + increment);
-        bindTextFieldToActionValue(); // faire le binding entre le textField et la value property de l'action
+        int currentIndex = getSelectedIndex();
+        int destination = currentIndex + increment;
+
+        programViewModel.swapActions(currentIndex, destination); // faire un swap
+        actions.getSelectionModel().select(destination); // selectionner le nouvel index de l'action
+
     }
 
     private void bindTextFieldToActionValue() {
