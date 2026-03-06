@@ -43,4 +43,12 @@ public class ProgramViewModel {
     public void deleteAction(Action action){
         program.delete(action);
     }
+
+    public void moveUp(int selectedIndex){
+        program.up(selectedIndex);
+    }
+
+    public void moveDown(int selectedIndex){
+        program.down(selectedIndex);
+    }
 }

@@ -72,11 +72,11 @@ public class ProgramView extends VBox {
         });
 
         upBtn.setOnAction(actionEvent -> {
-            moveAction(-1);
+            moveAction("up");
         });
 
         downBtn.setOnAction(actionEvent -> {
-            moveAction(+1);
+            moveAction("down");
         });
 
         duplicateBtn.setOnAction(actionEvent -> {
@@ -94,13 +94,20 @@ public class ProgramView extends VBox {
         actions.getSelectionModel().select(index);
     }
 
-    private void moveAction(int increment) {
-        int currentIndex = getSelectedIndex();
-        int destination = currentIndex + increment;
-
-        programViewModel.swapActions(currentIndex, destination); // faire un swap
-        selectAction(destination); // selectionner le nouvel index de l'action
-
+    private void moveAction(String way) {
+        int selectedIndex = getSelectedIndex();
+        int increment = 0;
+        switch (way){
+            case "up" :
+                programViewModel.moveUp(selectedIndex);
+                increment--;
+                break;
+            case "down" :
+                programViewModel.moveDown(selectedIndex);
+                increment++;
+                break;
+        }
+        selectAction(selectedIndex + increment); // selectionner le nouvel index de l'action
     }
 
     private void duplicateAction(Action action){

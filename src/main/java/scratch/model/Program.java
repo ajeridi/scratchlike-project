@@ -31,12 +31,14 @@ public class Program {
         actionList.swap(index1, index2);
     }
 
-    public void up() {
+    public void up(int selectedIndex) {
         // monter la liste d'actions
+        actionList.swap(selectedIndex, selectedIndex - 1);
     }
 
-    public void down(){
+    public void down(int selectedIndex){
         //  descendre la liste d'actions
+        actionList.swap(selectedIndex, selectedIndex+1);
     }
 
     public void duplicate(Action action){
