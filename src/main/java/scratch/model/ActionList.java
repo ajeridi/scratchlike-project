@@ -44,4 +44,8 @@ public class ActionList {
         actions.set(index1, actions.get(index2));
         actions.set(index2, temp);
     }
+
+    public void delete(Action action){
+        actions.remove(action);
+    }
 }

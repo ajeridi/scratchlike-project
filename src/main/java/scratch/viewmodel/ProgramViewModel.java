@@ -35,4 +35,12 @@ public class ProgramViewModel {
     public void swapActions(int index1, int index2){
         program.swapActions(index1, index2);
     }
+
+    public void duplicate(Action action){
+        addToActionList(action);
+    }
+
+    public void deleteAction(Action action){
+        program.delete(action);
+    }
 }

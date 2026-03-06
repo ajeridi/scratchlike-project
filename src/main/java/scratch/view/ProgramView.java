@@ -80,9 +80,13 @@ public class ProgramView extends VBox {
         });
 
         duplicateBtn.setOnAction(actionEvent -> {
-            programViewModel.addToActionList(getSelectedAction()); // ajouter l'action selectionnee a la liste d'action
+            duplicateAction(getSelectedAction()); // ajouter l'action selectionnee a la liste d'action
             selectAction(getActionsSizeProperty().intValue() - 1); // diriger l'index vers le dernier element de la liste
             bindTextFieldToActionValue(); // binder l'action avec le text area
+        });
+
+        deleteBtn.setOnAction(actionEvent -> {
+            deleteAction(getSelectedAction());
         });
     }
 
@@ -97,6 +101,14 @@ public class ProgramView extends VBox {
         programViewModel.swapActions(currentIndex, destination); // faire un swap
         selectAction(destination); // selectionner le nouvel index de l'action
 
+    }
+
+    private void duplicateAction(Action action){
+        programViewModel.duplicate(action);
+    }
+
+    private void deleteAction(Action action){
+        programViewModel.deleteAction(action);
     }
 
     private void bindTextFieldToActionValue() {
@@ -117,7 +129,7 @@ public class ProgramView extends VBox {
         upBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(0))); // desactivation du bouton Monter si on ne selectionne rien, ou si on est tout en haut de la liste
         downBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(getActionsSizeProperty().subtract(1)))); // desactivation du bouton descendre si on ne selectionne rien ou bien si on est tout en bas de la liste
         duplicateBtn.disableProperty().bind(isSelectedProperty().not()); // desactivation du bouton dupliquer si rien n'est selectionne
-
+        deleteBtn.disableProperty().bind(isSelectedProperty().not()); // desactivation du bouton supprimer si rien n'est selectionne
     }
 
     private void setDetailActionValueTextFieldBindings() {

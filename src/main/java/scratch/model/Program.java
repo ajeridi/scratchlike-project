@@ -39,12 +39,14 @@ public class Program {
         //  descendre la liste d'actions
     }
 
-    public void duplicate(){
+    public void duplicate(Action action){
         //dupliquer une action
+        addToActionList(action);
     }
 
-    public void delete(){
+    public void delete(Action action){
         // supprimer une action
+        actionList.delete(action);
     }
 
     public void deleteAll() {
