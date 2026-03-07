@@ -10,10 +10,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import scratch.viewmodel.SceneViewModel;
 
 public class SceneView extends VBox {
 
+    private final double TURTLE_SIZE = 20;
+    private final double TURTLE_HEAD_SIZE = 7;
     private final double CANVAS_DIMENSION = 600;
 
     private final Label titleLbl = new Label("Scène");
@@ -32,23 +36,20 @@ public class SceneView extends VBox {
         this.vm = vm;
         HBox buttons = makeButtonsHbox();
         drawCanvas();
-
         this.getChildren().addAll(titleLbl, canvasHolder, buttons);
-
-
         setMargin(canvasHolder, new Insets(10, 0, 10, 0));
         buttons.setAlignment(Pos.CENTER);
     }
 
     private void drawCanvas() {
         // graphics context
-        GraphicsContext gc =
-                sceneCanvas.getGraphicsContext2D();
+        GraphicsContext gc = sceneCanvas.getGraphicsContext2D();
         // dessin du quadrillage
         drawGrid(gc);
-
+        // dessine turtle
+        drawTurtle(gc, CANVAS_DIMENSION/2, CANVAS_DIMENSION/2, 0);
         canvasHolder.getChildren().add(sceneCanvas);
-        canvasHolder.setStyle("-fx-background-color: white");
+        canvasHolder.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1;");
     }
 
     private void drawGrid(GraphicsContext gc) {
@@ -69,5 +70,27 @@ public class SceneView extends VBox {
 
     public HBox makeButtonsHbox() {
         return new HBox(loadBtn, executeBtn);
+    }
+
+    private void drawTurtle(GraphicsContext gc, double x, double y, double angle) {
+        double xP1 = x + TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.cos(Math.toRadians(angle + 90)),
+                yP1 = y - TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.sin(Math.toRadians(angle + 90)),
+                xP2 = x - TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.cos(Math.toRadians(angle)),
+                yP2 = y + TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.sin(Math.toRadians(angle)),
+                xP3 = x + TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.cos(Math.toRadians(angle)),
+                yP3 = y - TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.sin(Math.toRadians(angle));
+
+        double[] xPoints = {xP1, xP2, xP3};
+        double[] yPoints = {yP1, yP2, yP3};
+        double radius = TURTLE_HEAD_SIZE / 2;
+
+        gc.setFill(Color.DEEPSKYBLUE);
+        gc.setStroke(Color.BLACK);
+        gc.fillPolygon(xPoints, yPoints, 3);
+        gc.strokePolygon(xPoints, yPoints, 3);
+
+        gc.setFill(Color.DARKGREEN);
+        gc.fillOval(xP1-radius, yP1-radius, radius*2, radius*2);
+        gc.strokeOval(xP1-radius, yP1-radius, radius*2, radius*2);
     }
 }
