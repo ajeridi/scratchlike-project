@@ -41,6 +41,7 @@ public class SceneView extends VBox {
     private final BooleanProperty programChanged = new SimpleBooleanProperty();
     private final IntegerProperty refreshCounter = new SimpleIntegerProperty();
     private final BooleanProperty isExecuted = new SimpleBooleanProperty();
+    private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
 
 
 
@@ -69,6 +70,7 @@ public class SceneView extends VBox {
         atLastAction.bind(sceneViewModel.isAtLastAction());
         programChanged.bind(sceneViewModel.programChangedProperty());
         refreshCounter.bind(sceneViewModel.getRefreshCounterProperty());
+        isValidProgram.bind(sceneViewModel.isValidProgramProperty());
 
         loadBtn.textProperty().bind(Bindings.createStringBinding(
                 () -> {
@@ -84,8 +86,8 @@ public class SceneView extends VBox {
                 isExecuted
         ));
 
-        executeBtn.disableProperty().bind(isLoaded.not().or(isLoaded.and(sceneViewModel.isAtLastAction())));
-        loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty());
+        executeBtn.disableProperty().bind(isLoaded.not().or(isLoaded.and(sceneViewModel.isAtLastAction())).or(isValidProgram.not()));
+        loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty().or(isValidProgram.not()));
     }
 
     private void addListeners() {

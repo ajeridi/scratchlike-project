@@ -18,6 +18,7 @@ public class SceneViewModel {
     private final IntegerProperty refreshCounter = new SimpleIntegerProperty(0);
     private final BooleanProperty isExecuted = new SimpleBooleanProperty(false);
     private final BooleanProperty isAtLastAction = new SimpleBooleanProperty();
+    private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
 
 
 
@@ -27,14 +28,6 @@ public class SceneViewModel {
         this.scene = scene;
         this.mainViewModel = mainViewModel;
 
-        isAtLastAction.bind(isAtLastAction());
-
-        isAtLastAction.addListener(
-                ((obs, o, n) -> {
-                    if (n) // si on arrive en fin de programme
-                        isExecuted.set(false); // fin de l'execution
-                })
-        );
 
         addListeners();
     }
@@ -59,13 +52,38 @@ public class SceneViewModel {
     public void addListeners() {
         ObservableList<Action> actions = mainViewModel.getActionsList();
 
-        // si la liste d'actions du programme est modifiee, isLoaded = false et isExecuting = false
+        // si la liste d'actions du programme est modifiee, isLoaded = false
         actions.addListener((ListChangeListener<? super Action>) change -> {
             while (change.next()){
                 programChanged.set(true);
                 isLoaded.set(false);
             }
         });
+
+        isValidProgram.bind(Bindings.createBooleanBinding(
+                () -> {
+                    Action current_pen_action = new Pen_Down();
+                    for (Action action : actions){
+                        if (action.getClass().equals(current_pen_action.getClass())){
+                            return false; // deux action du meme type se suivent
+                        }
+                        // s'ils ne sont pas du meme type et que action est de type Pen
+                        if (action instanceof Pen)
+                            current_pen_action = action;
+                    }
+                    return true;
+                },
+                actions
+        ));
+
+        isAtLastAction.bind(isAtLastAction());
+
+        isAtLastAction.addListener(
+                ((obs, o, n) -> {
+                    if (n) // si on arrive en fin de programme
+                        isExecuted.set(false); // fin de l'execution
+                })
+        );
     }
 
     public void loadProgram() {
@@ -132,6 +150,10 @@ public class SceneViewModel {
 
     public ReadOnlyBooleanProperty isExecutedProperty() {
         return isExecuted;
+    }
+
+    public ReadOnlyBooleanProperty isValidProgramProperty() {
+        return isValidProgram;
     }
 
 }
