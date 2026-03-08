@@ -26,4 +26,6 @@ public class CatalogueViewModel {
         return mainViewModel.addToProgram(selectedAction);
     }
 
+
+
 }

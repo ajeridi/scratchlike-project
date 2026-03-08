@@ -120,4 +120,8 @@ public class ProgramViewModel {
         }
         userInput.setValue(newValue);
     }
+
+    public void newProgram() {
+        program.deleteAll();
+    }
 }

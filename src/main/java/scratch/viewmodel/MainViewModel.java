@@ -57,4 +57,9 @@ public class MainViewModel {
     public BooleanBinding isActionsListEmpty() {
         return programViewModel.actionIsEmptyProperty();
     }
+
+    public void newFile() {
+        sceneViewModel.newProgram();
+        programViewModel.newProgram();
+    }
 }

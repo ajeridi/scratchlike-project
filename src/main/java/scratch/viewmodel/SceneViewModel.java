@@ -16,6 +16,7 @@ public class SceneViewModel {
     private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
     private final BooleanProperty isExecuting = new SimpleBooleanProperty(false);
     private final BooleanProperty programChanged = new SimpleBooleanProperty(false);
+    private final IntegerProperty refreshCounter = new SimpleIntegerProperty(0);
 
 
 
@@ -76,6 +77,11 @@ public class SceneViewModel {
         currentActionIndex.set(-1); // forcer le changement d'index
     }
 
+    public void newProgram() {
+        resetProgram();
+        refreshCounter.set(refreshCounter.get()+1);
+    }
+
     public void executeProgram() {
         currentActionIndex.set(0);
         isExecuting.set(true);
@@ -113,5 +119,8 @@ public class SceneViewModel {
         return mainViewModel.isActionsListEmpty();
     }
 
+    public ReadOnlyIntegerProperty getRefreshCounterProperty() {
+        return refreshCounter;
+    }
 
 }

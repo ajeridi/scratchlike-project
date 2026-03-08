@@ -40,6 +40,7 @@ public class SceneView extends VBox {
     private final BooleanProperty isExecuting = new SimpleBooleanProperty(false);
     private final BooleanProperty atLastAction = new SimpleBooleanProperty();
     private final BooleanProperty programChanged = new SimpleBooleanProperty();
+    private final IntegerProperty refreshCounter = new SimpleIntegerProperty();
 
 
 
@@ -47,13 +48,19 @@ public class SceneView extends VBox {
         this.sceneViewModel = sceneViewModel;
         HBox buttons = makeButtonsHbox();
         setBindings();
-        canvasHolder.getChildren().add(sceneCanvas);
-        refreshCanvas();
+        addListeners();
+        setCanvas();
         this.getChildren().addAll(titleLbl, canvasHolder, buttons);
-        setMargin(canvasHolder, new Insets(10, 0, 10, 0));
+
 
         setActions();
         buttons.setAlignment(Pos.CENTER);
+    }
+
+    private void setCanvas() {
+        canvasHolder.getChildren().add(sceneCanvas);
+        setMargin(canvasHolder, new Insets(10, 0, 10, 0));
+        refreshCanvas();
     }
 
     private void setBindings() {
@@ -62,6 +69,7 @@ public class SceneView extends VBox {
         isExecuting.bind(sceneViewModel.isExecutingProperty());
         atLastAction.bind(sceneViewModel.isAtLastAction());
         programChanged.bind(sceneViewModel.programChangedProperty());
+        refreshCounter.bind(sceneViewModel.getRefreshCounterProperty());
 
         loadBtn.textProperty().bind(Bindings.createStringBinding(
                 () -> {
@@ -81,6 +89,13 @@ public class SceneView extends VBox {
         loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty());
     }
 
+    private void addListeners() {
+        refreshCounter.addListener(
+                ((observableValue, number, t1) -> {
+                    refreshCanvas();
+                })
+        );
+    }
 
     private void setActions() {
         loadBtn.setOnAction(actionEvent -> {
