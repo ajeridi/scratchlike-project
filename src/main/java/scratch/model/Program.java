@@ -4,6 +4,13 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.collections.ObservableList;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Program {
 
@@ -59,5 +66,21 @@ public class Program {
 
     public void newFile() {
         // nettoie la liste
+    }
+
+    public void open(File file) throws IOException {
+        List<String> fileContent = new ArrayList<>();
+        if (file.exists())
+            fileContent = Files.readAllLines(file.toPath());
+
+        convertFileContentToActionList(fileContent);
+    }
+
+    public void convertFileContentToActionList(List<String> fileContent){
+        actionList.deleteAll();
+        for (String line : fileContent){
+            Action action = ActionFactory.mapStringToAction(line);
+            actionList.add(action);
+        }
     }
 }

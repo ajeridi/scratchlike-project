@@ -32,7 +32,7 @@ public class App extends Application {
         // view model principal regroupant tous les viewModels
         var mainViewModel = new MainViewModel(catalogue, program, sceneModel);
 
-        MainView mainView = new MainView(mainViewModel);
+        MainView mainView = new MainView(mainViewModel, primaryStage);
 
 
         Scene scene = new Scene(mainView, 1280, 720 );

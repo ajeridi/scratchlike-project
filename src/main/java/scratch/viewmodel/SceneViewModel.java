@@ -79,6 +79,8 @@ public class SceneViewModel {
 
     public void newProgram() {
         resetProgram();
+        isLoaded.set(false);
+        programChanged.set(false);
         refreshCounter.set(refreshCounter.get()+1);
     }
 

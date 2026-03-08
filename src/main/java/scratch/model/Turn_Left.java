@@ -10,8 +10,12 @@ public class Turn_Left extends Turn {
         super(original);
     }
 
+    public Turn_Left(double value){
+        super(value, "Tourner a gauche de");
+    }
+
     public Turn_Left(double value, String nom, String color){
-        super(getDefaultRotation(), nom, color);
+        super(value, nom, color);
     }
 
     @Override

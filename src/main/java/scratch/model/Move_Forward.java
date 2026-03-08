@@ -10,6 +10,10 @@ public class Move_Forward extends Action{
         super("Avancer de", DEFAULT_MOVE_FORWARD_COLOR);
     }
 
+    public Move_Forward(double value){
+        super(value, "Avancer de", DEFAULT_MOVE_FORWARD_COLOR);
+    }
+
     public Move_Forward(Move_Forward original){
         super(original.getValue(), original.getNom(), original.getColor());
     }

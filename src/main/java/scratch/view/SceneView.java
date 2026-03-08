@@ -123,6 +123,7 @@ public class SceneView extends VBox {
 
     private void resetProgram() {
         sceneViewModel.resetProgram();
+
         refreshCanvas();
     }
 

@@ -10,6 +10,10 @@ public class Turn_Right extends Turn {
         super (original);
     }
 
+    public Turn_Right(double value){
+        super(value, "Tourner à droite de");
+    }
+
     public Turn_Right(double value, String nom, String color){
         super(value, nom, color);
     }

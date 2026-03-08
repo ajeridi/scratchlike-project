@@ -7,7 +7,12 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import scratch.viewmodel.MainViewModel;
+
+import java.io.File;
+import java.io.IOException;
 
 public class MainView extends VBox {
 
@@ -15,6 +20,7 @@ public class MainView extends VBox {
     private final ProgramView programView;
     private final SceneView sceneView;
     private final MainViewModel mainViewModel;
+    private final Stage stage;
     private final MenuBar menuBar = new MenuBar();
     private final Menu fileMenu = new Menu("File");
     private final MenuItem newFile = new MenuItem("New");
@@ -23,8 +29,9 @@ public class MainView extends VBox {
     private final MenuItem exit = new MenuItem("Exit");
     private final HBox mainContent = new HBox();
 
-    public MainView(MainViewModel vm){
+    public MainView(MainViewModel vm, Stage stage){
         this.mainViewModel = vm;
+        this.stage = stage;
         this.catalogueView = new CatalogueView(vm.getCatalogueViewModel());
         this.programView = new ProgramView(vm.getProgramViewModel());
         this.sceneView = new SceneView(vm.getSceneViewModel());
@@ -41,9 +48,21 @@ public class MainView extends VBox {
     }
 
     private void setMenuActions() {
-        fileMenu.setOnAction(actionEvent -> {
+        newFile.setOnAction(actionEvent -> {
             mainViewModel.newFile();
         });
+
+        open.setOnAction(
+                actionEvent -> {
+                    try {
+                        openFile();
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());;
+                    }
+                }
+        );
+
+
     }
 
     private void setMenu() {
@@ -61,10 +80,15 @@ public class MainView extends VBox {
         setMargin(sceneView, new Insets(20, 20, 20, 20));
     }
 
-    /*
-
-
-
-
-     */
+    public void openFile() throws IOException {
+        // choisir le fichier
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Scratch files", "*.scr")
+        );
+        // transferer le fichier au VM
+        File chosenFile = fileChooser.showOpenDialog(stage);
+        if (chosenFile != null)
+            mainViewModel.openFile(chosenFile);
+    }
 }
