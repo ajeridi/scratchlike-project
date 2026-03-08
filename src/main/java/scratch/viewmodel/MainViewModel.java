@@ -1,5 +1,7 @@
 package scratch.viewmodel;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import scratch.model.Action;
 import scratch.model.Catalogue;
 import scratch.model.Program;
@@ -13,7 +15,7 @@ public class MainViewModel {
     public MainViewModel(Catalogue catalogue, Program program, Scene scene) {
         this.catalogueViewModel = new CatalogueViewModel(catalogue, this);
         this.programViewModel = new ProgramViewModel(program);
-        this.sceneViewModel = new SceneViewModel(scene);
+        this.sceneViewModel = new SceneViewModel(scene, this);
     }
 
     public CatalogueViewModel getCatalogueViewModel() {
@@ -30,5 +32,13 @@ public class MainViewModel {
 
     public boolean addToProgram(Action selectedAction){
         return programViewModel.addToActionList(selectedAction);
+    }
+
+    public IntegerProperty getSelectedIndexProperty() {
+        return programViewModel.getSelectedIndexProperty();
+    }
+
+    public ReadOnlyObjectProperty<Action> getCurrentSelectedActionProperty() {
+        return programViewModel.getCurrentSelectedActionProperty();
     }
 }

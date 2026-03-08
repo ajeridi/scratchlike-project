@@ -3,8 +3,10 @@ package scratch.view;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -36,6 +38,7 @@ public class ProgramView extends VBox {
     private final TextField detailActionValueTextField = new TextField();
 
     private Action currentBindedAction;
+    private final IntegerProperty indexToSelect = new SimpleIntegerProperty(); // va servir lors de l'execution du programme
 
 
     private final ProgramViewModel programViewModel;
@@ -54,6 +57,7 @@ public class ProgramView extends VBox {
         setBindings();
 
         setActions();
+        setListeners();
 
         this.getChildren().addAll(titleLbl, actions, buttons, accordion);
 
@@ -91,6 +95,14 @@ public class ProgramView extends VBox {
         deleteAllBtn.setOnAction(actionEvent -> {
             deleteAllActions();
         });
+    }
+
+    private void setListeners() {
+        indexToSelect.addListener(
+                ((observableValue, number, t1) -> {
+                    selectAction(indexToSelect.getValue()); // selection depuis la scene permet de selectionner ici
+                })
+        );
     }
 
     private void selectAction(int index){
@@ -141,10 +153,22 @@ public class ProgramView extends VBox {
     }
 
     private void setBindings() {
+
+        indexToSelect.bind(programViewModel.getSelectedIndexProperty());
+
+        programViewModel.getCurrentSelectedActionProperty().bind(getSelectedItemProperty());
+
+        setDetailElementsBindings();
+        setButtonsBindings();
+    }
+
+    private void setDetailElementsBindings() {
         setDetailActionLabelBindings();
         setDetailActionUnitLabelBindings();
         setDetailActionValueTextFieldBindings();
+    }
 
+    private void setButtonsBindings() {
         upBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(0))); // desactivation du bouton Monter si on ne selectionne rien, ou si on est tout en haut de la liste
         downBtn.disableProperty().bind(isSelectedProperty().not().or(getActionsSelectedIndexProperty().isEqualTo(getActionsSizeProperty().subtract(1)))); // desactivation du bouton descendre si on ne selectionne rien ou bien si on est tout en bas de la liste
         duplicateBtn.disableProperty().bind(isSelectedProperty().not()); // desactivation du bouton dupliquer si rien n'est selectionne

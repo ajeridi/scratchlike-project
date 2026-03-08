@@ -1,5 +1,7 @@
 package scratch.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -10,8 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
+import scratch.model.Action;
+import scratch.model.Cursor;
+import scratch.model.Point;
 import scratch.viewmodel.SceneViewModel;
 
 public class SceneView extends VBox {
@@ -30,16 +33,79 @@ public class SceneView extends VBox {
 
     private final Button executeBtn = new Button("Exécuter");
 
-    private final SceneViewModel vm;
+    private final SceneViewModel sceneViewModel;
 
-    public SceneView(SceneViewModel vm) {
-        this.vm = vm;
+
+    private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
+    private final BooleanProperty isExecuting = new SimpleBooleanProperty(false);
+
+
+
+    public SceneView(SceneViewModel sceneViewModel) {
+        this.sceneViewModel = sceneViewModel;
         HBox buttons = makeButtonsHbox();
+        setBindings();
         drawCanvas();
         this.getChildren().addAll(titleLbl, canvasHolder, buttons);
         setMargin(canvasHolder, new Insets(10, 0, 10, 0));
+
+        setActions();
         buttons.setAlignment(Pos.CENTER);
     }
+
+    private void setBindings() {
+
+        isLoaded.bind(sceneViewModel.isLoadedProperty());
+        isExecuting.bind(sceneViewModel.isExecutingProperty());
+
+        loadBtn.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                   return  isLoaded.get() ? "Re-initialiser" : "Charger";
+                },
+                isLoaded
+        ));
+
+        executeBtn.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                    return isExecuting.get() ? "Suivant" : "Executer";
+                },
+                isExecuting
+        ));
+    }
+
+
+    private void setActions() {
+        loadBtn.setOnAction(actionEvent -> {
+            if (!isLoaded.get())
+                loadProgram();
+            // else reset
+        });
+
+        executeBtn.setOnAction(actionEvent -> {
+            if (!isExecuting.get())
+                executeProgram();
+//            else
+//                nextAction();
+        });
+    }
+
+    private void loadProgram() {
+        sceneViewModel.loadProgram();
+    }
+
+    private void executeProgram() {
+        sceneViewModel.executeProgram();
+    }
+
+
+/*    private void nextAction() {
+        // executer l'action
+        currentSelectedAction.get().execute(sceneViewModel.getCursor());
+        // passer a l'action suivante
+
+        // refresh la page
+
+    }*/
 
     private void drawCanvas() {
         // graphics context
@@ -47,7 +113,7 @@ public class SceneView extends VBox {
         // dessin du quadrillage
         drawGrid(gc);
         // dessine turtle
-        drawTurtle(gc, CANVAS_DIMENSION/2, CANVAS_DIMENSION/2, 0);
+        drawTurtle(gc);
         canvasHolder.getChildren().add(sceneCanvas);
         canvasHolder.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1;");
     }
@@ -72,7 +138,12 @@ public class SceneView extends VBox {
         return new HBox(loadBtn, executeBtn);
     }
 
-    private void drawTurtle(GraphicsContext gc, double x, double y, double angle) {
+    private void drawTurtle(GraphicsContext gc) {
+        Cursor cursor = sceneViewModel.getCursor();
+        Point origin = cursor.getOrigine();
+        double x = origin.getX() + CANVAS_DIMENSION/2;
+        double y = origin.getY() + CANVAS_DIMENSION/2;
+        double angle = cursor.getDirection();
         double xP1 = x + TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.cos(Math.toRadians(angle + 90)),
                 yP1 = y - TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.sin(Math.toRadians(angle + 90)),
                 xP2 = x - TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.cos(Math.toRadians(angle)),

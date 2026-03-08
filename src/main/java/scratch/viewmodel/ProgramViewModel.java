@@ -2,7 +2,7 @@ package scratch.viewmodel;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import scratch.model.Action;
 import scratch.model.Program;
@@ -10,6 +10,8 @@ import scratch.model.Program;
 public class ProgramViewModel {
 
     private final Program program;
+    private final IntegerProperty selectedIndex = new SimpleIntegerProperty();
+    private final ObjectProperty<Action> currentSelectedAction = new SimpleObjectProperty<>();
 
 
     public ProgramViewModel(Program program) {
@@ -54,5 +56,16 @@ public class ProgramViewModel {
 
     public void moveDown(int selectedIndex){
         program.down(selectedIndex);
+    }
+
+
+
+    public IntegerProperty getSelectedIndexProperty() {
+        return selectedIndex;
+    }
+
+
+    public ObjectProperty<Action> getCurrentSelectedActionProperty() {
+        return currentSelectedAction;
     }
 }
