@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -76,6 +77,10 @@ public class MainView extends VBox {
                     }
                 }
         );
+
+        exit.setOnAction( actionEvent -> {
+            Platform.exit();
+        });
 
 
     }
