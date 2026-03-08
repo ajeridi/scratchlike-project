@@ -31,6 +31,6 @@ public class Point {
     }
 
     public Point translate(double translateX, double translateY){
-        return new Point(x + translateX, y + translateY);
+        return new Point(x + translateX, y - translateY);
     }
 }
