@@ -18,4 +18,10 @@ public  abstract class Pen extends Action {
     public String valueUnit() {
         return "";
     }
+
+
+    @Override
+    public boolean isValidValue(double value) {
+        return true;
+    }
 }

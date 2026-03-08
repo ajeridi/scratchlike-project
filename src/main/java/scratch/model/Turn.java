@@ -33,4 +33,9 @@ public abstract class Turn extends Action {
     public static double getDefaultRotation() {
         return DEFAULT_ROTATION;
     }
+
+    @Override
+    public boolean isValidValue(double value) {
+        return value >= 1 && value <= 180;
+    }
 }

@@ -32,10 +32,13 @@ public abstract class Action {
     }
 
     public void setValue(double value) {
-        this.value.set(value);
+        if (isValidValue(value))
+            this.value.set(value);
     }
 
     abstract public void execute(Scene scene);
+
+    abstract public boolean isValidValue(double value);
 
     abstract public Action create_default();
     abstract public Action copy();

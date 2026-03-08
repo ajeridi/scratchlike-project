@@ -21,7 +21,7 @@ public class SceneView extends VBox {
 
     private final double TURTLE_SIZE = 20;
     private final double TURTLE_HEAD_SIZE = 7;
-    private final double CANVAS_DIMENSION = 600;
+    private final double CANVAS_DIMENSION = 500;
 
     private final Label titleLbl = new Label("Scène");
 

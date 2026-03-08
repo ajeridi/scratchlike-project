@@ -29,6 +29,11 @@ public class Move_Forward extends Action{
     }
 
     @Override
+    public boolean isValidValue(double value) {
+        return value > 0 && value <= 100;
+    }
+
+    @Override
     public Move_Forward create_default() {
         return new Move_Forward(DEFAULT_MOVE_FORWARD_VALUE, this.getNom(), this.getColor());
     }

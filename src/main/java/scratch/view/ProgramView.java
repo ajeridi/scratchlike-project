@@ -3,10 +3,7 @@ package scratch.view;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import scratch.model.Action;
@@ -36,9 +34,11 @@ public class ProgramView extends VBox {
     private final Label detailActionLabel = new Label();
     private final Label detailActionUnitLabel = new Label();
     private final TextField detailActionValueTextField = new TextField();
+    private final Label valueErrorLabel = new Label("Erreur valeur");
 
     private Action currentBindedAction;
     private final IntegerProperty indexToSelect = new SimpleIntegerProperty(); // va servir lors de l'execution du programme
+    private final BooleanProperty isValidValue = new SimpleBooleanProperty();
 
 
     private final ProgramViewModel programViewModel;
@@ -72,7 +72,7 @@ public class ProgramView extends VBox {
 
         getSelectedItemProperty().addListener( // binding vers l'action selectionnee
                 (obs, o, n) -> {
-                    bindTextFieldToActionValue();
+                    updateTextField();
                 }
         );
 
@@ -138,26 +138,16 @@ public class ProgramView extends VBox {
         programViewModel.deleteAllActions();
     }
 
-    private void bindTextFieldToActionValue() {
-        // converter pour rendre la property de l'action compatible avec la property de textField
-        StringConverter<Number> doubleConverter = new NumberStringConverter();
-        // afin de ne pas binder tous les actions au meme textfield, il faut unbind le precedent
-        if (currentBindedAction != null) { // si j'ai une action bindee
-            Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty()); // on l'unbind de textField
-            detailActionValueTextField.textProperty().setValue(""); // nettoyer le textField
-        }
-        if (actionsIsEmptyProperty().not().getValue() ) { // si ma liste n'est pas vide, on rebind avec le nouveau selectedAction, s'il n'est pas null (car sinon bug quand on modifie une action avant de charger le programme)
-            currentBindedAction = getSelectedAction();
-            if (currentBindedAction != null)
-                Bindings.bindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty(), doubleConverter);
-        }
-    }
 
     private void setBindings() {
 
         indexToSelect.bind(programViewModel.getSelectedIndexProperty());
 
         programViewModel.getCurrentSelectedActionProperty().bind(getSelectedItemProperty());
+
+        isValidValue.bind(programViewModel.isValidValueProperty());
+        valueErrorLabel.visibleProperty().bind(isValidValue.not().and(getSelectedItemProperty().isNotNull()));
+        detailActionValueTextField.textProperty().bindBidirectional(programViewModel.getUserInputProperty());
 
         setDetailElementsBindings();
         setButtonsBindings();
@@ -257,14 +247,17 @@ public class ProgramView extends VBox {
     }
 
     private void createAccordion(){
-        HBox actionPaneBox = new HBox();
+        VBox actionPaneBox = new VBox();
 
-        setActionPaneBox(actionPaneBox);
+        HBox topSection = new HBox(detailActionLabel, detailActionValueTextField, detailActionUnitLabel);
+
+        valueErrorLabel.setTextFill(Color.RED);
+        setActionPaneBox(topSection);
 
         detailActionPane.setText("Detail de l'action");
         detailActionValueTextField.setPrefWidth(40);
 
-       actionPaneBox.getChildren().addAll(detailActionLabel, detailActionValueTextField, detailActionUnitLabel);
+       actionPaneBox.getChildren().addAll(topSection, valueErrorLabel);
         detailActionPane.setContent(actionPaneBox);
         detailActionPane.setAlignment(Pos.BASELINE_LEFT);
         accordion.getPanes().add(detailActionPane);
@@ -274,6 +267,10 @@ public class ProgramView extends VBox {
     private static void setActionPaneBox(HBox actionPaneBox) {
         actionPaneBox.setSpacing(10.0);
         actionPaneBox.setAlignment(Pos.CENTER_LEFT);
+    }
+
+    private void updateTextField() {
+        programViewModel.updateUserInput();
     }
 
 
