@@ -20,9 +20,9 @@ public abstract class Turn extends Action {
     abstract void turnCursor(Cursor cursor);
 
     @Override
-    public MyLine execute(Cursor cursor) {
+    public void execute(Scene scene) {
+        Cursor cursor = scene.getCursor();
         turnCursor(cursor);
-        return new MyLine(cursor.getOrigine(), cursor.getOrigine(), cursor.isWriting());
     }
 
     @Override

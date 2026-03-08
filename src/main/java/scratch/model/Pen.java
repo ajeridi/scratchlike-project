@@ -9,9 +9,9 @@ public  abstract class Pen extends Action {
     abstract public void movePen(Cursor cursor);
 
     @Override
-    public MyLine execute(Cursor cursor) {
+    public void execute(Scene scene) {
+        Cursor cursor = scene.getCursor();
         movePen(cursor);
-        return new MyLine(cursor.getOrigine(), cursor.getOrigine(), cursor.isWriting()); // sur place
     }
 
     @Override

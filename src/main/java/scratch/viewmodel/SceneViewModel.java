@@ -1,9 +1,9 @@
 package scratch.viewmodel;
 
 import javafx.beans.property.*;
-import scratch.model.Action;
-import scratch.model.Cursor;
-import scratch.model.Scene;
+import scratch.model.*;
+
+import java.util.List;
 
 public class SceneViewModel {
     private final Scene scene;
@@ -24,6 +24,10 @@ public class SceneViewModel {
         return scene.getCursor();
     }
 
+    public List<MyLine> getLines() {
+        return scene.getLines();
+    }
+
     public ReadOnlyObjectProperty<Action> getCurrentSelectedActionProperty() {
         return mainViewModel.getCurrentSelectedActionProperty();
     }
@@ -42,8 +46,16 @@ public class SceneViewModel {
         currentActionIndex.set(-1); // forcer le changement d'index
         isLoaded.set(true);
     }
+
     public void executeProgram() {
         currentActionIndex.set(0);
         isExecuting.set(true);
+    }
+
+    public void nextAction() {
+        // executer l'action
+        currentSelectedAction.get().execute(scene);
+        // passer a l'action suivante
+        currentActionIndex.set(currentActionIndex.get() + 1);
     }
 }

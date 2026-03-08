@@ -12,8 +12,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import scratch.model.Action;
 import scratch.model.Cursor;
+import scratch.model.MyLine;
 import scratch.model.Point;
 import scratch.viewmodel.SceneViewModel;
 
@@ -45,7 +45,8 @@ public class SceneView extends VBox {
         this.sceneViewModel = sceneViewModel;
         HBox buttons = makeButtonsHbox();
         setBindings();
-        drawCanvas();
+        canvasHolder.getChildren().add(sceneCanvas);
+        refreshCanvas();
         this.getChildren().addAll(titleLbl, canvasHolder, buttons);
         setMargin(canvasHolder, new Insets(10, 0, 10, 0));
 
@@ -84,8 +85,8 @@ public class SceneView extends VBox {
         executeBtn.setOnAction(actionEvent -> {
             if (!isExecuting.get())
                 executeProgram();
-//            else
-//                nextAction();
+            else
+                nextAction();
         });
     }
 
@@ -98,24 +99,36 @@ public class SceneView extends VBox {
     }
 
 
-/*    private void nextAction() {
-        // executer l'action
-        currentSelectedAction.get().execute(sceneViewModel.getCursor());
-        // passer a l'action suivante
+    private void nextAction() {
+       sceneViewModel.nextAction();
+       refreshCanvas();
+    }
 
-        // refresh la page
 
-    }*/
-
-    private void drawCanvas() {
+    private void refreshCanvas() {
         // graphics context
         GraphicsContext gc = sceneCanvas.getGraphicsContext2D();
+
+        gc.clearRect(0,0, CANVAS_DIMENSION, CANVAS_DIMENSION);
+
         // dessin du quadrillage
         drawGrid(gc);
+        // dessin des lignes
+        drawLines(gc);
         // dessine turtle
         drawTurtle(gc);
-        canvasHolder.getChildren().add(sceneCanvas);
+
         canvasHolder.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1;");
+    }
+
+    private void drawLines(GraphicsContext gc){
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(1);
+
+        double offset = CANVAS_DIMENSION / 2;
+        for (MyLine line : sceneViewModel.getLines()){
+            gc.strokeLine(line.getStartX() + offset, line.getStartY() + offset, line.getEndX() + offset, line.getEndY() + offset);
+        }
     }
 
     private void drawGrid(GraphicsContext gc) {

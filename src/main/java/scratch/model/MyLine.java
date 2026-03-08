@@ -3,12 +3,10 @@ package scratch.model;
 import javafx.scene.shape.Line;
 
 public class MyLine extends Line {
-    private boolean toAdd = true;
 
-    public MyLine(Point origine, Point arrivee, boolean toAdd) {
+    public MyLine(Point origine, Point arrivee) {
         setStart(origine);
         setEnd(arrivee);
-        this.toAdd = toAdd;
     }
 
     private void setStart(Point origine) {
@@ -27,14 +25,6 @@ public class MyLine extends Line {
 
     public Point getEnd(){
         return new Point(getEndX(), getEndY());
-    }
-
-    public boolean isToAdd() {
-        return toAdd;
-    }
-
-    public void setToAdd(boolean toAdd) {
-        this.toAdd = toAdd;
     }
 
     @Override

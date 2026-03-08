@@ -146,9 +146,10 @@ public class ProgramView extends VBox {
             Bindings.unbindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty()); // on l'unbind de textField
             detailActionValueTextField.textProperty().setValue(""); // nettoyer le textField
         }
-        if (actionsIsEmptyProperty().not().getValue()) { // si ma liste n'est pas vide, on rebind avec le nouveau selectedAction
+        if (actionsIsEmptyProperty().not().getValue() ) { // si ma liste n'est pas vide, on rebind avec le nouveau selectedAction, s'il n'est pas null (car sinon bug quand on modifie une action avant de charger le programme)
             currentBindedAction = getSelectedAction();
-            Bindings.bindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty(), doubleConverter);
+            if (currentBindedAction != null)
+                Bindings.bindBidirectional(detailActionValueTextField.textProperty(), currentBindedAction.valueProperty(), doubleConverter);
         }
     }
 

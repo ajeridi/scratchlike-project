@@ -19,11 +19,13 @@ public class Move_Forward extends Action{
     }
 
     @Override
-    public MyLine execute(Cursor cursor) {
-        Point start = cursor.getOrigine();
+    public void execute(Scene scene) {
+        Cursor cursor = scene.getCursor();
+
         Point end = createEnd(cursor);
+
+        scene.createLine(end);
         cursor.setOrigine(end);
-        return new MyLine(start, end, cursor.isWriting());
     }
 
     @Override
@@ -42,7 +44,7 @@ public class Move_Forward extends Action{
     }
 
     private Point createEnd(Cursor cursor) {
-        double angle = Math.toRadians(cursor.getDirection());
+        double angle = Math.toRadians(cursor.getDirection()) +  Math.PI / 2;;
         Point origin = cursor.getOrigine();
         double dx = getValue() * Math.cos(angle);
         double dy = getValue() * Math.sin(angle);
