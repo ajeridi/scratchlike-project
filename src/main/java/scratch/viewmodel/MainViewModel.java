@@ -3,6 +3,7 @@ package scratch.viewmodel;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.collections.ObservableList;
 import scratch.model.Action;
 import scratch.model.Catalogue;
 import scratch.model.Program;
@@ -45,5 +46,9 @@ public class MainViewModel {
 
     public IntegerBinding getActionsSizeProperty() {
         return programViewModel.getActionsSizeProperty();
+    }
+
+    public ObservableList<Action> getActionsList() {
+        return programViewModel.getActions();
     }
 }

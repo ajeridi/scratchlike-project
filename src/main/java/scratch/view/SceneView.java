@@ -39,6 +39,7 @@ public class SceneView extends VBox {
     private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
     private final BooleanProperty isExecuting = new SimpleBooleanProperty(false);
     private final BooleanProperty atLastAction = new SimpleBooleanProperty();
+    private final BooleanProperty programChanged = new SimpleBooleanProperty();
 
 
 
@@ -60,6 +61,7 @@ public class SceneView extends VBox {
         isLoaded.bind(sceneViewModel.isLoadedProperty());
         isExecuting.bind(sceneViewModel.isExecutingProperty());
         atLastAction.bind(sceneViewModel.isAtLastAction());
+        programChanged.bind(sceneViewModel.programChangedProperty());
 
         loadBtn.textProperty().bind(Bindings.createStringBinding(
                 () -> {
@@ -70,12 +72,12 @@ public class SceneView extends VBox {
 
         executeBtn.textProperty().bind(Bindings.createStringBinding(
                 () -> {
-                    return isExecuting.get() ? "Suivant" : "Executer";
+                    return isExecuting.not().get() || isLoaded.get() && currentActionIndexProperty().get() == -1  ? "Executer" : "Suivant";
                 },
                 isExecuting
         ));
 
-        executeBtn.disableProperty().bind(atLastAction);
+        executeBtn.disableProperty().bind(atLastAction.or(programChanged));
     }
 
 
@@ -112,6 +114,10 @@ public class SceneView extends VBox {
     private void nextAction() {
        sceneViewModel.nextAction();
        refreshCanvas();
+    }
+
+    private ReadOnlyIntegerProperty currentActionIndexProperty() {
+        return sceneViewModel.getCurrentActionIndexProperty();
     }
 
 
