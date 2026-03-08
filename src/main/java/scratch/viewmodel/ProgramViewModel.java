@@ -1,5 +1,6 @@
 package scratch.viewmodel;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
@@ -12,10 +13,40 @@ public class ProgramViewModel {
     private final Program program;
     private final IntegerProperty selectedIndex = new SimpleIntegerProperty();
     private final ObjectProperty<Action> currentSelectedAction = new SimpleObjectProperty<>();
+    private final BooleanProperty isValidValue = new SimpleBooleanProperty();
+    private final StringProperty userInput = new SimpleStringProperty();
 
 
     public ProgramViewModel(Program program) {
         this.program = program;
+
+        userInput.addListener(
+                ((observableValue, s, t1) -> {
+                    if (isValidValue.get())
+                        getCurrentSelectedAction().setValue(Double.parseDouble(userInput.get()));
+                })
+        );
+        setBindings();
+    }
+
+    private void setBindings() {
+        isValidValue.bind(Bindings.createBooleanBinding(
+                () -> {
+
+                    double value;
+                    boolean ok = false;
+                    if (getCurrentSelectedAction() != null) {
+                        try {
+                            value = Double.parseDouble(userInput.getValue());
+                            ok = getCurrentSelectedAction().isValidValue(value);
+                        } catch (NumberFormatException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                    return ok;
+                },
+                userInput
+        ));
     }
 
     public boolean addToActionList(Action selectedAction){
@@ -67,5 +98,26 @@ public class ProgramViewModel {
 
     public ObjectProperty<Action> getCurrentSelectedActionProperty() {
         return currentSelectedAction;
+    }
+
+    public Action getCurrentSelectedAction() {
+        return currentSelectedAction.get();
+    }
+
+    public StringProperty getUserInputProperty() {
+        return userInput;
+    }
+
+    public ReadOnlyBooleanProperty isValidValueProperty() {
+        return isValidValue;
+    }
+
+    public void updateUserInput() {
+        String newValue = "";
+        if (getCurrentSelectedAction() != null) {
+            double valueOfSelectedAction = currentSelectedAction.get().getValue();
+            newValue = String.valueOf(valueOfSelectedAction);
+        }
+        userInput.setValue(newValue);
     }
 }
