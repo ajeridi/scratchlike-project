@@ -44,6 +44,7 @@ public abstract class Action {
     abstract public Action copy();
 
     abstract public String valueUnit();
+    abstract public String getType();
 
     public void setColor(String color) {
         this.color = color;

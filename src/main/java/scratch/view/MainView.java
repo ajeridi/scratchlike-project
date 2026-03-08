@@ -28,6 +28,8 @@ public class MainView extends VBox {
     private final MenuItem saveAs = new MenuItem("Save As");
     private final MenuItem exit = new MenuItem("Exit");
     private final HBox mainContent = new HBox();
+    private final FileChooser fileChooser = new FileChooser();
+
 
     public MainView(MainViewModel vm, Stage stage){
         this.mainViewModel = vm;
@@ -36,6 +38,9 @@ public class MainView extends VBox {
         this.programView = new ProgramView(vm.getProgramViewModel());
         this.sceneView = new SceneView(vm.getSceneViewModel());
 
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Scratch files", "*.scr")
+        );
 
         setMargins();
         setMenu();
@@ -62,6 +67,16 @@ public class MainView extends VBox {
                 }
         );
 
+        saveAs.setOnAction(
+                actionEvent -> {
+                    try {
+                        saveFile();
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());;
+                    }
+                }
+        );
+
 
     }
 
@@ -81,14 +96,15 @@ public class MainView extends VBox {
     }
 
     public void openFile() throws IOException {
-        // choisir le fichier
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Scratch files", "*.scr")
-        );
         // transferer le fichier au VM
         File chosenFile = fileChooser.showOpenDialog(stage);
         if (chosenFile != null)
             mainViewModel.openFile(chosenFile);
+    }
+
+    public void saveFile() throws IOException {
+        File fileToSaveTo = fileChooser.showSaveDialog(stage);
+        if (fileToSaveTo != null)
+            mainViewModel.saveFile(fileToSaveTo);
     }
 }

@@ -24,4 +24,9 @@ public class Pen_Up extends Pen {
     public Action copy() {
         return new Pen_Up(this);
     }
+
+    @Override
+    public String getType() {
+        return "PEN_UP";
+    }
 }

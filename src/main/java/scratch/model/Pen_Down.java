@@ -25,5 +25,10 @@ public class Pen_Down extends Pen {
         return new Pen_Down(this);
     }
 
+    @Override
+    public String getType() {
+        return "PEN_DOWN";
+    }
+
 
 }

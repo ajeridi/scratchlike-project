@@ -1,5 +1,10 @@
 package scratch.model;
 
+import javafx.collections.ObservableList;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ActionFactory {
 
     public static Action mapStringToAction(String line){
@@ -17,5 +22,13 @@ public class ActionFactory {
             case "TURN_RIGHT" -> new Turn_Right(value);
             default -> null;
         };
+    }
+
+    public static List<String> mapActionsToString(ActionList actions){
+        List<String> newContent = new ArrayList<>();
+        for (Action action : actions.getActions()){
+            newContent.add(action.getType() + ";" + action.getValue());
+        }
+        return newContent;
     }
 }

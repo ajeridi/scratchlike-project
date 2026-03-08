@@ -83,4 +83,11 @@ public class Program {
             actionList.add(action);
         }
     }
+
+    public void saveFile(File file) throws IOException {
+        List<String> newFileContent = ActionFactory.mapActionsToString(actionList);
+        for (String action : newFileContent){
+            Files.write(file.toPath(), newFileContent);
+        }
+    }
 }

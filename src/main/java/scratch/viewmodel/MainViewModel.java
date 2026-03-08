@@ -77,4 +77,8 @@ public class MainViewModel {
         if (file.exists())
             program.open(file);
     }
+
+    public void saveFile(File file) throws IOException {
+            program.saveFile(file);
+    }
 }

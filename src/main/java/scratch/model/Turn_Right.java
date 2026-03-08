@@ -33,4 +33,9 @@ public class Turn_Right extends Turn {
     public Action copy() {
         return new Turn_Right(this);
     }
+
+    @Override
+    public String getType() {
+        return "TURN_RIGHT";
+    }
 }

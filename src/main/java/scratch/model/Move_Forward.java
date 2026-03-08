@@ -52,6 +52,11 @@ public class Move_Forward extends Action{
         return "pixels";
     }
 
+    @Override
+    public String getType() {
+        return "MOVE_FORWARD";
+    }
+
     private Point createEnd(Cursor cursor) {
         double angle = Math.toRadians(cursor.getDirection()) +  Math.PI / 2;;
         Point origin = cursor.getOrigine();
