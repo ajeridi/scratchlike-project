@@ -14,12 +14,24 @@ public class Scene {
         return cursor;
     }
 
-    public LineList getLines() {
-        return lines;
+    public List<MyLine> getLines() {
+        return lines.getLines();
     }
 
     public ActionList getActions() {
         return actions;
+    }
+
+    public void createLine(Point end) {
+        if (cursor.isWriting()){
+            MyLine newLine = new MyLine(cursor.getOrigine(), end);
+            lines.add(newLine);
+        }
+    }
+
+    public void reset() {
+        lines.clear();
+        cursor.reset();
     }
 
     // a ajouter : les fonctions d'ajouts au lines et actions

@@ -1,7 +1,5 @@
 package scratch.model;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
 public abstract class Action {
@@ -37,7 +35,7 @@ public abstract class Action {
         this.value.set(value);
     }
 
-    abstract public MyLine execute(Cursor cursor);
+    abstract public void execute(Scene scene);
 
     abstract public Action create_default();
     abstract public Action copy();

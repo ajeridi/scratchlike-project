@@ -1,5 +1,7 @@
 package scratch.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -10,8 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
+import scratch.model.Cursor;
+import scratch.model.MyLine;
+import scratch.model.Point;
 import scratch.viewmodel.SceneViewModel;
 
 public class SceneView extends VBox {
@@ -30,26 +33,119 @@ public class SceneView extends VBox {
 
     private final Button executeBtn = new Button("Exécuter");
 
-    private final SceneViewModel vm;
+    private final SceneViewModel sceneViewModel;
 
-    public SceneView(SceneViewModel vm) {
-        this.vm = vm;
+
+    private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
+    private final BooleanProperty isExecuting = new SimpleBooleanProperty(false);
+    private final BooleanProperty atLastAction = new SimpleBooleanProperty();
+    private final BooleanProperty programChanged = new SimpleBooleanProperty();
+
+
+
+    public SceneView(SceneViewModel sceneViewModel) {
+        this.sceneViewModel = sceneViewModel;
         HBox buttons = makeButtonsHbox();
-        drawCanvas();
+        setBindings();
+        canvasHolder.getChildren().add(sceneCanvas);
+        refreshCanvas();
         this.getChildren().addAll(titleLbl, canvasHolder, buttons);
         setMargin(canvasHolder, new Insets(10, 0, 10, 0));
+
+        setActions();
         buttons.setAlignment(Pos.CENTER);
     }
 
-    private void drawCanvas() {
+    private void setBindings() {
+
+        isLoaded.bind(sceneViewModel.isLoadedProperty());
+        isExecuting.bind(sceneViewModel.isExecutingProperty());
+        atLastAction.bind(sceneViewModel.isAtLastAction());
+        programChanged.bind(sceneViewModel.programChangedProperty());
+
+        loadBtn.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                   return  isLoaded.get() ? "Re-initialiser" : "Charger";
+                },
+                isLoaded
+        ));
+
+        executeBtn.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                    return isLoaded.get() && currentActionIndexProperty().get() == -1 || isExecuting.not().get() ? "Executer" : "Suivant";
+                },
+                isExecuting
+        ));
+
+        executeBtn.disableProperty().bind(atLastAction.or(programChanged));
+        loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty());
+    }
+
+
+    private void setActions() {
+        loadBtn.setOnAction(actionEvent -> {
+            if (!isLoaded.get())
+                loadProgram();
+            // sinon on  reinitialise
+            resetProgram();
+        });
+
+        executeBtn.setOnAction(actionEvent -> {
+            if (!isExecuting.get())
+                executeProgram();
+            else
+                nextAction();
+        });
+    }
+
+    private void loadProgram() {
+        sceneViewModel.loadProgram();
+    }
+
+    private void executeProgram() {
+        sceneViewModel.executeProgram();
+    }
+
+    private void resetProgram() {
+        sceneViewModel.resetProgram();
+        refreshCanvas();
+    }
+
+
+    private void nextAction() {
+       sceneViewModel.nextAction();
+       refreshCanvas();
+    }
+
+    private ReadOnlyIntegerProperty currentActionIndexProperty() {
+        return sceneViewModel.getCurrentActionIndexProperty();
+    }
+
+
+    private void refreshCanvas() {
         // graphics context
         GraphicsContext gc = sceneCanvas.getGraphicsContext2D();
+
+        gc.clearRect(0,0, CANVAS_DIMENSION, CANVAS_DIMENSION);
+
         // dessin du quadrillage
         drawGrid(gc);
+        // dessin des lignes
+        drawLines(gc);
         // dessine turtle
-        drawTurtle(gc, CANVAS_DIMENSION/2, CANVAS_DIMENSION/2, 0);
-        canvasHolder.getChildren().add(sceneCanvas);
+        drawTurtle(gc);
+
         canvasHolder.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1;");
+    }
+
+    private void drawLines(GraphicsContext gc){
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(1);
+
+        double offset = CANVAS_DIMENSION / 2;
+        for (MyLine line : sceneViewModel.getLines()){
+            gc.strokeLine(line.getStartX() + offset, line.getStartY() + offset, line.getEndX() + offset, line.getEndY() + offset);
+        }
     }
 
     private void drawGrid(GraphicsContext gc) {
@@ -72,7 +168,12 @@ public class SceneView extends VBox {
         return new HBox(loadBtn, executeBtn);
     }
 
-    private void drawTurtle(GraphicsContext gc, double x, double y, double angle) {
+    private void drawTurtle(GraphicsContext gc) {
+        Cursor cursor = sceneViewModel.getCursor();
+        Point origin = cursor.getOrigine();
+        double x = origin.getX() + CANVAS_DIMENSION/2;
+        double y = origin.getY() + CANVAS_DIMENSION/2;
+        double angle = cursor.getDirection();
         double xP1 = x + TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.cos(Math.toRadians(angle + 90)),
                 yP1 = y - TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.sin(Math.toRadians(angle + 90)),
                 xP2 = x - TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.cos(Math.toRadians(angle)),

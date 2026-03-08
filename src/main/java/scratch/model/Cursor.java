@@ -1,8 +1,11 @@
 package scratch.model;
 
 public class Cursor {
+
+    private final double DEFAULT_CURSOR_HEAD_ANGLE = 0;
+
     private Point origine;
-    private double direction = 90;
+    private double direction = DEFAULT_CURSOR_HEAD_ANGLE;
     private boolean writing = true;
 
     public Cursor(Point origine){ // constructeur par défaut
@@ -49,5 +52,11 @@ public class Cursor {
     @Override
     public String toString() {
         return "Cursor is at position " + this.origine + " with a direction of " + this.direction + " degrees and a norm of " + getNorm();
+    }
+
+    public void reset() {
+        origine.setX(0);
+        origine.setY(0);
+        direction = DEFAULT_CURSOR_HEAD_ANGLE;
     }
 }
