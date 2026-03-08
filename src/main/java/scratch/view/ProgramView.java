@@ -255,7 +255,7 @@ public class ProgramView extends VBox {
         setActionPaneBox(topSection);
 
         detailActionPane.setText("Detail de l'action");
-        detailActionValueTextField.setPrefWidth(40);
+        detailActionValueTextField.setPrefWidth(45);
 
        actionPaneBox.getChildren().addAll(topSection, valueErrorLabel);
         detailActionPane.setContent(actionPaneBox);
