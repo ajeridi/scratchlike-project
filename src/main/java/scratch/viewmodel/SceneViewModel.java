@@ -109,5 +109,9 @@ public class SceneViewModel {
         return currentActionIndex;
     }
 
+    public BooleanBinding isActionsListEmpty() {
+        return mainViewModel.isActionsListEmpty();
+    }
+
 
 }

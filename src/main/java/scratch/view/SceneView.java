@@ -78,6 +78,7 @@ public class SceneView extends VBox {
         ));
 
         executeBtn.disableProperty().bind(atLastAction.or(programChanged));
+        loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty());
     }
 
 
