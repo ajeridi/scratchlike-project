@@ -56,4 +56,8 @@ public class Program {
         // supprimer toutes les actions
         actionList.deleteAll();
     }
+
+    public void newFile() {
+        // nettoie la liste
+    }
 }
