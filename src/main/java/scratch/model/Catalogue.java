@@ -10,10 +10,7 @@ import java.util.Set;
 public class Catalogue {
     //private final Set<Action> catalogue = new HashSet<>();
 
-    private final ObservableList<Action> catalogue =
-            FXCollections.observableArrayList(
-                    action -> new Observable[]{action.valueProperty()}
-            );
+    private final ActionList catalogue = new ActionList();
 
     public Catalogue(){
         catalogue.add(new Move_Forward());
@@ -28,7 +25,7 @@ public class Catalogue {
     }
 
     public ObservableList<Action> getCatalogue() {
-        return catalogue;
+        return catalogue.getActions();
     }
 
     public boolean addToProgram(){

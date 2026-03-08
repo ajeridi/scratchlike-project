@@ -1,0 +1,257 @@
+@startuml
+
+skinparam Shadowing false               /' Désactive l'effet d'ombre sur les éléments '/
+skinparam classAttributeIconSize 0      /' Taille des icônes d'attribut de classe (ici 0 pour les cacher) '/
+skinparam defaultFontName Consolas      /' Utilisation de la police Consolas par défaut '/
+!pragma useIntermediatePackages false   /' Désactive l'utilisation de packages intermédiaires '/
+
+abstract class scratch.model.Action {
+    - nom : String
+    - value : SimpleDoubleProperty
+    - color : String
+    + {abstract} execute(Scene) : void
+    + {abstract} create_default() : Action
+    + {abstract} isValidValue(double) : boolean
+    + {abstract} copy() : Action
+    + {abstract} getType() : String
+}
+
+class scratch.model.ActionFactory {
+     + mapStringToAction(String line) : Action
+     + mapActionsToString(ActionList actions) : List<String>
+}
+
+class scratch.model.ActionList {
+    - actions : ObservableList<Action>
+    + add(Action) : boolean
+    + getSizeProperty() : IntegerBinding
+    + isEmptyProperty() : BooleanBinding
+    + swap(int i1, int i2) : void
+    + delete(Action) : void
+    + deleteAll() : void
+}
+
+class scratch.model.Catalogue {
+    - catalogue : ActionList
+    + add(Action) : boolean
+}
+
+class scratch.model.Cursor {
+    - origine : Point
+    - direction : double
+    - writing : boolean
+    + reset() : void
+}
+
+class scratch.model.LineList {
+    - lines : List<MyLine>
+    + add(MyLine) : boolean
+    + clear() : void
+}
+
+class scratch.model.Move_Forward {
+
+}
+
+class scratch.model.MyLine {
+
+}
+
+abstract class scratch.model.Pen {
+    + {abstract} movePen() : void
+}
+
+class scratch.model.Pen_Down {
+
+}
+
+class scratch.model.Pen_Up {
+
+}
+
+class scratch.model.Point {
+    - x : double
+    - y : double
+    + translate(double, double) : Point
+}
+
+class scratch.model.Program {
+    - actionList : ActionList
+    + getSizeProperty() : IntegerBinding
+    + actionIsEmptyProperty() : BooleanBinding
+    + addActionToList(Action action) : boolean
+    + up(int) : void
+    + down(int) : void
+    + duplicate(Action) : void
+    + delete(Action) : void
+    + deleteAll()
+    + open(File) : void
+    + saveFile(File) void
+}
+
+class scratch.model.Scene {
+    - cursor : Cursor
+    - lines ; LineList
+    + createLine(Point) : void
+    + reset() : void
+}
+
+abstract class scratch.model.Turn {
+    + turnCursor(Cursor) : void
+}
+
+class scratch.model.Turn_Left {
+
+}
+
+class scratch.model.Turn_Right {
+
+}
+
+class scratch.view.CatalogueView {
+    - actionListView : ListView<Action>
+    - catalogueViewModel : CatalogueViewModel
+    - addButton : Button
+}
+
+class scratch.view.MainView {
+    - catalogueView : CatalogueView
+    - programView : ProgramView
+    - sceneView : SceneView
+    - mainViewModel : MainViewModel
+    - stage : Stage
+    - menu : MenuBar
+    - fileChooser : FileChooser
+}
+
+class scratch.view.ProgramView {
+    - actions : ListView<Action>
+    - upButton : Button
+    - downButton : Button
+    - duplicateButton : Button
+    - deleteButton : Button
+    - deleteAllButton : Button
+    - indexToSelect = IntegerProperty
+    - isValidValue : BooleanProperty
+    - programViewModel : ProgramViewModel
+}
+
+class scratch.view.SceneView {
+    - sceneCanvas : Canvas
+    - load/reset : Button
+    - execute/next : Button
+    - sceneViewModel : SceneViewModel
+    - isLoaded : BooleanProperty
+    - atLastAction : BooleanProperty
+    - programChanged : BooleanProperty
+    - refreshCounter : IntegerProperty
+    - isExecuted : BooleanProperty
+    - isValidPrograam : BooleanProperty
+}
+
+class scratch.viewmodel.CatalogueViewModel {
+    - catalogue : Catalogue
+    - mainViewModel : mainViewModel
+    + addToProgram(Action) : boolean
+}
+
+class scratch.viewmodel.MainViewModel {
+    - catalogueViewModel : CatalogueViewModel
+    - programViewModel : ProgramViewModel
+    - sceneViewModel : SceneViewModel
+    - catalogue : Catalogue
+    - program : Program
+    - scene : Scene
+    + addToProgram(Action) : boolean
+    + getSelectedIndexProperty() : IntegerProperty
+    + getCurrentSelectedActionProperty() : ReadOnlyObjectProperty<Action>
+    + getActionsSizeProperty() : IntegerBinding
+    + isActionsListEmpty() : BooleanBinding
+    + newFile() : void
+    + openFile(File) : void
+    + saveFile(File) : void
+}
+
+class scratch.viewmodel.ProgramViewModel {
+    - program : Program
+    - selectedIndex : IntegerProperty
+    - currentSelectedAction : ObjectProperty<Action>
+    - isValidValue : BooleanProperty
+    - userInput : StringProperty
+    + addToActionList(Action) : boolean
+    + getActionsSizeProperty() : IntegerBinding
+    + actionIsEmptyProperty() : BooleanBinding
+    + moveUp(int) : void
+    + moveDown(int) : void
+    + duplicate(Action) : void
+    + deleteAction(Action) : void
+    + deleteAllActions() : void
+    + newProgram() : void
+}
+
+class scratch.viewmodel.SceneViewModel {
+    - scene : Scene
+    - mainViewModel : MainViewModel
+    - currentActionIndex : IntegerProperty
+    - isLoaded : BooleanProperty
+    - programChanged : BooleanProperty
+    - refreshCounter : IntegerProperty
+    - isExecuted : BooleanProperty
+    - isAtLastAction : BooleanProperty
+    - isValidPrograam : BooleanProperty
+    + loadProgram() : void
+    + resetProgram() : void
+    + newProgram() : void
+    + executeProgram() : void
+    + nextAction() : void
+}
+
+class scratch.App {
+    - catalogue : Catalogue
+    - program : Program
+    - scene : Scene
+    - mainViewModel : MainViewModel
+    - mainView : MainView
+}
+
+scratch.model.Move_Forward --|> scratch.model.Action
+scratch.model.Pen --|> scratch.model.Action
+scratch.model.Turn --|> scratch.model.Action
+scratch.model.Pen_Up --|> scratch.model.Pen
+scratch.model.Pen_Down --|> scratch.model.Pen
+scratch.model.Turn_Right --|> scratch.model.Turn
+scratch.model.Turn_Left --|> scratch.model.Turn
+
+scratch.model.LineList *-- scratch.model.MyLine
+scratch.model.Cursor *-- scratch.model.Point
+scratch.model.Program *-- scratch.model.ActionList
+scratch.model.Catalogue *-- scratch.model.ActionList
+scratch.model.Scene *-- scratch.model.Cursor
+scratch.model.Scene *-- scratch.model.LineList
+scratch.model.ActionList *-- scratch.model.Action
+scratch.model.Program ..> scratch.model.ActionFactory : uses
+
+scratch.viewmodel.MainViewModel *-- scratch.viewmodel.CatalogueViewModel
+scratch.viewmodel.MainViewModel *-- scratch.viewmodel.ProgramViewModel
+scratch.viewmodel.MainViewModel *-- scratch.viewmodel.SceneViewModel
+scratch.viewmodel.CatalogueViewModel ..> scratch.model.Catalogue : uses
+scratch.viewmodel.CatalogueViewModel ..> scratch.viewmodel.MainViewModel : uses
+scratch.viewmodel.ProgramViewModel ..> scratch.model.Program : uses
+scratch.viewmodel.SceneViewModel ..> scratch.model.Scene : uses
+
+
+scratch.view.MainView *-- scratch.view.CatalogueView
+scratch.view.MainView *-- scratch.view.ProgramView
+scratch.view.MainView *-- scratch.view.SceneView
+scratch.view.MainView ..> scratch.viewmodel.MainViewModel : binds to
+scratch.view.ProgramView ..> scratch.viewmodel.ProgramViewModel : binds to
+scratch.view.SceneView ..> scratch.viewmodel.SceneViewModel : binds to
+scratch.view.CatalogueView ..> scratch.viewmodel.CatalogueViewModel : binds to
+
+scratch.App *-- scratch.viewmodel.MainViewModel
+scratch.App *-- scratch.view.MainView
+scratch.App *-- scratch.model.Catalogue
+scratch.App *-- scratch.model.Program
+scratch.App *-- scratch.model.Scene
+
+@enduml

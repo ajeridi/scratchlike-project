@@ -7,7 +7,6 @@ import java.util.List;
 public class Scene {
     private final Cursor cursor = new Cursor(new Point(0,0));
     private final LineList lines = new LineList();
-    private final ActionList actions = new ActionList();
 
 
     public Cursor getCursor() {
@@ -18,9 +17,6 @@ public class Scene {
         return lines.getLines();
     }
 
-    public ActionList getActions() {
-        return actions;
-    }
 
     public void createLine(Point end) {
         if (cursor.isWriting()){

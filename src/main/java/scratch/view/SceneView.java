@@ -142,16 +142,13 @@ public class SceneView extends VBox {
     private void refreshCanvas() {
         // graphics context
         GraphicsContext gc = sceneCanvas.getGraphicsContext2D();
-
         gc.clearRect(0,0, CANVAS_DIMENSION, CANVAS_DIMENSION);
-
         // dessin du quadrillage
         drawGrid(gc);
         // dessin des lignes
         drawLines(gc);
         // dessine turtle
         drawTurtle(gc);
-
         canvasHolder.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1;");
     }
 

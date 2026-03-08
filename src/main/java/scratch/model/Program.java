@@ -76,7 +76,7 @@ public class Program {
         convertFileContentToActionList(fileContent);
     }
 
-    public void convertFileContentToActionList(List<String> fileContent){
+    private void convertFileContentToActionList(List<String> fileContent){
         actionList.deleteAll();
         for (String line : fileContent){
             Action action = ActionFactory.mapStringToAction(line);
