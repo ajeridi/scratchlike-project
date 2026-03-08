@@ -38,6 +38,7 @@ public class SceneView extends VBox {
 
     private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
     private final BooleanProperty isExecuting = new SimpleBooleanProperty(false);
+    private final BooleanProperty atLastAction = new SimpleBooleanProperty();
 
 
 
@@ -58,6 +59,7 @@ public class SceneView extends VBox {
 
         isLoaded.bind(sceneViewModel.isLoadedProperty());
         isExecuting.bind(sceneViewModel.isExecutingProperty());
+        atLastAction.bind(sceneViewModel.isAtLastAction());
 
         loadBtn.textProperty().bind(Bindings.createStringBinding(
                 () -> {
@@ -72,6 +74,8 @@ public class SceneView extends VBox {
                 },
                 isExecuting
         ));
+
+        executeBtn.disableProperty().bind(atLastAction);
     }
 
 

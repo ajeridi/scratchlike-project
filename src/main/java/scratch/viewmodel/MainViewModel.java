@@ -1,5 +1,6 @@
 package scratch.viewmodel;
 
+import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import scratch.model.Action;
@@ -40,5 +41,9 @@ public class MainViewModel {
 
     public ReadOnlyObjectProperty<Action> getCurrentSelectedActionProperty() {
         return programViewModel.getCurrentSelectedActionProperty();
+    }
+
+    public IntegerBinding getActionsSizeProperty() {
+        return programViewModel.getActionsSizeProperty();
     }
 }

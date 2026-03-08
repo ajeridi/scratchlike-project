@@ -1,5 +1,7 @@
 package scratch.viewmodel;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import scratch.model.*;
 
@@ -57,5 +59,17 @@ public class SceneViewModel {
         currentSelectedAction.get().execute(scene);
         // passer a l'action suivante
         currentActionIndex.set(currentActionIndex.get() + 1);
+        //fin de l'execution
+        if (isAtLastAction().get())
+            isExecuting.set(false);
+    }
+
+    public BooleanBinding isAtLastAction() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    return currentActionIndex.get() == mainViewModel.getActionsSizeProperty().get() - 1;
+                },
+                currentActionIndex
+        );
     }
 }
