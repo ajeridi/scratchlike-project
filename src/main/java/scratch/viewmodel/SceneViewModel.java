@@ -14,9 +14,10 @@ public class SceneViewModel {
     private final MainViewModel mainViewModel;
     private final IntegerProperty currentActionIndex = new SimpleIntegerProperty();
     private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
-    private final BooleanProperty isExecuting = new SimpleBooleanProperty(false);
     private final BooleanProperty programChanged = new SimpleBooleanProperty(false);
     private final IntegerProperty refreshCounter = new SimpleIntegerProperty(0);
+    private final BooleanProperty isExecuted = new SimpleBooleanProperty(false);
+    private final BooleanProperty isAtLastAction = new SimpleBooleanProperty();
 
 
 
@@ -26,7 +27,14 @@ public class SceneViewModel {
         this.scene = scene;
         this.mainViewModel = mainViewModel;
 
-        isExecuting.bind(programChanged.not().and(isAtLastAction().not()));
+        isAtLastAction.bind(isAtLastAction());
+
+        isAtLastAction.addListener(
+                ((obs, o, n) -> {
+                    if (n) // si on arrive en fin de programme
+                        isExecuted.set(false); // fin de l'execution
+                })
+        );
 
         addListeners();
     }
@@ -47,9 +55,6 @@ public class SceneViewModel {
         return isLoaded;
     }
 
-    public ReadOnlyBooleanProperty isExecutingProperty() {
-        return isExecuting;
-    }
 
     public void addListeners() {
         ObservableList<Action> actions = mainViewModel.getActionsList();
@@ -74,19 +79,22 @@ public class SceneViewModel {
         // reinitialiser la scene
         scene.reset();
         programChanged.set(false);
+        isExecuted.set(false);
         currentActionIndex.set(-1); // forcer le changement d'index
     }
 
     public void newProgram() {
         resetProgram();
-        isLoaded.set(false);
-        programChanged.set(false);
+        isLoaded.set(false); // dechargement
+        programChanged.set(false); // changement de programme
+        isExecuted.set(false); // pas d'execution
         refreshCounter.set(refreshCounter.get()+1);
     }
 
     public void executeProgram() {
         currentActionIndex.set(0);
-        isExecuting.set(true);
+        //isExecuting.set(true);
+        isExecuted.set(true); // debut de l'execution
     }
 
     public void nextAction() {
@@ -95,9 +103,6 @@ public class SceneViewModel {
             currentSelectedAction.get().execute(scene);
         // passer a l'action suivante
         currentActionIndex.set(currentActionIndex.get() + 1);
-        //fin de l'execution
-//        if (isAtLastAction().get())
-//            isExecuting.set(false);
     }
 
     public BooleanBinding isAtLastAction() {
@@ -123,6 +128,10 @@ public class SceneViewModel {
 
     public ReadOnlyIntegerProperty getRefreshCounterProperty() {
         return refreshCounter;
+    }
+
+    public ReadOnlyBooleanProperty isExecutedProperty() {
+        return isExecuted;
     }
 
 }

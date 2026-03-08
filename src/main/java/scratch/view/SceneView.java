@@ -37,10 +37,10 @@ public class SceneView extends VBox {
 
 
     private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
-    private final BooleanProperty isExecuting = new SimpleBooleanProperty(false);
     private final BooleanProperty atLastAction = new SimpleBooleanProperty();
     private final BooleanProperty programChanged = new SimpleBooleanProperty();
     private final IntegerProperty refreshCounter = new SimpleIntegerProperty();
+    private final BooleanProperty isExecuted = new SimpleBooleanProperty();
 
 
 
@@ -51,7 +51,6 @@ public class SceneView extends VBox {
         addListeners();
         setCanvas();
         this.getChildren().addAll(titleLbl, canvasHolder, buttons);
-
 
         setActions();
         buttons.setAlignment(Pos.CENTER);
@@ -66,7 +65,7 @@ public class SceneView extends VBox {
     private void setBindings() {
 
         isLoaded.bind(sceneViewModel.isLoadedProperty());
-        isExecuting.bind(sceneViewModel.isExecutingProperty());
+        isExecuted.bind(sceneViewModel.isExecutedProperty());
         atLastAction.bind(sceneViewModel.isAtLastAction());
         programChanged.bind(sceneViewModel.programChangedProperty());
         refreshCounter.bind(sceneViewModel.getRefreshCounterProperty());
@@ -80,12 +79,12 @@ public class SceneView extends VBox {
 
         executeBtn.textProperty().bind(Bindings.createStringBinding(
                 () -> {
-                    return isLoaded.get() && currentActionIndexProperty().get() == -1 || isExecuting.not().get() ? "Executer" : "Suivant";
+                    return isExecuted.not().get() ? "Executer" : "Suivant";
                 },
-                isExecuting
+                isExecuted
         ));
 
-        executeBtn.disableProperty().bind(atLastAction.or(programChanged));
+        executeBtn.disableProperty().bind(isLoaded.not().or(isLoaded.and(sceneViewModel.isAtLastAction())));
         loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty());
     }
 
@@ -106,7 +105,7 @@ public class SceneView extends VBox {
         });
 
         executeBtn.setOnAction(actionEvent -> {
-            if (!isExecuting.get())
+            if (!isExecuted.get())
                 executeProgram();
             else
                 nextAction();

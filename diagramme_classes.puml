@@ -30,7 +30,9 @@ class Catalogue {
 abstract class Action {
     - nom : String
     - value : double
-    + execute(Cursor) : Line
+    + execute(Scene) : void
+    + create_default() : Action
+    + copy() : Action
 }
 
 class Move_Forward {

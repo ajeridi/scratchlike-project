@@ -58,5 +58,6 @@ public class Cursor {
         origine.setX(0);
         origine.setY(0);
         direction = DEFAULT_CURSOR_HEAD_ANGLE;
+        setWriting(true);
     }
 }
