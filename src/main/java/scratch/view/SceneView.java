@@ -72,7 +72,7 @@ public class SceneView extends VBox {
 
         executeBtn.textProperty().bind(Bindings.createStringBinding(
                 () -> {
-                    return isExecuting.not().get() || isLoaded.get() && currentActionIndexProperty().get() == -1  ? "Executer" : "Suivant";
+                    return isLoaded.get() && currentActionIndexProperty().get() == -1 || isExecuting.not().get() ? "Executer" : "Suivant";
                 },
                 isExecuting
         ));

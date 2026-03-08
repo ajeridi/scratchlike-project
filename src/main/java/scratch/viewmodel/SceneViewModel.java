@@ -65,8 +65,8 @@ public class SceneViewModel {
     public void loadProgram() {
         currentActionIndex.bindBidirectional(mainViewModel.getSelectedIndexProperty()); // va binder l'index a celui de programView
         currentSelectedAction.bind(mainViewModel.getCurrentSelectedActionProperty());
-         resetProgram();
         isLoaded.set(true);
+        resetProgram();
     }
 
     public void resetProgram() {
