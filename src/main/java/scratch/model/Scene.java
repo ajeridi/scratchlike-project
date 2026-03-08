@@ -29,6 +29,11 @@ public class Scene {
         }
     }
 
+    public void reset() {
+        lines.clear();
+        cursor.reset();
+    }
+
     // a ajouter : les fonctions d'ajouts au lines et actions
     // les composants visuels de Scene comme Canvas et les methodes repaint etc sont la responsabilite de la vue
 }

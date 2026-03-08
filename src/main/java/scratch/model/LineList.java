@@ -13,4 +13,8 @@ public class LineList {
     public List<MyLine> getLines() {
         return lines;
     }
+
+    public void clear() {
+        lines.clear();
+    }
 }

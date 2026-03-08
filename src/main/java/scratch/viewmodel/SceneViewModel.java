@@ -45,8 +45,14 @@ public class SceneViewModel {
     public void loadProgram() {
         currentActionIndex.bindBidirectional(mainViewModel.getSelectedIndexProperty()); // va binder l'index a celui de programView
         currentSelectedAction.bind(mainViewModel.getCurrentSelectedActionProperty());
-        currentActionIndex.set(-1); // forcer le changement d'index
+         resetProgram();
         isLoaded.set(true);
+    }
+
+    public void resetProgram() {
+        // reinitialiser la scene
+        scene.reset();
+        currentActionIndex.set(-1); // forcer le changement d'index
     }
 
     public void executeProgram() {
@@ -67,9 +73,11 @@ public class SceneViewModel {
     public BooleanBinding isAtLastAction() {
         return Bindings.createBooleanBinding(
                 () -> {
-                    return currentActionIndex.get() == mainViewModel.getActionsSizeProperty().get() - 1;
+                    return currentActionIndex.get() == mainViewModel.getActionsSizeProperty().get();
                 },
                 currentActionIndex
         );
     }
+
+
 }

@@ -53,4 +53,10 @@ public class Cursor {
     public String toString() {
         return "Cursor is at position " + this.origine + " with a direction of " + this.direction + " degrees and a norm of " + getNorm();
     }
+
+    public void reset() {
+        origine.setX(0);
+        origine.setY(0);
+        direction = DEFAULT_CURSOR_HEAD_ANGLE;
+    }
 }

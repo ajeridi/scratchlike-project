@@ -83,7 +83,8 @@ public class SceneView extends VBox {
         loadBtn.setOnAction(actionEvent -> {
             if (!isLoaded.get())
                 loadProgram();
-            // else reset
+            // sinon on  reinitialise
+            resetProgram();
         });
 
         executeBtn.setOnAction(actionEvent -> {
@@ -100,6 +101,11 @@ public class SceneView extends VBox {
 
     private void executeProgram() {
         sceneViewModel.executeProgram();
+    }
+
+    private void resetProgram() {
+        sceneViewModel.resetProgram();
+        refreshCanvas();
     }
 
 
