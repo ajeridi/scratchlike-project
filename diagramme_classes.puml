@@ -8,21 +8,21 @@ skinparam defaultFontName Consolas      /' Utilisation de la police Consolas par
 
 class Program {
      - ActionList
-     + up() : void
-     + down() : void
-     + duplicate() : Action
-     + delete() : Action
+     + up(Action) : void
+     + down(Action) : void
+     + duplicate(Action) : Action
+     + delete(Action) : Action
      + deleteAll() : void
 }
 
 class ActionList{
-    -List<Action>
+    - List<Action>
     + add(Action) : boolean
 }
 
 
 class Catalogue {
-    -Set<Action>
+    - ActionList
     + addToCatalogue() : boolean
     + addToProgram() : boolean
 }
@@ -59,10 +59,8 @@ class Pen_Down {
 
 
 class Scene {
-    - canevas : Canevas
     - cursor : Cursor
     - lineList
-    - ActionList
     + repaint() : void
     + suivant() : void
     + charger() : void
@@ -76,27 +74,22 @@ class Cursor {
 }
 
 class LineList {
-    - List<Line>
+    - List<MyLine>
     + add(Line) : boolean
 }
 
-class Line {
-    - toAdd : boolean;
+class MyLine {
+    - origine : Point
+    - arrivee : Point
 }
 
 class Point {
     - x : double
     - y : double
-    + translate() : Point
+    + translate(double dx, double dy) : Point
 }
 
-Program -[hidden]l LineList
-Point -[hidden]r Cursor
-LineList -[hidden]r Scene
-Scene --> Program : > gets ActionList from
-Program "1"*->"1" ActionList : > contains
-ActionList "1"*-->"many" Action : > contains
-Catalogue "1"o-->"many" Action : > has
+
 Move_Forward --|> Action : is
 Turn --|> Action : is
 Turn_Right --|> Turn : is
@@ -105,15 +98,22 @@ Pen --|> Action : is
 Pen_Up --|> Pen : is
 Pen_Down --|> Pen : is
 
-Scene "many"o->"1" Cursor : > contains
-Scene "1"*->"1" LineList : > contains
-LineList "1"*->"many" Line : > contains
-Cursor "1"*->"1" Point : > contains
-Line "1"*->"2" Point : > contains
 
-Action --> Cursor : > uses
-ActionList --> Catalogue : >  gets Actions from
+Action --> Scene : > modifies
+Program "1"*--"1" ActionList
+ActionList "1"*--"many" Action : > contains
+Catalogue "1"o--"many" Action : > has
+Catalogue *-- ActionList
 
-Action --> Line : > instantiates
+Scene "1"*--"1" Cursor : > contains
+Scene "1"*--"1" LineList : > has
+LineList "1"*--"many" MyLine : > contains
+Cursor "1"*--"1" Point : > has
+MyLine "1"*--"2" Point : > contains
+
+Scene "1"-->"1" Program : > gets modified by Actions from
+
+Program --> Catalogue : >  gets Actions from
+
 
 @enduml
