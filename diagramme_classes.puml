@@ -29,11 +29,25 @@ class Catalogue {
 
 abstract class Action {
     - nom : String
-    - value : double
+    - variable : Variable
     + execute(Scene) : void
     + create_default() : Action
     + copy() : Action
+    + convertValueOrVariableToDouble(String) : double
 }
+
+interface Variable {
+    + getValue() : double
+}
+
+class Entière {
+    - var_name : String
+}
+
+class Litterale{
+    - value : double
+}
+
 
 class Move_Forward {
 }
@@ -57,14 +71,44 @@ class Pen_Up {
 class Pen_Down {
 }
 
+abstract class Action_On_Var {
+    - var_name
+}
+class Var_Declaration {
+    /'declare une variable'/
+    - var_name : String
+}
+
+class Var_Assignment {
+    /'Assigne une variable'/
+    - var_target : String
+}
+
+class Inc_Dec_Variable {
+    /'Incrémente ou décrémente la variable'/
+    - var_target : String
+}
+
+class Repeat {
+    - List<Action>
+}
+
+class End_Repeat{
+}
+
+class Variable_Table {
+    - table : Map<String, double>
+    + getValue(String) : double
+}
 
 class Scene {
     - cursor : Cursor
     - lineList
-    + repaint() : void
-    + suivant() : void
-    + charger() : void
-    + reinitialiser() : void
+    - variables : Map<String, double>  /'une map de variables, chaque clé est le nom de la variable et la valeur est la valeur de la variable, à voir si utile dans scene ou pas'/
+    + nextAction() : void
+    + createLine(Point) : void
+    + load() : void
+    + reset() : void
 }
 
 class Cursor {
@@ -97,13 +141,24 @@ Turn_Left --|> Turn : is
 Pen --|> Action : is
 Pen_Up --|> Pen : is
 Pen_Down --|> Pen : is
+Action_On_Var --|> Action : is
+Var_Declaration --|> Action_On_Var : is
+Var_Assignment --|> Action_On_Var : is
+Inc_Dec_Variable --|> Action_On_Var : is
+Repeat --|> Action : is
+End_Repeat --|> Action : is
 
 
-Action --> Scene : > modifies
+Action --> Scene : > modifies elements in
 Program "1"*--"1" ActionList
 ActionList "1"*--"many" Action : > contains
 Catalogue "1"o--"many" Action : > has
-Catalogue *-- ActionList
+Catalogue "1"*--"1" ActionList
+Action "1"*--"1" Variable
+Entière ..|> Variable
+Litterale ..|> Variable
+
+Entière --> Variable_Table : > gets value from
 
 Scene "1"*--"1" Cursor : > contains
 Scene "1"*--"1" LineList : > has
