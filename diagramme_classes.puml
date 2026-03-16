@@ -38,12 +38,12 @@ abstract class Action {
     + execute(Runtime) : void
     + create_default() : Action
     + copy() : Action
-    + convertValueOrVariableToDouble(String) : double
 }
 
 class Variable {
     - name : String
     - value : double
+    + hasName() : boolean
 }
 
 class Move_Forward {
