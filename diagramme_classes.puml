@@ -34,10 +34,13 @@ class ActionFactory {
 
 abstract class Action {
     - nom : String
+    + {abstract} execute(Runtime) : void
+    + {abstract} create_default() : Action
+    + {abstract} copy() : Action
+}
+
+abstract class MotionAction {
     - variable : Variable
-    + execute(Runtime) : void
-    + create_default() : Action
-    + copy() : Action
 }
 
 class Variable {
@@ -77,10 +80,12 @@ class Var_Declaration {
 
 class Var_Assignment {
     /'Assigne une variable'/
+    - value : double
 }
 
 class Inc_Dec_Variable {
     /'Incrémente ou décrémente la variable'/
+    - value : double
 }
 
 class Repeat {
@@ -131,10 +136,12 @@ class Point {
 }
 
 
-Move_Forward --|> Action : is
-Turn --|> Action : is
+Move_Forward --|> MotionAction : is
+MotionAction --|> Action : is
+Turn --|> MotionAction : is
 Turn_Right --|> Turn : is
 Turn_Left --|> Turn : is
+
 Pen --|> Action : is
 Pen_Up --|> Pen : is
 Pen_Down --|> Pen : is
