@@ -27,27 +27,24 @@ class Catalogue {
     + addToProgram() : boolean
 }
 
+class ActionFactory {
+    + mapStringToAction(String line) : Action
+    +  mapActionsToString(ActionList actions) : List<String>
+}
+
 abstract class Action {
     - nom : String
     - variable : Variable
-    + execute(Scene) : void
+    + execute(Runtime) : void
     + create_default() : Action
     + copy() : Action
     + convertValueOrVariableToDouble(String) : double
 }
 
-interface Variable {
-    + getValue() : double
-}
-
-class Entière {
-    - var_name : String
-}
-
-class Litterale{
+class Variable {
+    - name : String
     - value : double
 }
-
 
 class Move_Forward {
 }
@@ -76,17 +73,14 @@ abstract class Action_On_Var {
 }
 class Var_Declaration {
     /'declare une variable'/
-    - var_name : String
 }
 
 class Var_Assignment {
     /'Assigne une variable'/
-    - var_target : String
 }
 
 class Inc_Dec_Variable {
     /'Incrémente ou décrémente la variable'/
-    - var_target : String
 }
 
 class Repeat {
@@ -96,19 +90,22 @@ class Repeat {
 class End_Repeat{
 }
 
-class Variable_Table {
-    - table : Map<String, double>
-    + getValue(String) : double
+class VariableTable {
+    - table : Map<String, Variable>
+}
+
+class Runtime {
+    - Scene
+    - VariableTable
+    + nextAction() : void
+    + load() : void
+    + reset() : void
 }
 
 class Scene {
     - cursor : Cursor
     - lineList
-    - variables : Map<String, double>  /'une map de variables, chaque clé est le nom de la variable et la valeur est la valeur de la variable, à voir si utile dans scene ou pas'/
-    + nextAction() : void
     + createLine(Point) : void
-    + load() : void
-    + reset() : void
 }
 
 class Cursor {
@@ -148,25 +145,25 @@ Inc_Dec_Variable --|> Action_On_Var : is
 Repeat --|> Action : is
 End_Repeat --|> Action : is
 
-
-Action --> Scene : > modifies elements in
+ActionFactory --> ActionList : > converts Actions to File
+Action --> Runtime : > Executes on
 Program "1"*--"1" ActionList
-ActionList "1"*--"many" Action : > contains
-Catalogue "1"o--"many" Action : > has
+ActionList "1"*--"*" Action : > contains
 Catalogue "1"*--"1" ActionList
-Action "1"*--"1" Variable
-Entière ..|> Variable
-Litterale ..|> Variable
+Action "1"*--"1" Variable : > has
 
-Entière --> Variable_Table : > gets value from
+VariableTable "1"*--"*" Variable : > contains
+
+Runtime "1"*--"1" Scene : > contains
+Runtime "1"*--"1" VariableTable : > contains
 
 Scene "1"*--"1" Cursor : > contains
 Scene "1"*--"1" LineList : > has
-LineList "1"*--"many" MyLine : > contains
+LineList "1"*--"*" MyLine : > contains
 Cursor "1"*--"1" Point : > has
 MyLine "1"*--"2" Point : > contains
 
-Scene "1"-->"1" Program : > gets modified by Actions from
+Runtime "1"-->"1" Program : > gets modified by Actions from
 
 Program --> Catalogue : >  gets Actions from
 
