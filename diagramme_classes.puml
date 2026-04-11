@@ -35,7 +35,7 @@ class ActionFactory {
 abstract class Action {
     - nom : String
     - variable : Variable
-    + {abstract} execute(Runtime) : void
+    + {abstract} execute(ExecutionState) : void
     + {abstract} create_default() : Action
     + {abstract} copy() : Action
 }
@@ -92,7 +92,7 @@ class VariableTable {
     - table : Map<String, Variable>
 }
 
-class Runtime {
+class ExecutionState {
     - Scene
     - VariableTable
     + nextAction() : void
@@ -144,7 +144,7 @@ Repeat --|> Action : is
 End_Repeat --|> Action : is
 
 ActionFactory --> ActionList : > converts Actions to File
-Action --> Runtime : > Executes on
+Action --> ExecutionState : > Executes on
 Program "1"*--"1" ActionList
 ActionList "1"*--"*" Action : > contains
 Catalogue "1"*--"1" ActionList
@@ -152,8 +152,8 @@ Action "1"*--"1" Variable : > has
 
 VariableTable "1"*--"*" Variable : > contains
 
-Runtime "1"*--"1" Scene : > contains
-Runtime "1"*--"1" VariableTable : > contains
+ExecutionState "1"*--"1" Scene : > contains
+ExecutionState "1"*--"1" VariableTable : > contains
 
 Scene "1"*--"1" Cursor : > contains
 Scene "1"*--"1" LineList : > has
@@ -161,7 +161,7 @@ LineList "1"*--"*" MyLine : > contains
 Cursor "1"*--"1" Point : > has
 MyLine "1"*--"2" Point : > contains
 
-Runtime "1"-->"1" Program : > gets modified by Actions from
+ExecutionState "1"-->"1" Program : > gets modified by Actions from
 
 Program --> Catalogue : >  gets Actions from
 
