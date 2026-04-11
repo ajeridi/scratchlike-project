@@ -6,6 +6,9 @@ import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import scratch.model.*;
+import scratch.model.actions.Action;
+import scratch.model.actions.Pen;
+import scratch.model.actions.Pen_Down;
 
 import java.util.List;
 

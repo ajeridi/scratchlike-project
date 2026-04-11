@@ -5,7 +5,7 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
-import scratch.model.Action;
+import scratch.model.actions.Action;
 import scratch.model.Program;
 
 public class ProgramViewModel {

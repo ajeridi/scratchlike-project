@@ -8,7 +8,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
-import scratch.model.Action;
+import scratch.model.actions.Action;
 import scratch.viewmodel.CatalogueViewModel;
 
 public class CatalogueView extends VBox {

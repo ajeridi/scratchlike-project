@@ -4,18 +4,14 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
-import scratch.model.Action;
-import scratch.model.Pen;
+import scratch.model.actions.Action;
+import scratch.model.actions.Pen;
 import scratch.viewmodel.ProgramViewModel;
 
 public class ProgramView extends VBox {

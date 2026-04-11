@@ -1,7 +1,11 @@
-package scratch.model;
+package scratch.model.actions;
+import scratch.model.Cursor;
+import scratch.model.Point;
+import scratch.model.Scene;
+
 import java.lang.Math;
 
-public class Move_Forward extends Action{
+public class Move_Forward extends Action {
 
     private static final double DEFAULT_MOVE_FORWARD_VALUE = 30;
     private static final String DEFAULT_MOVE_FORWARD_COLOR = "blue";

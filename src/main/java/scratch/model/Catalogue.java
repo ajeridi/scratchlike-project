@@ -1,11 +1,7 @@
 package scratch.model;
 
-import javafx.beans.Observable;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import java.util.HashSet;
-import java.util.Set;
+import scratch.model.actions.*;
 
 public class Catalogue {
     //private final Set<Action> catalogue = new HashSet<>();

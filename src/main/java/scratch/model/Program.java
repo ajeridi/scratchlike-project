@@ -2,9 +2,8 @@ package scratch.model;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.collections.ObservableList;
-import javafx.stage.FileChooser;
+import scratch.model.actions.Action;
 
 import java.io.File;
 import java.io.IOException;

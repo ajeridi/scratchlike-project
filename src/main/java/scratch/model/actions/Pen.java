@@ -1,4 +1,7 @@
-package scratch.model;
+package scratch.model.actions;
+
+import scratch.model.Cursor;
+import scratch.model.Scene;
 
 public  abstract class Pen extends Action {
 

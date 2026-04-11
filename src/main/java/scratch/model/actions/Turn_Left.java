@@ -1,4 +1,6 @@
-package scratch.model;
+package scratch.model.actions;
+
+import scratch.model.Cursor;
 
 public class Turn_Left extends Turn {
 

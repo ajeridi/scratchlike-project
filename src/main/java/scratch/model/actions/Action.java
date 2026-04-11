@@ -1,6 +1,7 @@
-package scratch.model;
+package scratch.model.actions;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import scratch.model.Scene;
 
 public abstract class Action {
     private final String nom;

@@ -1,6 +1,6 @@
 package scratch.model;
 
-import javafx.collections.ObservableList;
+import scratch.model.actions.*;
 
 import java.util.ArrayList;
 import java.util.List;
