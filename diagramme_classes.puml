@@ -69,21 +69,16 @@ class Pen_Up {
 class Pen_Down {
 }
 
-abstract class Action_On_Var {
-    - var_name
-}
 class Var_Declaration {
     /'declare une variable'/
 }
 
 class Var_Assignment {
     /'Assigne une variable'/
-    - value : double
 }
 
 class Inc_Dec_Variable {
     /'Incrémente ou décrémente la variable'/
-    - value : double
 }
 
 class Repeat {
@@ -142,10 +137,9 @@ Turn_Left --|> Turn : is
 Pen --|> Action : is
 Pen_Up --|> Pen : is
 Pen_Down --|> Pen : is
-Action_On_Var --|> Action : is
-Var_Declaration --|> Action_On_Var : is
-Var_Assignment --|> Action_On_Var : is
-Inc_Dec_Variable --|> Action_On_Var : is
+Var_Declaration --|> Action: is
+Var_Assignment --|> Action: is
+Inc_Dec_Variable --|> Action: is
 Repeat --|> Action : is
 End_Repeat --|> Action : is
 
