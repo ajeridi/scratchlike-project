@@ -159,4 +159,23 @@ public class SceneViewModel {
         return isValidProgram;
     }
 
+    // correction iteration 1
+    public BooleanBinding canExecute() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    return !isLoaded.get() || (isLoaded.get() && isAtLastAction.get()) || (!isValidProgram.get());
+                },
+                isLoaded, isAtLastAction, isValidProgram
+        );
+    }
+
+    public BooleanBinding canLoad() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    return isActionsListEmpty().get() || !isValidProgram.get();
+                },
+                isActionsListEmpty(), isValidProgram
+        );
+    }
+
 }

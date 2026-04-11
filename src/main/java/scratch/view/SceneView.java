@@ -86,8 +86,14 @@ public class SceneView extends VBox {
                 isExecuted
         ));
 
+        // Logique applicative a bouger dans le VM
+/*
         executeBtn.disableProperty().bind(isLoaded.not().or(isLoaded.and(sceneViewModel.isAtLastAction())).or(isValidProgram.not()));
         loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty().or(isValidProgram.not()));
+*/
+        // correction iteration 1
+        executeBtn.disableProperty().bind(sceneViewModel.canExecute());
+        loadBtn.disableProperty().bind(sceneViewModel.canLoad());
     }
 
     private void addListeners() {
