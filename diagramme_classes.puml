@@ -34,14 +34,12 @@ class ActionFactory {
 
 abstract class Action {
     - nom : String
+    - variable : Variable
     + {abstract} execute(Runtime) : void
     + {abstract} create_default() : Action
     + {abstract} copy() : Action
 }
 
-abstract class MotionAction {
-    - variable : Variable
-}
 
 class Variable {
     - name : String
@@ -136,9 +134,8 @@ class Point {
 }
 
 
-Move_Forward --|> MotionAction : is
-MotionAction --|> Action : is
-Turn --|> MotionAction : is
+Move_Forward --|> Action : is
+Turn --|> Action : is
 Turn_Right --|> Turn : is
 Turn_Left --|> Turn : is
 
