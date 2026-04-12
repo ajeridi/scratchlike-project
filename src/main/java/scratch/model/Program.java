@@ -4,16 +4,19 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.collections.ObservableList;
 import scratch.model.actions.Action;
+import scratch.model.actions.Repeat;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Program {
 
     private final ActionList actionList = new ActionList();
+    private final Stack<ActionList> loops = new Stack<>();
 
     public ObservableList<Action> getActions() {
         return actionList.getActions();
@@ -30,6 +33,21 @@ public class Program {
     public boolean addToActionList(Action action){
         // creer une action avec une valeur par defaut
         Action default_action = action.create_default();
+
+        if (default_action.getType().equals("END_REPEAT")){
+            loops.pop();
+        }
+
+        if (!loops.isEmpty()){
+            var currentLoop = loops.peek();
+            currentLoop.add(default_action);
+        }
+
+        default_action.setLoopDepth(loops.size());
+
+        if (default_action.getType().equals("REPEAT")){
+            loops.push(default_action.getActions());
+        }
         return actionList.add(default_action);
     }
 
@@ -61,6 +79,7 @@ public class Program {
     public void deleteAll() {
         // supprimer toutes les actions
         actionList.deleteAll();
+        loops.clear();
     }
 
     public void newFile() {
