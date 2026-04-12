@@ -27,4 +27,9 @@ public  abstract class Pen extends Action {
     public boolean isValidValue(double value) {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return this.getNom();
+    }
 }

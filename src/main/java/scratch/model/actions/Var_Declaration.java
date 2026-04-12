@@ -43,7 +43,7 @@ public class Var_Declaration extends Action {
 
     @Override
     public String getType() {
-        return "";
+        return "VAR_DECLARATION";
     }
 
     @Override

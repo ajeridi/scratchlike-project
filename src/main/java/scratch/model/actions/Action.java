@@ -40,13 +40,26 @@ public abstract class Action {
         return variable.nameProperty();
     }
 
+    public boolean variableHasName() {
+        return variable.hasName();
+    }
+
+    public boolean isValidVarName(String name) {
+        return variable.validateName(name).isEmpty();
+    }
+
+    public void setVarName(String name) {
+        variable.setName(name);
+    }
+
     public String variableName() {
         return variableNameProperty().getValue();
     }
 
     public void setValue(double value) {
         if (isValidValue(value))
-            valueProperty().set(value);
+            variable.setValue(value);
+            //valueProperty().set(value);
     }
 
     abstract public void execute(Scene scene);
@@ -69,6 +82,6 @@ public abstract class Action {
 
     @Override
     public String toString() {
-        return nom + (valueProperty().getValue() == 0 ? "" : " " + valueProperty().getValue());
+        return nom + (variableHasName() ? " " + variableName() : " " + valueProperty().getValue());
     }
 }
