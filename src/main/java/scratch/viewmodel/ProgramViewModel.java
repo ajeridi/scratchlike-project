@@ -4,9 +4,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import scratch.model.actions.Action;
 import scratch.model.Program;
+import scratch.model.actions.Target_Action;
 import scratch.model.actions.Var_Declaration;
 
 public class ProgramViewModel {
@@ -157,5 +159,14 @@ public class ProgramViewModel {
 
     public void newProgram() {
         program.deleteAll();
+    }
+
+    public BooleanBinding isTargetAction() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    return getCurrentSelectedAction() instanceof Target_Action;
+                },
+                currentSelectedAction
+        );
     }
 }

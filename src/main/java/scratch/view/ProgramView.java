@@ -148,6 +148,9 @@ public class ProgramView extends VBox {
         valueErrorLabel.visibleProperty().bind(isValidValue.not().and(getSelectedItemProperty().isNotNull()));
         detailActionValueTextField.textProperty().bindBidirectional(programViewModel.getUserInputProperty());
 
+        targetHbox.visibleProperty().bind(programViewModel.isTargetAction());
+        targetHbox.managedProperty().bind(targetHbox.visibleProperty()); // si invisible, espace rempli par d'autres composants
+
         setDetailElementsBindings();
         setButtonsBindings();
     }
