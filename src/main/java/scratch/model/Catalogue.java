@@ -15,6 +15,7 @@ public class Catalogue {
         catalogue.add(new Move_Forward());
         catalogue.add(new Turn_Left());
         catalogue.add(new Turn_Right());
+        catalogue.add(new Repeat());
         catalogue.add(new Pen_Up());
         catalogue.add(new Pen_Down());
     }
