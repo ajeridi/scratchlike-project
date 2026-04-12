@@ -12,6 +12,15 @@ public class Variable {
         this.value.set(value);
     }
 
+    // constructeur pour les variables litterale
+    public Variable(double value){
+        this("", value);
+    }
+
+    public SimpleDoubleProperty valueProperty() {
+        return value;
+    }
+
     // methode qui va verifier si la variable a un nom (entiere) ou pas (litterale)
     public boolean hasName(){
         return !name.getValue().isEmpty();
