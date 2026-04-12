@@ -83,8 +83,9 @@ class Inc_Dec_Variable {
     - target_name : String
 }
 
-interface Target_Action {
+abstract class Target_Action {
     + getTargetted() : String
+    + setTarget(String) : void
 }
 
 class Repeat {
@@ -144,8 +145,7 @@ Pen --|> Action : is
 Pen_Up --|> Pen : is
 Pen_Down --|> Pen : is
 Var_Declaration --|> Action: is
-Var_Assignment --|> Action: is
-Inc_Dec_Variable --|> Action: is
+Target_Action --|> Action: is
 Repeat --|> Action : is
 End_Repeat --|> Action : is
 
@@ -171,6 +171,6 @@ ExecutionState "1"-->"1" Program : > gets modified by Actions from
 
 Program --> Catalogue : >  gets Actions from
 
-class Var_Assignment implements Target_Action
-class Inc_Dec_Variable implements Target_Action
+class Var_Assignment extends Target_Action
+class Inc_Dec_Variable extends Target_Action
 @enduml

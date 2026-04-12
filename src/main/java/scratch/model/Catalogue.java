@@ -11,6 +11,7 @@ public class Catalogue {
     public Catalogue(){
         catalogue.add(new Var_Declaration());
         catalogue.add(new Var_Assignment());
+        catalogue.add(new Increment_Variable());
         catalogue.add(new Move_Forward());
         catalogue.add(new Turn_Left());
         catalogue.add(new Turn_Right());
