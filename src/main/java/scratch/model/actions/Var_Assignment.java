@@ -3,18 +3,21 @@ package scratch.model.actions;
 import javafx.beans.property.SimpleStringProperty;
 import scratch.model.Scene;
 
-public class Var_Assignment extends Action implements Target_Action{
+public class Var_Assignment extends Target_Action {
 
-    private final SimpleStringProperty target_name = new SimpleStringProperty("");
     private static final String DEFAULT_VAR_ASSIGNMENT_NAME = "Assignation";
     private static final String DEFAULT_VAR_ASSIGNMENT_COLOR = "cyan";
+
+    public Var_Assignment(String target, double value,String nom, String color){
+        super(target, value, nom,  color);
+    }
 
     public Var_Assignment(double value, String nom, String color) {
         super(value, nom, color);
     }
 
     public Var_Assignment(Var_Assignment varAssignment) {
-        this(varAssignment.getValue(), varAssignment.getNom(), varAssignment.getColor());
+        this(varAssignment.getTargetted(), varAssignment.getValue(), varAssignment.getNom(), varAssignment.getColor());
     }
 
     public Var_Assignment() {
@@ -58,19 +61,10 @@ public class Var_Assignment extends Action implements Target_Action{
         return "Assignation de la variable";
     }
 
-    @Override
-    public String getTargetted() {
-        return target_name.getValue();
-    }
-
-    @Override
-    public void setTarget(String name) {
-        target_name.setValue(name);
-    }
 
     @Override
     public String toString() {
         String variable = (variableHasName() ? variableName() : (getValue() == 0 ? "" : String.valueOf(getValue())));
-        return getNom() + " : " + target_name.getValue() + " = " + variable;
+        return getNom() + " : " + getTargetted() + " = " + variable;
     }
 }
