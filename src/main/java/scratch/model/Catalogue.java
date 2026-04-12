@@ -9,6 +9,7 @@ public class Catalogue {
     private final ActionList catalogue = new ActionList();
 
     public Catalogue(){
+        catalogue.add(new Var_Declaration());
         catalogue.add(new Move_Forward());
         catalogue.add(new Turn_Left());
         catalogue.add(new Turn_Right());
