@@ -70,7 +70,7 @@ public class CatalogueView extends VBox {
                     setText(null);
                     setStyle("");
                 } else {
-                    setText(action.toString());
+                    setText(action.getNom());
                     setStyle("-fx-text-fill: " + action.getColor() + ";");
                 }
             }

@@ -1,6 +1,7 @@
 package scratch.model.actions;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 import scratch.model.Scene;
 import scratch.model.Variable;
 
@@ -33,6 +34,14 @@ public abstract class Action {
 
     public SimpleDoubleProperty valueProperty() {
         return variable.valueProperty();
+    }
+
+    public SimpleStringProperty variableNameProperty() {
+        return variable.nameProperty();
+    }
+
+    public String variableName() {
+        return variableNameProperty().getValue();
     }
 
     public void setValue(double value) {

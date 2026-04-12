@@ -21,6 +21,14 @@ public class Variable {
         return value;
     }
 
+    public SimpleStringProperty nameProperty() {
+        return name;
+    }
+
+    public String getName() {
+        return name.getValue();
+    }
+
     // methode qui va verifier si la variable a un nom (entiere) ou pas (litterale)
     public boolean hasName(){
         return !name.getValue().isEmpty();
