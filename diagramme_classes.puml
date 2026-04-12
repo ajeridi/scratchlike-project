@@ -75,10 +75,16 @@ class Var_Declaration {
 
 class Var_Assignment {
     /'Assigne une variable'/
+    - target_name : String
 }
 
 class Inc_Dec_Variable {
     /'Incrémente ou décrémente la variable'/
+    - target_name : String
+}
+
+interface Target_Action {
+    + getTargetted() : String
 }
 
 class Repeat {
@@ -165,5 +171,6 @@ ExecutionState "1"-->"1" Program : > gets modified by Actions from
 
 Program --> Catalogue : >  gets Actions from
 
-
+class Var_Assignment implements Target_Action
+class Inc_Dec_Variable implements Target_Action
 @enduml

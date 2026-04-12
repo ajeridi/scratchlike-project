@@ -16,6 +16,10 @@ public class Var_Declaration extends Action {
         super(value, nom, color);
     }
 
+    public Var_Declaration(Var_Declaration varDeclaration) {
+        this(varDeclaration.getValue(), varDeclaration.getNom(), varDeclaration.getColor());
+    }
+
     @Override
     public void execute(Scene scene) {
 
@@ -23,7 +27,7 @@ public class Var_Declaration extends Action {
 
     @Override
     public boolean isValidValue(double value) {
-        return false;
+        return true;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class Var_Declaration extends Action {
 
     @Override
     public Action copy() {
-        return null;
+        return new Var_Declaration(this);
     }
 
     @Override
