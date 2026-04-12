@@ -7,6 +7,7 @@ import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import scratch.model.actions.Action;
 import scratch.model.Program;
+import scratch.model.actions.Var_Declaration;
 
 public class ProgramViewModel {
 
@@ -21,9 +22,20 @@ public class ProgramViewModel {
         this.program = program;
 
         userInput.addListener(
+                // au changement de user input, valider l'entree, puis modifier la variable
                 ((observableValue, s, t1) -> {
-                    if (isValidValue.get())
-                        getCurrentSelectedAction().setValue(Double.parseDouble(userInput.get()));
+                    if (isValidValue.get()) {
+                        var action = getCurrentSelectedAction();
+                        var input = userInput.get();
+                        // si la valeur est un nom, on update le nom de la variable, sinon on update la valeur
+                        if (isDouble(input)){
+                            action.setValue(Double.parseDouble(input));
+                        }
+                        else {
+                            action.setVarName(input);
+                        }
+                    }
+//                        getCurrentSelectedAction().setValue(Double.parseDouble(userInput.get()));
                 })
         );
         setBindings();
@@ -31,22 +43,36 @@ public class ProgramViewModel {
 
     private void setBindings() {
         isValidValue.bind(Bindings.createBooleanBinding(
+                // des que userInput est modifie, on valide la valeur entree
                 () -> {
 
-                    double value;
+                    double value = 0;
                     boolean ok = false;
                     if (getCurrentSelectedAction() != null) {
-                        try {
-                            value = Double.parseDouble(userInput.getValue());
-                            ok = getCurrentSelectedAction().isValidValue(value);
-                        } catch (NumberFormatException e) {
-                            System.out.println(e.getMessage());
+                        if (isDouble(userInput.getValue())){ // si l'input est un double, on valide le double
+                            ok = getCurrentSelectedAction().isValidValue(Double.parseDouble(userInput.getValue()));
+                        }
+                        else { // sinon on valide le nom
+                            ok = getCurrentSelectedAction().isValidVarName(userInput.getValue());
                         }
                     }
                     return ok;
                 },
                 userInput
         ));
+    }
+
+    public boolean isDouble(String s) {
+        // verifie sur un string est un double
+        boolean result;
+        try {
+            Double.parseDouble(userInput.getValue());
+            result = true;
+        } catch (NumberFormatException e) {
+            System.out.println(e.getMessage());
+            result = false;
+        }
+        return result;
     }
 
     public boolean addToActionList(Action selectedAction){
@@ -113,10 +139,18 @@ public class ProgramViewModel {
     }
 
     public void updateUserInput() {
+        // va update le contenu de userInput
         String newValue = "";
         if (getCurrentSelectedAction() != null) {
-            double valueOfSelectedAction = currentSelectedAction.get().getValue();
-            newValue = String.valueOf(valueOfSelectedAction);
+            var action = getCurrentSelectedAction();
+            // on regarde si la variable est litterale ou entiere
+            // si la variable est litterale on affiche la valeur, si elle est entiere on affiche le nom
+            if (action.variableHasName() || action instanceof Var_Declaration){
+                newValue = action.variableName();
+            }
+            else{
+                newValue = String.valueOf(action.getValue());
+            }
         }
         userInput.setValue(newValue);
     }

@@ -1,16 +1,20 @@
 package scratch.model.actions;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 import scratch.model.Scene;
+import scratch.model.Variable;
 
 public abstract class Action {
     private final String nom;
-    private final SimpleDoubleProperty value = new SimpleDoubleProperty();
+   // private final SimpleDoubleProperty value = new SimpleDoubleProperty();
     private static final double DEFAULT_ACTION_VALUE = 0;
+    private final Variable variable;
     private  String color;
 
     public Action(double value, String nom, String color) {
-        this.value.set(value);
+        this.variable = new Variable(value);
+        //this.value.set(value);
         this.nom = nom;
         this.color = color;
     }
@@ -25,16 +29,37 @@ public abstract class Action {
 
 
     public double getValue() {
-        return value.getValue();
+        return valueProperty().getValue();
     }
 
     public SimpleDoubleProperty valueProperty() {
-        return value;
+        return variable.valueProperty();
+    }
+
+    public SimpleStringProperty variableNameProperty() {
+        return variable.nameProperty();
+    }
+
+    public boolean variableHasName() {
+        return variable.hasName();
+    }
+
+    public boolean isValidVarName(String name) {
+        return variable.validateName(name).isEmpty();
+    }
+
+    public void setVarName(String name) {
+        variable.setName(name);
+    }
+
+    public String variableName() {
+        return variableNameProperty().getValue();
     }
 
     public void setValue(double value) {
         if (isValidValue(value))
-            this.value.set(value);
+            variable.setValue(value);
+            //valueProperty().set(value);
     }
 
     abstract public void execute(Scene scene);
@@ -57,6 +82,6 @@ public abstract class Action {
 
     @Override
     public String toString() {
-        return nom + (value.getValue() == 0 ? "" : " " + value.getValue());
+        return nom + (variableHasName() ? " " + variableName() : " " + valueProperty().getValue());
     }
 }

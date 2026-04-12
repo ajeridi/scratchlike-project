@@ -12,6 +12,33 @@ public class Variable {
         this.value.set(value);
     }
 
+    // constructeur pour les variables litterale
+    public Variable(double value){
+        this("", value);
+    }
+
+    public SimpleDoubleProperty valueProperty() {
+        return value;
+    }
+
+    public void setValue(double value){
+        // si je set une value, le nom disparait car la variable devient litterale
+        this.value.set(value);
+        setName("");
+    }
+
+    public SimpleStringProperty nameProperty() {
+        return name;
+    }
+
+    public String getName() {
+        return name.getValue();
+    }
+
+    public void setName(String name){
+        this.name.set(name);
+    }
+
     // methode qui va verifier si la variable a un nom (entiere) ou pas (litterale)
     public boolean hasName(){
         return !name.getValue().isEmpty();
@@ -28,9 +55,14 @@ public class Variable {
         s = s.toLowerCase();
         for (int i = 0; i < s.length(); ++i) {
             char c = s.charAt(i);
-            if (i == 0 && isNumeric(c))
+            System.out.println(c);
+            if (i == 0 && isNumeric(c)) { // si on commence par un chiffre
+                System.out.println("first letter is numeric");
                 return false;
-            else if (!isAlpha(c) || !isNumeric(c) || c != '_') {
+            }
+
+            else if (!isAlpha(c) && !isNumeric(c) && c != '_') { // si on est ni une lettre, ni un chiffre ni _
+                System.out.print("letter is not valid");
                 return false;
             }
         }

@@ -12,7 +12,7 @@ public class ActionList {
 
     private final ObservableList<Action> actions =
             FXCollections.observableArrayList(
-                    action -> new Observable[]{action.valueProperty()}
+                    action -> new Observable[]{action.valueProperty(), action.variableNameProperty()}
             );
 
     public boolean add(Action action) {
