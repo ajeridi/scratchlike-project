@@ -34,12 +34,17 @@ public class Program {
         // creer une action avec une valeur par defaut
         Action default_action = action.create_default();
 
+        if (default_action.getType().equals("END_REPEAT")){
+            loops.pop();
+        }
 
         if (!loops.isEmpty()){
             var currentLoop = loops.peek();
             currentLoop.add(default_action);
-            default_action.setLoopDepth(loops.size());
         }
+
+        default_action.setLoopDepth(loops.size());
+
         if (default_action.getType().equals("REPEAT")){
             loops.push(default_action.getActions());
         }
