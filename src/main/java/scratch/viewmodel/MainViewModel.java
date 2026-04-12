@@ -26,7 +26,7 @@ public class MainViewModel {
         this.catalogueViewModel = new CatalogueViewModel(catalogue, this);
         this.programViewModel = new ProgramViewModel(program);
         this.sceneViewModel = new SceneViewModel(scene, this);
-        this.informationViewModel = new InformationViewModel(scene.getCursor());
+        this.informationViewModel = new InformationViewModel(scene);
         this.catalogue = catalogue;
         this.program = program;
         this.scene = scene;

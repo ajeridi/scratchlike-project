@@ -1,5 +1,6 @@
 package scratch.model.actions;
 
+import javafx.beans.property.SimpleStringProperty;
 import scratch.model.Scene;
 
 public class Var_Declaration extends Action {
@@ -22,7 +23,8 @@ public class Var_Declaration extends Action {
 
     @Override
     public void execute(Scene scene) {
-
+        var variables = scene.getVariables();
+        variables.put(variableName(), new SimpleStringProperty(String.format("%.2f", getValue())));
     }
 
     @Override

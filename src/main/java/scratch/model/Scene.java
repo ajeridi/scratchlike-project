@@ -1,5 +1,9 @@
 package scratch.model;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.scene.shape.Line;
 
 import java.util.List;
@@ -9,6 +13,13 @@ public class Scene {
     private final LineList lines = new LineList();
 
 
+    // map qui va contenir toutes les variabls
+    private final ObservableMap<String, StringProperty> variables = FXCollections.observableHashMap();
+
+    public ObservableMap<String, StringProperty> getVariables() {
+        return variables;
+    }
+
     public Cursor getCursor() {
         return cursor;
     }
@@ -16,6 +27,8 @@ public class Scene {
     public List<MyLine> getLines() {
         return lines.getLines();
     }
+
+
 
 
     public void createLine(Point end) {
