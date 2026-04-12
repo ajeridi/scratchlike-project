@@ -61,4 +61,9 @@ public class Repeat extends Action {
     public String toString() {
         return super.toString() + " fois";
     }
+
+    @Override
+    public ActionList getActions() {
+        return actions;
+    }
 }

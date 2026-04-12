@@ -2,6 +2,7 @@ package scratch.model.actions;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
+import scratch.model.ActionList;
 import scratch.model.Scene;
 import scratch.model.Variable;
 
@@ -11,6 +12,16 @@ public abstract class Action {
     private static final double DEFAULT_ACTION_VALUE = 0;
     private final Variable variable;
     private  String color;
+    private int loopDepth = 0;
+
+    public int getLoopDepth() {
+        return loopDepth;
+    }
+
+    public void setLoopDepth(int loopDepth) {
+        this.loopDepth = loopDepth;
+    }
+
 
     public Action(double value, String nom, String color) {
         this.variable = new Variable(value);
@@ -87,4 +98,15 @@ public abstract class Action {
     }
 
 
+    public ActionList getActions() {
+        return null;
+    }
+
+    public String getIndentation() {
+        String indentations = "";
+        for (int i = 0; i < loopDepth; ++i){
+            indentations += "\t";
+        }
+        return indentations;
+    }
 }
