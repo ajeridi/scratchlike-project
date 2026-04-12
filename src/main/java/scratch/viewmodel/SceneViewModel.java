@@ -102,6 +102,7 @@ public class SceneViewModel {
         programChanged.set(false);
         isExecuted.set(false);
         currentActionIndex.set(-1); // forcer le changement d'index
+        scene.getVariables().clear();
     }
 
     public void newProgram() {

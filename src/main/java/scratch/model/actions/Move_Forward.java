@@ -30,7 +30,14 @@ public class Move_Forward extends Action {
     public void execute(Scene scene) {
         Cursor cursor = scene.getCursor();
 
-        Point end = createEnd(cursor);
+        double value;
+        if (variableHasName())
+            value = Double.parseDouble(scene.getVariables().get(variableName()).getValue().replace(",", "."));
+        else
+            value = getValue();
+
+
+        Point end = createEnd(cursor, value);
 
         scene.createLine(end);
         cursor.setOrigine(end);
@@ -66,11 +73,11 @@ public class Move_Forward extends Action {
         return getNom();
     }
 
-    private Point createEnd(Cursor cursor) {
+    private Point createEnd(Cursor cursor, double value) {
         double angle = Math.toRadians(cursor.getDirection()) +  Math.PI / 2;;
         Point origin = cursor.getOrigine();
-        double dx = getValue() * Math.cos(angle);
-        double dy = getValue() * Math.sin(angle);
+        double dx = value * Math.cos(angle);
+        double dy = value * Math.sin(angle);
         return origin.translate(dx, dy);
     }
 }
