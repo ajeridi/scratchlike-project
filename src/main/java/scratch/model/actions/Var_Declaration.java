@@ -51,6 +51,11 @@ public class Var_Declaration extends Action {
     }
 
     @Override
+    public String getDetailString() {
+        return "Declaration de la variable";
+    }
+
+    @Override
     public String toString() {
         return "Declaration de la variable " + variableName();
     }

@@ -71,6 +71,7 @@ public abstract class Action {
 
     abstract public String valueUnit();
     abstract public String getType();
+    abstract public String getDetailString();
 
     public void setColor(String color) {
         this.color = color;
@@ -84,4 +85,6 @@ public abstract class Action {
     public String toString() {
         return nom + (variableHasName() ? " " + variableName() : " " + valueProperty().getValue());
     }
+
+
 }

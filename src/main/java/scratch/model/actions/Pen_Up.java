@@ -31,4 +31,9 @@ public class Pen_Up extends Pen {
     public String getType() {
         return "PEN_UP";
     }
+
+    @Override
+    public String getDetailString() {
+        return getNom();
+    }
 }

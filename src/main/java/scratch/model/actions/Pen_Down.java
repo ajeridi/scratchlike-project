@@ -32,5 +32,10 @@ public class Pen_Down extends Pen {
         return "PEN_DOWN";
     }
 
+    @Override
+    public String getDetailString() {
+        return getNom();
+    }
+
 
 }

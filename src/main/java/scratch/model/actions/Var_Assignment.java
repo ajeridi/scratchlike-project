@@ -54,6 +54,11 @@ public class Var_Assignment extends Action implements Target_Action{
     }
 
     @Override
+    public String getDetailString() {
+        return "Assignation de la variable";
+    }
+
+    @Override
     public String getTargetted() {
         return target_name.getValue();
     }

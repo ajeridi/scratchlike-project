@@ -26,11 +26,14 @@ public class ProgramView extends VBox {
     private final Button deleteAllBtn = new Button("Vider tout");
     private final Accordion accordion = new Accordion();
 
+    // detail de l'action
     private final TitledPane detailActionPane = new TitledPane();
     private final Label detailActionLabel = new Label();
     private final Label detailActionUnitLabel = new Label();
     private final TextField detailActionValueTextField = new TextField();
     private final Label valueErrorLabel = new Label("Erreur valeur");
+    private final HBox targetHbox = new HBox();
+    private final TextField detailTargetTextField = new TextField();
 
     private Action currentBindedAction;
     private final IntegerProperty indexToSelect = new SimpleIntegerProperty(); // va servir lors de l'execution du programme
@@ -189,7 +192,7 @@ public class ProgramView extends VBox {
                 () -> {
                     var selectedAction = getSelectedAction();
                     if (selectedAction != null)
-                        return selectedAction.getNom();
+                        return selectedAction.getDetailString();
                     return "aucune action selectionnee";
                 },
                 getSelectedItemProperty()
@@ -245,13 +248,18 @@ public class ProgramView extends VBox {
     private void createAccordion(){
         VBox actionPaneBox = new VBox();
 
-        HBox topSection = new HBox(detailActionLabel, detailActionValueTextField, detailActionUnitLabel);
+        HBox topSection = new HBox(detailActionLabel, targetHbox, detailActionValueTextField, detailActionUnitLabel);
 
+        Label de = new Label("de");
+        targetHbox.getChildren().addAll(detailTargetTextField, de);
+        targetHbox.setAlignment(Pos.CENTER_LEFT);
+        targetHbox.setSpacing(5);
         valueErrorLabel.setTextFill(Color.RED);
         setActionPaneBox(topSection);
 
         detailActionPane.setText("Detail de l'action");
         detailActionValueTextField.setPrefWidth(45);
+        detailTargetTextField.setPrefWidth(45);
 
        actionPaneBox.getChildren().addAll(topSection, valueErrorLabel);
         detailActionPane.setContent(actionPaneBox);
