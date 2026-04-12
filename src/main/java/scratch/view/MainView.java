@@ -20,6 +20,7 @@ public class MainView extends VBox {
     private final CatalogueView catalogueView;
     private final ProgramView programView;
     private final SceneView sceneView;
+    private final InformationView informationView;
     private final MainViewModel mainViewModel;
     private final Stage stage;
     private final MenuBar menuBar = new MenuBar();
@@ -29,6 +30,7 @@ public class MainView extends VBox {
     private final MenuItem saveAs = new MenuItem("Save As");
     private final MenuItem exit = new MenuItem("Exit");
     private final HBox mainContent = new HBox();
+    private final VBox sceneAndInformation = new VBox();
     private final FileChooser fileChooser = new FileChooser();
 
 
@@ -38,6 +40,7 @@ public class MainView extends VBox {
         this.catalogueView = new CatalogueView(vm.getCatalogueViewModel());
         this.programView = new ProgramView(vm.getProgramViewModel());
         this.sceneView = new SceneView(vm.getSceneViewModel());
+        this.informationView = new InformationView(vm.getInformationViewModel());
 
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Scratch files", "*.scr")
@@ -47,8 +50,10 @@ public class MainView extends VBox {
         setMenu();
 
         setMenuActions();
+        sceneAndInformation.setSpacing(2);
+        sceneAndInformation.getChildren().addAll(sceneView, informationView);
 
-        mainContent.getChildren().addAll(catalogueView, programView, sceneView);
+        mainContent.getChildren().addAll(catalogueView, programView, sceneAndInformation);
         this.getChildren().addAll(menuBar, mainContent);
 
     }

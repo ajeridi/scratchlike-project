@@ -17,6 +17,7 @@ public class MainViewModel {
     private final CatalogueViewModel catalogueViewModel;
     private final ProgramViewModel programViewModel;
     private final SceneViewModel sceneViewModel;
+    private final InformationViewModel informationViewModel;
     private final Catalogue catalogue;
     private final Program program;
     private final Scene scene;
@@ -25,6 +26,7 @@ public class MainViewModel {
         this.catalogueViewModel = new CatalogueViewModel(catalogue, this);
         this.programViewModel = new ProgramViewModel(program);
         this.sceneViewModel = new SceneViewModel(scene, this);
+        this.informationViewModel = new InformationViewModel(scene.getCursor());
         this.catalogue = catalogue;
         this.program = program;
         this.scene = scene;
@@ -78,5 +80,9 @@ public class MainViewModel {
 
     public void saveFile(File file) throws IOException {
             program.saveFile(file);
+    }
+
+    public InformationViewModel getInformationViewModel() {
+        return informationViewModel;
     }
 }
