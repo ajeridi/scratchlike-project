@@ -40,4 +40,9 @@ public class Turn_Left extends Turn {
     public String getType() {
         return "TURN_LEFT";
     }
+
+    @Override
+    public String getDetailString() {
+        return getNom();
+    }
 }

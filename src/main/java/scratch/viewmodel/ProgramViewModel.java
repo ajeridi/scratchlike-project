@@ -7,6 +7,7 @@ import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import scratch.model.actions.Action;
 import scratch.model.Program;
+import scratch.model.actions.Target_Action;
 import scratch.model.actions.Var_Declaration;
 
 public class ProgramViewModel {
@@ -15,18 +16,19 @@ public class ProgramViewModel {
     private final IntegerProperty selectedIndex = new SimpleIntegerProperty();
     private final ObjectProperty<Action> currentSelectedAction = new SimpleObjectProperty<>();
     private final BooleanProperty isValidValue = new SimpleBooleanProperty();
-    private final StringProperty userInput = new SimpleStringProperty();
+    private final StringProperty variableInput = new SimpleStringProperty(); // valeur de la variable entree par le user
+    private final StringProperty targetInput = new SimpleStringProperty();
 
 
     public ProgramViewModel(Program program) {
         this.program = program;
 
-        userInput.addListener(
+        variableInput.addListener(
                 // au changement de user input, valider l'entree, puis modifier la variable
                 ((observableValue, s, t1) -> {
                     if (isValidValue.get()) {
                         var action = getCurrentSelectedAction();
-                        var input = userInput.get();
+                        var input = variableInput.get();
                         // si la valeur est un nom, on update le nom de la variable, sinon on update la valeur
                         if (isDouble(input)){
                             action.setValue(Double.parseDouble(input));
@@ -35,7 +37,18 @@ public class ProgramViewModel {
                             action.setVarName(input);
                         }
                     }
-//                        getCurrentSelectedAction().setValue(Double.parseDouble(userInput.get()));
+//                        getCurrentSelectedAction().setValue(Double.parseDouble(variableInput.get()));
+                })
+        );
+
+        targetInput.addListener(
+                // si target input est modifie, on valide l'input puis on modifie la valeur de target de l'action
+                // il faut que le nom de la variable existe sinon on ne peut pas l'ajouter
+                ((observableValue, s, t1) -> {
+                    var action = getCurrentSelectedAction();
+                    if (action instanceof Target_Action){
+                        ((Target_Action) action).setTarget(targetInput.getValue());
+                    }
                 })
         );
         setBindings();
@@ -43,22 +56,22 @@ public class ProgramViewModel {
 
     private void setBindings() {
         isValidValue.bind(Bindings.createBooleanBinding(
-                // des que userInput est modifie, on valide la valeur entree
+                // des que variableInput est modifie, on valide la valeur entree
                 () -> {
 
                     double value = 0;
                     boolean ok = false;
                     if (getCurrentSelectedAction() != null) {
-                        if (isDouble(userInput.getValue())){ // si l'input est un double, on valide le double
-                            ok = getCurrentSelectedAction().isValidValue(Double.parseDouble(userInput.getValue()));
+                        if (isDouble(variableInput.getValue())){ // si l'input est un double, on valide le double
+                            ok = getCurrentSelectedAction().isValidValue(Double.parseDouble(variableInput.getValue()));
                         }
                         else { // sinon on valide le nom
-                            ok = getCurrentSelectedAction().isValidVarName(userInput.getValue());
+                            ok = getCurrentSelectedAction().isValidVarName(variableInput.getValue());
                         }
                     }
                     return ok;
                 },
-                userInput
+                variableInput
         ));
     }
 
@@ -66,7 +79,7 @@ public class ProgramViewModel {
         // verifie sur un string est un double
         boolean result;
         try {
-            Double.parseDouble(userInput.getValue());
+            Double.parseDouble(variableInput.getValue());
             result = true;
         } catch (NumberFormatException e) {
             System.out.println(e.getMessage());
@@ -130,8 +143,11 @@ public class ProgramViewModel {
         return currentSelectedAction.get();
     }
 
-    public StringProperty getUserInputProperty() {
-        return userInput;
+    public StringProperty getVariableInputProperty() {
+        return variableInput;
+    }
+    public StringProperty getTargetInputProperty() {
+        return targetInput;
     }
 
     public ReadOnlyBooleanProperty isValidValueProperty() {
@@ -139,7 +155,7 @@ public class ProgramViewModel {
     }
 
     public void updateUserInput() {
-        // va update le contenu de userInput
+        // va update le contenu de variableInput
         String newValue = "";
         if (getCurrentSelectedAction() != null) {
             var action = getCurrentSelectedAction();
@@ -152,10 +168,28 @@ public class ProgramViewModel {
                 newValue = String.valueOf(action.getValue());
             }
         }
-        userInput.setValue(newValue);
+        variableInput.setValue(newValue);
     }
+
+    public void updateTargetInput() {
+        var action = getCurrentSelectedAction();
+        if (action instanceof Target_Action){
+            targetInput.setValue(((Target_Action) action).getTargetted());
+        }
+    }
+
 
     public void newProgram() {
         program.deleteAll();
     }
+
+    public BooleanBinding isTargetAction() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    return getCurrentSelectedAction() instanceof Target_Action;
+                },
+                currentSelectedAction
+        );
+    }
+
 }

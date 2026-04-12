@@ -61,6 +61,11 @@ public class Move_Forward extends Action {
         return "MOVE_FORWARD";
     }
 
+    @Override
+    public String getDetailString() {
+        return getNom();
+    }
+
     private Point createEnd(Cursor cursor) {
         double angle = Math.toRadians(cursor.getDirection()) +  Math.PI / 2;;
         Point origin = cursor.getOrigine();
