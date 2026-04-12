@@ -64,6 +64,11 @@ public class Var_Assignment extends Action implements Target_Action{
     }
 
     @Override
+    public void setTarget(String name) {
+        target_name.setValue(name);
+    }
+
+    @Override
     public String toString() {
         String variable = (variableHasName() ? variableName() : (getValue() == 0 ? "" : String.valueOf(getValue())));
         return getNom() + " : " + target_name.getValue() + " = " + variable;

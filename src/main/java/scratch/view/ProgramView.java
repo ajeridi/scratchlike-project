@@ -146,7 +146,8 @@ public class ProgramView extends VBox {
 
         isValidValue.bind(programViewModel.isValidValueProperty());
         valueErrorLabel.visibleProperty().bind(isValidValue.not().and(getSelectedItemProperty().isNotNull()));
-        detailActionValueTextField.textProperty().bindBidirectional(programViewModel.getUserInputProperty());
+        detailActionValueTextField.textProperty().bindBidirectional(programViewModel.getVariableInputProperty());
+        detailTargetTextField.textProperty().bindBidirectional(programViewModel.getTargetInputProperty());
 
         targetHbox.visibleProperty().bind(programViewModel.isTargetAction());
         targetHbox.managedProperty().bind(targetHbox.visibleProperty()); // si invisible, espace rempli par d'autres composants
@@ -278,6 +279,7 @@ public class ProgramView extends VBox {
 
     private void updateTextField() {
         programViewModel.updateUserInput();
+        programViewModel.updateTargetInput();
     }
 
 

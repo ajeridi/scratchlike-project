@@ -17,6 +17,7 @@ public class ProgramViewModel {
     private final ObjectProperty<Action> currentSelectedAction = new SimpleObjectProperty<>();
     private final BooleanProperty isValidValue = new SimpleBooleanProperty();
     private final StringProperty variableInput = new SimpleStringProperty(); // valeur de la variable entree par le user
+    private final StringProperty targetInput = new SimpleStringProperty();
 
 
     public ProgramViewModel(Program program) {
@@ -37,6 +38,17 @@ public class ProgramViewModel {
                         }
                     }
 //                        getCurrentSelectedAction().setValue(Double.parseDouble(variableInput.get()));
+                })
+        );
+
+        targetInput.addListener(
+                // si target input est modifie, on valide l'input puis on modifie la valeur de target de l'action
+                // il faut que le nom de la variable existe sinon on ne peut pas l'ajouter
+                ((observableValue, s, t1) -> {
+                    var action = getCurrentSelectedAction();
+                    if (action instanceof Target_Action){
+                        ((Target_Action) action).setTarget(targetInput.getValue());
+                    }
                 })
         );
         setBindings();
@@ -131,8 +143,11 @@ public class ProgramViewModel {
         return currentSelectedAction.get();
     }
 
-    public StringProperty getUserInputProperty() {
+    public StringProperty getVariableInputProperty() {
         return variableInput;
+    }
+    public StringProperty getTargetInputProperty() {
+        return targetInput;
     }
 
     public ReadOnlyBooleanProperty isValidValueProperty() {
@@ -156,6 +171,14 @@ public class ProgramViewModel {
         variableInput.setValue(newValue);
     }
 
+    public void updateTargetInput() {
+        var action = getCurrentSelectedAction();
+        if (action instanceof Target_Action){
+            targetInput.setValue(((Target_Action) action).getTargetted());
+        }
+    }
+
+
     public void newProgram() {
         program.deleteAll();
     }
@@ -168,4 +191,5 @@ public class ProgramViewModel {
                 currentSelectedAction
         );
     }
+
 }
