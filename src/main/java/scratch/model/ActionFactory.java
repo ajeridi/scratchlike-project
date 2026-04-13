@@ -20,6 +20,7 @@ public class ActionFactory {
             case "PEN_UP" -> new Pen_Up();
             case "TURN_LEFT" -> new Turn_Left(value);
             case "TURN_RIGHT" -> new Turn_Right(value);
+            //case "REPEAT" -> new Repeat(value);
             default -> null;
         };
     }

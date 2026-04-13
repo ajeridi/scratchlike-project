@@ -42,12 +42,13 @@ public class Scene {
     private final Stack<Integer> currentLoopIndexes = new Stack<>();
 
 
-    // map qui va contenir toutes les variable, sera dans ExecutionState
-    private final ObservableMap<String, StringProperty> variables = FXCollections.observableHashMap();
 
-    public ObservableMap<String, StringProperty> getVariables() {
-        return variables;
-    }
+    // map qui va contenir toutes les variable, sera dans ExecutionState
+    //private final ObservableMap<String, StringProperty> variables = FXCollections.observableHashMap();
+
+//    public ObservableMap<String, StringProperty> getVariables() {
+//        return variables;
+//    }
 
     public Cursor getCursor() {
         return cursor;

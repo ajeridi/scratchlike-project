@@ -3,6 +3,7 @@ package scratch.model.actions;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import scratch.model.Scene;
+import scratch.model.Variable_Table;
 
 public class Var_Assignment extends Target_Action {
 
@@ -29,8 +30,8 @@ public class Var_Assignment extends Target_Action {
     @Override
     public void execute(Scene scene) {
         // modifier la valeur de la variable 'target_name'
-        var variables = scene.getVariables();
-        variables.get(getTargetted()).setValue(getVariableValue());
+        Variable_Table.setValue(getTargetted(), getValue());
+        //variables.get(getTargetted()).setValue(getVariableValue());
     }
 
     private String getVariableValue() {

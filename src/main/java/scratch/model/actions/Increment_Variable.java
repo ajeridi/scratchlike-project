@@ -1,6 +1,7 @@
 package scratch.model.actions;
 
 import scratch.model.Scene;
+import scratch.model.Variable_Table;
 
 public class Increment_Variable extends Target_Action{
 
@@ -22,19 +23,21 @@ public class Increment_Variable extends Target_Action{
     @Override
     public void execute(Scene scene) {
         // incrementation / decrementation de la variable target
-        var varTable = scene.getVariables();
-        double value;
+        //var varTable = scene.getVariables();
+        double value = getValue();
         // A reflechir au cas ou variable a pour valeur une variable qui a pour valeur une variable qui a pour valeur une variable
         // au lieu d'avoir un Map<String, StringProperty> Faire un Map<String, Variable> et comme ca le Variable.getValue, on aura si c'est Litteral alors retourne la valeur directement, sinon retourne la valeur recherchee dans la table
-        if (variableHasName())
-            value = Double.parseDouble(varTable.get(variableName()).getValue().replace(",", "."));
-        else
-            value = getValue();
+//        if (variableHasName())
+//            value = Double.parseDouble(varTable.get(variableName()).getValue().replace(",", "."));
+//        else
+//            value = getValue();
 
         // incrementation
-        double targetValue = Double.parseDouble(varTable.get(getTargetted()).getValue().replace(",", ".")) + value;
+        double targetValue = Variable_Table.getValue(getTargetted());
 
-        varTable.get(getTargetted()).setValue(String.format("%.2f", targetValue));
+        Variable_Table.setValue(getTargetted(), targetValue + value);
+
+
 
     }
 

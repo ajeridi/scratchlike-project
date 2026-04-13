@@ -98,7 +98,8 @@ public class Program {
         actionList.deleteAll();
         for (String line : fileContent){
             Action action = ActionFactory.mapStringToAction(line);
-            actionList.add(action);
+            //actionList.add(action);
+            addToActionList(action);
         }
     }
 

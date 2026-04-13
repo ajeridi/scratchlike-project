@@ -2,6 +2,7 @@ package scratch.model.actions;
 
 import javafx.beans.property.SimpleStringProperty;
 import scratch.model.Scene;
+import scratch.model.Variable_Table;
 
 public class Var_Declaration extends Action {
 
@@ -23,8 +24,8 @@ public class Var_Declaration extends Action {
 
     @Override
     public void execute(Scene scene) {
-        var variables = scene.getVariables();
-        variables.put(variableName(), new SimpleStringProperty(String.format("%.2f", getValue())));
+        //var variables = scene.getVariables();
+        Variable_Table.putVariable(variableName(), new SimpleStringProperty(String.format("%.2f", DEFAULT_VAR_DECLARATION_VALUE)));
     }
 
     @Override

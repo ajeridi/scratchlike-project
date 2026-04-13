@@ -40,7 +40,9 @@ public abstract class Action {
 
 
     public double getValue() {
-        return valueProperty().getValue();
+
+        //return valueProperty().getValue();
+        return variable.getValue();
     }
 
     public SimpleDoubleProperty valueProperty() {

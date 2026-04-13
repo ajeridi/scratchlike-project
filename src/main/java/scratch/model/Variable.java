@@ -77,5 +77,11 @@ public class Variable {
         return c >= 'a' && c <= 'z';
     }
 
+    public double getValue() {
+        if (hasName())
+            return Variable_Table.getValue(getName());
+        return value.get();
+    }
+
 
 }

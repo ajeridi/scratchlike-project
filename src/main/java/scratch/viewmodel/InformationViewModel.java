@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.layout.VBox;
 import scratch.model.Cursor;
 import scratch.model.Scene;
+import scratch.model.Variable_Table;
 
 import java.util.AbstractMap;
 import java.util.Map;
@@ -37,9 +38,10 @@ public class InformationViewModel extends VBox {
 
     private void setObservableListOfMap(Scene scene) {
         // creation d'une observable list qui va contenir les elements de la map de variables
-        this.observableListOfMap = FXCollections.observableArrayList(scene.getVariables().entrySet());
+        var variableTable = Variable_Table.getVariables();
+        this.observableListOfMap = FXCollections.observableArrayList(variableTable.entrySet());
 
-        scene.getVariables().addListener(
+        variableTable.addListener(
                 (MapChangeListener<String, StringProperty>) change -> {
                     if (change.wasAdded()){
                         // si on ajoute un element a la map
