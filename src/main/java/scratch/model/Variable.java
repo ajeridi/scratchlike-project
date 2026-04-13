@@ -46,6 +46,18 @@ public class Variable {
         setName("");
     }
 
+    public void setVariable(String value){
+        // methode qui prend un string (nom ou nombre) et l'assigne a la variable
+        if (isNumber(value)){ // si la variable est un nombre, on set la propriete value avec un nom vide
+            setValue(Double.parseDouble(value));
+        }
+        else {
+            // si c'est un nom, on set le nom de la variable
+            setName(value);
+        }
+
+    }
+
     public SimpleStringProperty nameProperty() {
         return name;
     }
@@ -97,10 +109,18 @@ public class Variable {
     }
 
     public double getValue() {
+        // retourne la variable sous forme de double (pour les calculs)
         if (hasName())
             return Variable_Table.getValue(getName());
         return value.get();
     }
 
 
+    public String getStringValue() {
+        //retourne les variables sous forme de String, utile pour les affichages
+        if (hasName())
+            return getName();
+        else
+            return String.format("%.0f", getValue());
+    }
 }

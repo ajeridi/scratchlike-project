@@ -10,6 +10,11 @@ public abstract class Action {
     private final String nom;
    // private final SimpleDoubleProperty value = new SimpleDoubleProperty();
     private static final double DEFAULT_ACTION_VALUE = 0;
+
+    public Variable getVariable() {
+        return variable;
+    }
+
     private final Variable variable;
     private  String color;
     private int loopDepth = 0;
@@ -81,6 +86,11 @@ public abstract class Action {
             //valueProperty().set(value);
     }
 
+    public void setValue(String value){
+        // prend un string (nombre ou nom) en parametre et set la variable
+        variable.setVariable(value);
+    }
+
     abstract public void execute(Scene scene);
 
     abstract public boolean isValidValue(double value);
@@ -102,7 +112,7 @@ public abstract class Action {
 
     @Override
     public String toString() {
-        return nom + " "  + (variable.getValue());
+        return nom + " "  + (variable.getStringValue());
     }
 
 

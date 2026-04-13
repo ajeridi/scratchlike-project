@@ -69,7 +69,7 @@ public class Repeat extends Action {
 
     @Override
     public String toString() {
-        return getNom() + " " + getValue() + " fois";
+        return getNom() + " " + getVariable().getStringValue() + " fois";
     }
 
     @Override

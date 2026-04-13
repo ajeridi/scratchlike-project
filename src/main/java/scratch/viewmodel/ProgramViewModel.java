@@ -31,6 +31,7 @@ public class ProgramViewModel {
                         var action = getCurrentSelectedAction();
                         var input = variableInput.get();
                         // si la valeur est un nom, on update le nom de la variable, sinon on update la valeur
+                        //action.setValue(input);
                         if (isDouble(input)){
                             action.setValue(Double.parseDouble(input));
                         }
@@ -156,18 +157,21 @@ public class ProgramViewModel {
     }
 
     public void updateUserInput() {
-        // va update le contenu de variableInput
+        // va update le contenu de variableInput, qui est binded au detailActionValueTextField de ProgramView, notamment quand on selectionne une action
         String newValue = "";
         if (getCurrentSelectedAction() != null) {
             var action = getCurrentSelectedAction();
             // on regarde si la variable est litterale ou entiere
             // si la variable est litterale on affiche la valeur, si elle est entiere on affiche le nom
+/*
             if (action.variableHasName() || action instanceof Var_Declaration){
                 newValue = action.variableName();
             }
             else{
                 newValue = String.valueOf(action.getValue());
             }
+*/
+            newValue = action.getVariable().getStringValue();
         }
         variableInput.setValue(newValue);
     }
