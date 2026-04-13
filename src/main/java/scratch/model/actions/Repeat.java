@@ -24,7 +24,13 @@ public class Repeat extends Action {
 
     @Override
     public void execute(Scene scene) {
-
+        var currentLoopIndexes = scene.getCurrentLoopIndexes();
+        var repeat_index = scene.currentIndexProperty().get();
+        currentLoopIndexes.add(repeat_index);
+        int counter = 0;
+        var loopCounters = scene.getLoopCounters();
+        loopCounters.push(counter);
+        scene.getLoopActions().push(this);
     }
 
     @Override

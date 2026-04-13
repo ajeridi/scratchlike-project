@@ -31,7 +31,7 @@ public class SceneViewModel {
         this.scene = scene;
         this.mainViewModel = mainViewModel;
 
-
+        currentActionIndex.bindBidirectional(scene.currentIndexProperty()); // pour les repeats
         addListeners();
     }
 

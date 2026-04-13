@@ -20,7 +20,20 @@ public class End_Repeat extends Action{
 
     @Override
     public void execute(Scene scene) {
-
+        var loopCounters = scene.getLoopCounters();
+        var counter = loopCounters.peek();
+        var loopIndexes = scene.getCurrentLoopIndexes();
+        Action currentLoopAction = scene.getLoopActions().peek();
+        if (counter != currentLoopAction.getValue()){
+            scene.currentIndexProperty().set(loopIndexes.peek());
+            loopCounters.pop();
+            counter++;
+            loopCounters.push(counter);
+        }
+        else {
+            loopCounters.pop();
+            loopIndexes.pop();
+        }
     }
 
     @Override
