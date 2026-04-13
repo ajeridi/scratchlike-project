@@ -76,4 +76,9 @@ public class Repeat extends Action {
     public ActionList getActions() {
         return actions;
     }
+
+    @Override
+    public String getTarget() {
+        return "";
+    }
 }

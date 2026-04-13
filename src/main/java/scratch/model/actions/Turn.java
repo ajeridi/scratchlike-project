@@ -49,4 +49,9 @@ public abstract class Turn extends Action {
     public boolean isValidValue(double value) {
         return value >= 1 && value <= 180;
     }
+
+    @Override
+    public String getTarget() {
+        return "";
+    }
 }

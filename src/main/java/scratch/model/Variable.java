@@ -120,7 +120,6 @@ public class Variable {
         //retourne les variables sous forme de String, utile pour les affichages
         if (hasName())
             return getName();
-        else
-            return String.format("%.0f", getValue());
+        return String.format("%.0f", getValue());
     }
 }

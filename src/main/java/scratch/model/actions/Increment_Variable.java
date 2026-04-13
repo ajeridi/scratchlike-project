@@ -13,11 +13,18 @@ public class Increment_Variable extends Target_Action{
     }
 
     public Increment_Variable() {
+        // constructeur utile pour le catalogue
         super(DEFAULT_INCREMENT_VAR_NAME, DEFAULT_INCREMENT_VAR_COLOR);
     }
 
     public Increment_Variable(Increment_Variable incrementVariable) {
+        // constructeur de copie
         super(incrementVariable.getTargetted(), incrementVariable.getValue(), incrementVariable.getNom(), incrementVariable.getColor());
+    }
+
+    public Increment_Variable(String target, String value){
+        // constructeur pour la conversion file -> action
+        super(target, value, DEFAULT_INCREMENT_VAR_NAME, DEFAULT_INCREMENT_VAR_COLOR);
     }
 
     @Override

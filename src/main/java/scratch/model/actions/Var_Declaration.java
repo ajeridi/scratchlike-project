@@ -22,10 +22,16 @@ public class Var_Declaration extends Action {
         this(varDeclaration.getValue(), varDeclaration.getNom(), varDeclaration.getColor());
     }
 
+    public Var_Declaration(String name) {
+        this(DEFAULT_VAR_DECLARATION_VALUE, DEFAULT_VAR_DECLARATION_NAME, DEFAULT_VAR_DECLARATION_COLOR);
+        getVariable().setName(name);
+    }
+
     @Override
     public void execute(Scene scene) {
+        // va ajouter une nouvelle variable dans la table des variables, avec une valeur par defaut de 0
         //var variables = scene.getVariables();
-        Variable_Table.putVariable(variableName(), new SimpleStringProperty(String.format("%.2f", DEFAULT_VAR_DECLARATION_VALUE)));
+        Variable_Table.putVariable(variableName(), new SimpleStringProperty(String.format("%.0f", DEFAULT_VAR_DECLARATION_VALUE)));
     }
 
     @Override
@@ -61,5 +67,10 @@ public class Var_Declaration extends Action {
     @Override
     public String toString() {
         return "Declaration de la variable " + variableName();
+    }
+
+    @Override
+    public String getTarget() {
+        return "";
     }
 }

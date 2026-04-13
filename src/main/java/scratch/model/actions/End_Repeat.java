@@ -70,4 +70,9 @@ public class End_Repeat extends Action{
     public String toString() {
         return getNom();
     }
+
+    @Override
+    public String getTarget() {
+        return "";
+    }
 }

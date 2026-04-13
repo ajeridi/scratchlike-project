@@ -32,4 +32,9 @@ public  abstract class Pen extends Action {
     public String toString() {
         return this.getNom();
     }
+
+    @Override
+    public String getTarget(){
+        return "";
+    }
 }

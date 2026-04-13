@@ -27,6 +27,12 @@ public class Var_Assignment extends Target_Action {
     }
 
 
+    public Var_Assignment(String targetVar, String value) {
+        // constructeur pour file -> Action
+        super(targetVar, value, DEFAULT_VAR_ASSIGNMENT_NAME, DEFAULT_VAR_ASSIGNMENT_COLOR);
+    }
+
+
     @Override
     public void execute(Scene scene) {
         // modifier la valeur de la variable 'target_name'
@@ -70,10 +76,11 @@ public class Var_Assignment extends Target_Action {
         return "Assignation de la variable";
     }
 
-
+/*
     @Override
     public String toString() {
-        String variable = (variableHasName() ? variableName() : (getValue() == 0 ? "" : String.valueOf(getValue())));
-        return getNom() + " : " + getTargetted() + " = " + variable;
+        //String variable = (variableHasName() ? variableName() : (getValue() == 0 ? "" : String.valueOf(getValue())));
+        return getNom() + " : " + getTargetted() + " = " + getStringValue();
     }
+*/
 }

@@ -128,4 +128,9 @@ public abstract class Action {
         return indentations;
     }
 
+    abstract public String getTarget(); // uniquement pour les methode Target_Action
+
+    public String getStringValue() {
+        return variable.getStringValue();
+    }
 }

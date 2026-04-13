@@ -24,6 +24,9 @@ public class ActionFactory {
             case "TURN_RIGHT" -> new Turn_Right(split[1]);
             case "REPEAT" -> new Repeat(split[1]);
             case "END_REPEAT" -> new End_Repeat();
+            case "VAR_DECLARATION" -> new Var_Declaration(split[1]);
+            case "VAR_ASSIGNMENT" -> new Var_Assignment(split[1], split[2]);
+            case "INCREMENT_VARIABLE" -> new Increment_Variable(split[1], split[2]);
             default -> null;
         };
     }
@@ -31,7 +34,20 @@ public class ActionFactory {
     public static List<String> mapActionsToString(ActionList actions){
         List<String> newContent = new ArrayList<>();
         for (Action action : actions.getActions()){
-            newContent.add(action.getType() + ";" + action.getValue());
+            String type = action.getType();
+            String base = type + ";";
+
+            switch (type) {
+                case "PEN_UP", "PEN_DOWN", "END_REPEAT" :
+                    break;
+                case "VAR_ASSIGNMENT", "INCREMENT_VARIABLE" :
+                    base += action.getTarget() + ";" + action.getStringValue();
+                    break;
+                default:
+                    base += action.getStringValue();
+            }
+
+            newContent.add(base);
         }
         return newContent;
     }
