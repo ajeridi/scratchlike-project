@@ -177,6 +177,8 @@ public class ProgramView extends VBox {
                 },
                 getSelectedItemProperty()
         ));
+
+        detailActionValueTextField.visibleProperty().bind(programViewModel.isActionWithValue());
     }
 
     private void setDetailActionUnitLabelBindings() { // fait le binding entre le label de l'unite de la valeur de l'action et le string valueUNit de action

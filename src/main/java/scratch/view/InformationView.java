@@ -58,7 +58,7 @@ public class InformationView extends VBox {
         cursorDirection.bind(informationViewModel.cursorDirectionProperty());
         cursorInformation.textProperty().bind(Bindings.createStringBinding(
                 () -> {
-                    return "Tortue : x = " + String.format("%.2f", cursorX.get() * -1) + ", y = " + String.format("%.2f", cursorY.get() * -1) + ", direction = " + String.format("%.2f", cursorDirection.get())  + "°";
+                    return "Tortue : x = " + String.format("%.2f", cursorX.get()) + ", y = " + String.format("%.2f", cursorY.get() == 0 ? 0 : cursorY.get() * -1) + ", direction = " + String.format("%.2f", cursorDirection.get())  + "°";
                 },
                 cursorX, cursorY, cursorDirection
         ));
