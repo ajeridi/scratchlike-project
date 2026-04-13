@@ -30,6 +30,12 @@ public abstract class Action {
         this.color = color;
     }
 
+    public Action(String value, String nom, String color){
+        this.variable = new Variable(value);
+        this.nom = nom;
+        this.color = color;
+    }
+
     public Action(String nom, String color) {
         this(DEFAULT_ACTION_VALUE, nom, color);
     }
@@ -96,7 +102,7 @@ public abstract class Action {
 
     @Override
     public String toString() {
-        return nom + (variableHasName() ? " " + variableName() : " " + valueProperty().getValue());
+        return nom + " "  + (variable.getValue());
     }
 
 

@@ -26,6 +26,10 @@ public class Move_Forward extends Action {
         super(value, nom, color);
     }
 
+    public Move_Forward(String variable){
+        super(variable, "Avancer de", DEFAULT_MOVE_FORWARD_COLOR);
+    }
+
     @Override
     public void execute(Scene scene) {
         Cursor cursor = scene.getCursor();

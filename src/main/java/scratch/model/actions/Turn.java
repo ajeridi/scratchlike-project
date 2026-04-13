@@ -24,6 +24,10 @@ public abstract class Turn extends Action {
         super(value, nom, DEFAULT_TURN_COLOR);
     }
 
+    public Turn(String value, String nom){
+        super(value, nom, DEFAULT_TURN_COLOR);
+    }
+
     abstract void turnCursor(Cursor cursor);
 
     @Override

@@ -50,7 +50,7 @@ public class MainView extends VBox {
         setMenu();
 
         setMenuActions();
-        sceneAndInformation.setSpacing(2);
+        sceneAndInformation.setSpacing(10);
         sceneAndInformation.getChildren().addAll(sceneView, informationView);
 
         mainContent.getChildren().addAll(catalogueView, programView, sceneAndInformation);

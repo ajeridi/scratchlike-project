@@ -8,19 +8,22 @@ import java.util.List;
 public class ActionFactory {
 
     public static Action mapStringToAction(String line){
+        // prends un String et le converti en Action
         String[] split = line.split(";");
-        System.out.println(split[0] + " " + split[1]);
+        //System.out.println(split[0] + " " + split[1]);
         //separtion type et valeur
         String type = split[0];
-        double value = Double.parseDouble(split[1]);
+        //double value = Double.parseDouble(split[1]);
+
 
         return switch (type) {
-            case "MOVE_FORWARD" -> new Move_Forward(value);
+            case "MOVE_FORWARD" -> new Move_Forward(split[1]);
             case "PEN_DOWN" -> new Pen_Down();
             case "PEN_UP" -> new Pen_Up();
-            case "TURN_LEFT" -> new Turn_Left(value);
-            case "TURN_RIGHT" -> new Turn_Right(value);
-            //case "REPEAT" -> new Repeat(value);
+            case "TURN_LEFT" -> new Turn_Left(split[1]);
+            case "TURN_RIGHT" -> new Turn_Right(split[1]);
+            case "REPEAT" -> new Repeat(split[1]);
+            case "END_REPEAT" -> new End_Repeat();
             default -> null;
         };
     }

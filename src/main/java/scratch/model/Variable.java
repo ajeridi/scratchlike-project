@@ -17,6 +17,25 @@ public class Variable {
         this("", value);
     }
 
+    public Variable(String varString){
+        if (isNumber(varString)){
+            this.name.set("");
+            this.value.set(Double.parseDouble(varString));
+        }
+        else
+            this.name.set(varString);
+    }
+
+    private boolean isNumber(String varString) {
+        boolean isNumber = false;
+        try{
+            Double.parseDouble(varString);
+            isNumber = true;
+        } catch (Exception _){
+        }
+        return isNumber;
+    }
+
     public SimpleDoubleProperty valueProperty() {
         return value;
     }
@@ -45,13 +64,13 @@ public class Variable {
     }
 
 
-    public String validateName(String name){
+    public static String validateName(String name){
         if (!validateChars(name))
             return "Name can only contain letters, digits, or the _ symbol";
         return "";
     }
 
-    private boolean validateChars(String s){
+    private static boolean validateChars(String s){
         s = s.toLowerCase();
         for (int i = 0; i < s.length(); ++i) {
             char c = s.charAt(i);
@@ -69,11 +88,11 @@ public class Variable {
         return true;
     }
 
-    private boolean isNumeric(char c){
+    private static boolean isNumeric(char c){
         return c >= '0' && c <= '9';
     }
 
-    private boolean isAlpha(char c){
+    private static boolean isAlpha(char c){
         return c >= 'a' && c <= 'z';
     }
 

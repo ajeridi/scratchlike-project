@@ -37,6 +37,7 @@ public class InformationView extends VBox {
         setBindings();
 
         this.setStyle("-fx-border-color: black; -fx-border-width: 1px; -fx-padding: 10px;");
+        variableTable.setPrefHeight(100);
 
         setTableView();
 

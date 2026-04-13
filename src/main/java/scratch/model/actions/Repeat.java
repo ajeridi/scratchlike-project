@@ -22,6 +22,10 @@ public class Repeat extends Action {
         super(DEFAULT_REPEAT_NAME, DEFAULT_REPEAT_COLOR);
     }
 
+    public Repeat(String value){
+        super(value, DEFAULT_REPEAT_NAME, DEFAULT_REPEAT_COLOR);
+    }
+
     @Override
     public void execute(Scene scene) {
         var currentLoopIndexes = scene.getCurrentLoopIndexes();
@@ -65,7 +69,7 @@ public class Repeat extends Action {
 
     @Override
     public String toString() {
-        return super.toString() + " fois";
+        return getNom() + " " + getValue() + " fois";
     }
 
     @Override
