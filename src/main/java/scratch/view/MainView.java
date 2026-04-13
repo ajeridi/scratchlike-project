@@ -102,7 +102,7 @@ public class MainView extends VBox {
         mainContent.setSpacing(20);
         setMargin(catalogueView, new Insets(20, 20, 20, 20));
         setMargin(programView, new Insets(20, 20, 20, 20));
-        setMargin(sceneView, new Insets(20, 20, 20, 20));
+        setMargin(sceneAndInformation, new Insets(20, 20, 20, 20));
     }
 
     public void openFile() throws IOException {

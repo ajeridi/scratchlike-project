@@ -27,7 +27,7 @@ public class Repeat extends Action {
         var currentLoopIndexes = scene.getCurrentLoopIndexes();
         var repeat_index = scene.currentIndexProperty().get();
         currentLoopIndexes.add(repeat_index);
-        int counter = 0;
+        int counter = 1;
         var loopCounters = scene.getLoopCounters();
         loopCounters.push(counter);
         scene.getLoopActions().push(this);
