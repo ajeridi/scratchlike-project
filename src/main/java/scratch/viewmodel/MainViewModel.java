@@ -44,8 +44,8 @@ public class MainViewModel {
         return sceneViewModel;
     }
 
-    public boolean addToProgram(Action selectedAction){
-        return programViewModel.addToActionList(selectedAction);
+    public boolean addToProgram(Action selectedAction, String from){
+        return programViewModel.addToActionList(selectedAction, from);
     }
 
     public IntegerProperty getSelectedIndexProperty() {

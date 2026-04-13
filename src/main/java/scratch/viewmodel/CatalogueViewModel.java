@@ -18,8 +18,8 @@ public class CatalogueViewModel {
         return catalogue.getCatalogue();
     }
 
-    public boolean addToProgram(Action selectedAction){
-        return mainViewModel.addToProgram(selectedAction);
+    public boolean addToProgram(Action selectedAction, String from){
+        return mainViewModel.addToProgram(selectedAction, "from-catalogue");
     }
 
 

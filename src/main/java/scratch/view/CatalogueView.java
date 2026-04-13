@@ -42,7 +42,7 @@ public class CatalogueView extends VBox {
     }
 
     private boolean addToProgram(Action selectedAction){
-        return catalogueViewModel.addToProgram(selectedAction);
+        return catalogueViewModel.addToProgram(selectedAction, "from-catalogue");
     }
 
     private Action getSelectedAction() {

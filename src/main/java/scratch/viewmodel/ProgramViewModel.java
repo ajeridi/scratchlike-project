@@ -89,8 +89,8 @@ public class ProgramViewModel {
         return result;
     }
 
-    public boolean addToActionList(Action selectedAction){
-        return program.addToActionList(selectedAction);
+    public boolean addToActionList(Action selectedAction, String from){
+        return program.addToActionList(selectedAction, from);
     }
 
     public ObservableList<Action> getActions() {

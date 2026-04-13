@@ -30,28 +30,40 @@ public class Program {
         return actionList.isEmptyProperty();
     }
 
-    public boolean addToActionList(Action action){
-        // creer une action avec une valeur par defaut
-        Action default_action = action.create_default();
+    public boolean addToActionList(Action action, String from){
+        Action actionToAdd;
 
-        if (default_action.getType().equals("END_REPEAT")){
+
+        // creer une action avec une valeur par defaut, si on ajoute depuis le catalogue
+        if (from.equals("from-catalogue"))
+            actionToAdd = action.create_default();
+        else //sinon on ajoute l'action (par ex depuis file)
+            actionToAdd = action;
+
+
+        // si l'action est un end_repeat, on retire le dernier element de la boucle courante
+        if (actionToAdd.getType().equals("END_REPEAT")){
             loops.pop();
         }
 
-        if (!loops.isEmpty()){
+        if (!loops.isEmpty()){ // si on a une boucle courante
+            // on ajoute l'action dans la boucle courante (donc la liste d'action contenue dans le Repeat courant)
             var currentLoop = loops.peek();
-            currentLoop.add(default_action);
+            currentLoop.add(actionToAdd);
         }
 
-        default_action.setLoopDepth(loops.size());
+        // on defini la profondeur de l'action, qui va nous servir pour l'indentation
+        actionToAdd.setLoopDepth(loops.size());
 
-        if (default_action.getType().equals("REPEAT")){
-            loops.push(default_action.getActions());
+        // si l'action est un repeat, on defini la boucle courante comme etant la liste qu'elle contient
+        if (actionToAdd.getType().equals("REPEAT")){
+            loops.push(actionToAdd.getActions());
         }
-        return actionList.add(default_action);
+        return actionList.add(actionToAdd);
     }
 
     public void swapActions(int index1, int index2){
+        // echange la position de deux actions dans la liste
         actionList.swap(index1, index2);
     }
 
@@ -99,7 +111,7 @@ public class Program {
         for (String line : fileContent){
             Action action = ActionFactory.mapStringToAction(line);
             //actionList.add(action);
-            addToActionList(action);
+            addToActionList(action, "from-file");
         }
     }
 
