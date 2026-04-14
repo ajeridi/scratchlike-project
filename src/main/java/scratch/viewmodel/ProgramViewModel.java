@@ -212,4 +212,14 @@ public class ProgramViewModel {
                 currentSelectedAction
         );
     }
+
+    public BooleanBinding isValueNumeric() {
+        // methode qui va creer un BooleanBinding sur le fait que la variable dans userInput est numeric ou pas
+       return Bindings.createBooleanBinding(
+                () -> {
+                    return isDouble(variableInput.getValue()); //&& !getCurrentSelectedAction().getType().equals("END_REPEAT");
+                },
+                variableInput
+        );
+    }
 }

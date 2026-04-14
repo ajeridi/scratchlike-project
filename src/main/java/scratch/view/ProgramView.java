@@ -34,6 +34,9 @@ public class ProgramView extends VBox {
     private final Label valueErrorLabel = new Label("Erreur valeur");
     private final HBox targetHbox = new HBox();
     private final TextField detailTargetTextField = new TextField();
+    private final HBox valueIncrementDecrementBox = new HBox(); // box qui va contenir les boutons + et - pour augmenter la valeur des valeur literale
+    private final Button plus = new Button("+");
+    private final Button minus = new Button("-");
 
     private Action currentBindedAction;
     private final IntegerProperty indexToSelect = new SimpleIntegerProperty(); // va servir lors de l'execution du programme
@@ -152,6 +155,10 @@ public class ProgramView extends VBox {
         targetHbox.visibleProperty().bind(programViewModel.isTargetAction());
         targetHbox.managedProperty().bind(targetHbox.visibleProperty()); // si invisible, espace rempli par d'autres composants
 
+        // la box contenant le plus et le moins apparait uniquement si la valeur contenue dans le textfield est un nombre, et si le textfield value est visible
+        valueIncrementDecrementBox.visibleProperty().bind(programViewModel.isValueNumeric().and(detailActionValueTextField.visibleProperty()));
+        valueIncrementDecrementBox.managedProperty().bind(valueIncrementDecrementBox.visibleProperty()); // si invisible, espace rempli par d'autres composants
+
         setDetailElementsBindings();
         setButtonsBindings();
     }
@@ -254,7 +261,7 @@ public class ProgramView extends VBox {
     private void createAccordion(){
         VBox actionPaneBox = new VBox();
 
-        HBox topSection = new HBox(detailActionLabel, targetHbox, detailActionValueTextField, detailActionUnitLabel);
+        HBox topSection = new HBox(detailActionLabel, targetHbox, detailActionValueTextField, valueIncrementDecrementBox, detailActionUnitLabel);
 
         Label de = new Label("de");
         targetHbox.getChildren().addAll(detailTargetTextField, de);
@@ -266,6 +273,8 @@ public class ProgramView extends VBox {
         detailActionPane.setText("Detail de l'action");
         detailActionValueTextField.setPrefWidth(45);
         detailTargetTextField.setPrefWidth(45);
+
+        valueIncrementDecrementBox.getChildren().addAll(plus, minus);
 
        actionPaneBox.getChildren().addAll(topSection, valueErrorLabel);
         detailActionPane.setContent(actionPaneBox);
