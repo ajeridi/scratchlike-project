@@ -4,7 +4,6 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.collections.ObservableList;
 import scratch.model.actions.Action;
-import scratch.model.actions.Repeat;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,11 +68,39 @@ public class Program {
 
     public void up(int selectedIndex) {
         // monter la liste d'actions
+        // Avec l'introduction de Repeat, il faut qu'on puisse garder les bonnes indentations
+        // L'action montee, doit avoir l'indentation de l'action qu'elle remplace
+        // A l'exception de End_Repeat. Si je monte une action, et qu'elle prends la place de End_Repeat, elle rentre dans la boucle
+        // et donc elle aura comme indentation, celle de END_REPEAT + 1
+        // A noter : si on sort on entre dans une boucle, faudrait update les liste, je pense que ca va me servir pour les checks de compilations
+        var list = actionList.getActions();
+        Action upperAction = list.get(selectedIndex-1);
+        Action currentAction = list.get(selectedIndex);
+        int upperActionDepth = upperAction.getLoopDepth();
+        if (upperAction.getType().equals("END_REPEAT")){
+            // si l'action du dessus est un END_REPEAT, on rentre dans une boucle et donc on aura comme profondeur celle de END_REPEAT + 1
+            currentAction.setLoopDepth(upperActionDepth + 1);
+        }
+        else {
+            currentAction.setLoopDepth(upperActionDepth);
+        }
         actionList.swap(selectedIndex, selectedIndex - 1);
     }
 
     public void down(int selectedIndex){
         //  descendre la liste d'actions
+         //meme principe que UP, mais au lieu de END_REPEAT c'est REPEAT
+        var list = actionList.getActions();
+        Action lowerAction = list.get(selectedIndex+1);
+        Action currentAction = list.get(selectedIndex);
+        int lowerActionDepth = lowerAction.getLoopDepth();
+        if (lowerAction.getType().equals("REPEAT")){
+            // si l'action du dessous est un REPEAT, on rentre dans une boucle et donc on aura comme profondeur celle de REPEAT + 1
+            currentAction.setLoopDepth(lowerActionDepth + 1);
+        }
+        else {
+            currentAction.setLoopDepth(lowerActionDepth);
+        }
         actionList.swap(selectedIndex, selectedIndex+1);
     }
 
