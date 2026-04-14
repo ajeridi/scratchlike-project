@@ -222,4 +222,17 @@ public class ProgramViewModel {
                 variableInput
         );
     }
+
+    public void incrementValue() {
+        addOrSubstractValue(1);
+    }
+
+    private void addOrSubstractValue(int amount) {
+        var value = Double.parseDouble(variableInput.getValue());
+        variableInput.setValue(String.format("%.0f", value + amount));
+    }
+
+    public void decrementValue() {
+        addOrSubstractValue(-1);
+    }
 }

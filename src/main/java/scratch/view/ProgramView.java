@@ -97,6 +97,22 @@ public class ProgramView extends VBox {
         deleteAllBtn.setOnAction(actionEvent -> {
             deleteAllActions();
         });
+
+        // pour le bouton plus et le bouton moins, quand on clique dessus, on incremente la valeur contenue dans detailActionValueTextField
+        plus.setOnAction( actionEvent -> {
+            incrementValue();
+        });
+        minus.setOnAction(actionEvent -> {
+            decrementValue();
+        });
+    }
+
+    private void decrementValue() {
+        programViewModel.decrementValue();
+    }
+
+    private void incrementValue() {
+        programViewModel.incrementValue();
     }
 
     private void setListeners() {
