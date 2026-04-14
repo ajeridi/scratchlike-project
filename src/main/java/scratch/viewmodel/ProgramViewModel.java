@@ -224,10 +224,13 @@ public class ProgramViewModel {
     }
 
     public void incrementValue() {
+        // methode qui va incrementer la valeur contenue dans variable input
         addOrSubstractValue(1);
     }
 
     private void addOrSubstractValue(int amount) {
+        // methode qui va soit incrementer soit decrementer d'un certain amount la valeur contenue dans variableInput
+        // comme on est sur que cette fonction s'appelera quand la valeur est un double on ne check pas si c'est un double ou pas
         var value = Double.parseDouble(variableInput.getValue());
         variableInput.setValue(String.format("%.0f", value + amount));
     }

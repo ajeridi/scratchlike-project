@@ -290,6 +290,8 @@ public class ProgramView extends VBox {
         detailActionValueTextField.setPrefWidth(45);
         detailTargetTextField.setPrefWidth(45);
 
+
+        valueIncrementDecrementBox.setSpacing(5);
         valueIncrementDecrementBox.getChildren().addAll(plus, minus);
 
        actionPaneBox.getChildren().addAll(topSection, valueErrorLabel);
