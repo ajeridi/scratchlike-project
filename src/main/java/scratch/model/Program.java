@@ -29,7 +29,7 @@ public class Program {
         return actionList.isEmptyProperty();
     }
 
-    public boolean addToActionList(Action action, String from){
+    public boolean addToActionList(Action action, String from, int indexToAdd){
         Action actionToAdd;
 
 
@@ -58,6 +58,27 @@ public class Program {
         if (actionToAdd.getType().equals("REPEAT")){
             loops.push(actionToAdd.getActions());
         }
+
+        // si on a selectionne un index, on ne peut pas juste l'ajouter apres
+        // si on ajoute une action apres un repeat, il faut ajouter la bonne indentation
+        // techniquement ca va marcher comme un down
+        // donc on prends le depth de l'action qui precede, si c'est un repeat on ajoute + 1 au depth, sinon on garde le meme depth
+        // la prise en compte de l'ajout au bon index dans la liste contenue dans repeat se fera plus tard, ici on se preoccupe uniquement de l'ajout dans la liste programme
+        System.out.println("Index to add " + indexToAdd);
+        if (indexToAdd > 0 && indexToAdd != getActions().size()){ // si index est selectionne
+            var upperAction = getActions().get(indexToAdd-1);
+            var upperActionDepth = upperAction.getLoopDepth();
+            if (upperAction.getType().equals("REPEAT"))
+                actionToAdd.setLoopDepth(upperActionDepth+1); // on fait plus 1 au depth
+            else
+                actionToAdd.setLoopDepth(upperActionDepth);
+            // si l'action a ajoute est un end repeat, on fait -1 au depth
+            if (actionToAdd.getType().equals("END_REPEAT"))
+                actionToAdd.setLoopDepth(upperActionDepth-1);
+            getActions().add(indexToAdd, actionToAdd);
+            return true;
+        }
+
         return actionList.add(actionToAdd);
     }
 
@@ -98,9 +119,9 @@ public class Program {
             // si l'action du dessous est un REPEAT, on rentre dans une boucle et donc on aura comme profondeur celle de REPEAT + 1
             currentAction.setLoopDepth(lowerActionDepth + 1);
         }
-        else {
+        else
             currentAction.setLoopDepth(lowerActionDepth);
-        }
+
         actionList.swap(selectedIndex, selectedIndex+1);
     }
 
@@ -138,7 +159,7 @@ public class Program {
         for (String line : fileContent){
             Action action = ActionFactory.mapStringToAction(line);
             //actionList.add(action);
-            addToActionList(action, "from-file");
+            addToActionList(action, "from-file", -1);
         }
     }
 

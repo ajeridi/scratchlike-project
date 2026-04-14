@@ -121,6 +121,13 @@ public class ProgramView extends VBox {
                     selectAction(indexToSelect.getValue()); // selection depuis la scene permet de selectionner ici
                 })
         );
+
+        getActionsSelectedIndexProperty().addListener(
+                // si on veut ajouter une action apres l'index selectionne il faut notifier le viewModel
+                ((observableValue, number, t1) -> {
+                    programViewModel.setIndexToAdd(getSelectedIndex() +1);
+                })
+        );
     }
 
     private void selectAction(int index){

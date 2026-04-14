@@ -14,7 +14,8 @@ import scratch.model.actions.Var_Declaration;
 public class ProgramViewModel {
 
     private final Program program;
-    private final IntegerProperty selectedIndex = new SimpleIntegerProperty();
+    private final IntegerProperty selectedIndex = new SimpleIntegerProperty(); // index qui va selectionner l'action pendant execution donc de VM -> View
+    private int indexToAdd; // index d'insertion de la nouvelle action a partir de l'index selectionne dans la vue , View -> VM
     private final ObjectProperty<Action> currentSelectedAction = new SimpleObjectProperty<>();
     private final BooleanProperty isValidValue = new SimpleBooleanProperty();
     private final StringProperty variableInput = new SimpleStringProperty(); // valeur de la variable entree par le user
@@ -91,7 +92,7 @@ public class ProgramViewModel {
     }
 
     public boolean addToActionList(Action selectedAction, String from){
-        return program.addToActionList(selectedAction, from);
+        return program.addToActionList(selectedAction, from, indexToAdd);
     }
 
     public ObservableList<Action> getActions() {
@@ -237,5 +238,9 @@ public class ProgramViewModel {
 
     public void decrementValue() {
         addOrSubstractValue(-1);
+    }
+
+    public void setIndexToAdd(int i) {
+        indexToAdd = i;
     }
 }
