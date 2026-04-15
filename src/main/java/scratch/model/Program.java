@@ -29,6 +29,8 @@ public class Program {
         return actionList.isEmptyProperty();
     }
 
+    // BUG A RESOUDRE, AJOUT DE FIN REPETER APRES AVOIR AJOUTER A DES INDEX, FAIT CRASH SI ON AJOUTE A L'INTERIEUR D'UN REPEAT -> FAUT GERER LES AJOUTS DANS LES BOUCLES REPEAT
+    // FAUT TENIR COMPTE DE L'INDEX DU REPEAT DE LA BOUCLE COURANTE POUR DEFINIR L'INDEX DU OU PAS BREF A VOIR
     public boolean addToActionList(Action action, String from, int indexToAdd){
         Action actionToAdd;
 
