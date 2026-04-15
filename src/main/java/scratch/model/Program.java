@@ -141,12 +141,29 @@ public class Program {
         Action lowerAction = list.get(selectedIndex+1);
         Action currentAction = list.get(selectedIndex);
         int lowerActionDepth = lowerAction.getLoopDepth();
-        if (lowerAction.getType().equals("REPEAT") && !currentAction.getType().equals("END_REPEAT")){ // si mon action a descendre est un end repeat, elle ne rentre pas dans la boucle d'un repeat
-            // si l'action du dessous est un REPEAT, on rentre dans une boucle et donc on aura comme profondeur celle de REPEAT + 1
-            currentAction.setLoopDepth(lowerActionDepth + 1);
+
+        // cas end_repeat
+        if (currentAction.getType().equals("END_REPEAT")){
+            // si end_repeat descends en dessous d'un repeat, il prends sa profondeur (il referme le repeat)
+            if (lowerAction.getType().equals("REPEAT") || lowerAction.getType().equals(currentAction.getType())){
+                currentAction.setLoopDepth(lowerActionDepth);
+            }
         }
-        else
-            currentAction.setLoopDepth(lowerActionDepth);
+        // cas du repeat
+        else if (currentAction.getType().equals("REPEAT")){
+            if (lowerAction.getType().equals("END_REPEAT")) // si je descends en dessous d'un end_repeat je prends sa profondeur
+                currentAction.setLoopDepth(lowerActionDepth);
+            else if (lowerAction.getType().equals("REPEAT"))
+                currentAction.setLoopDepth(lowerActionDepth+1); // si je descends en dessous d'un repeat je rentre dans sa boucle
+        }
+        // les autres cas
+        else {
+            if (lowerAction.getType().equals("REPEAT"))
+                // si l'action du dessous est un REPEAT, on rentre dans une boucle et donc on aura comme profondeur celle de REPEAT + 1
+                currentAction.setLoopDepth(lowerActionDepth + 1);
+            else
+                currentAction.setLoopDepth(lowerActionDepth);
+        }
 
         actionList.swap(selectedIndex, selectedIndex+1);
     }
