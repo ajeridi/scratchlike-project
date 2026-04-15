@@ -1,16 +1,22 @@
 package scratch.viewmodel;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.util.Duration;
 import scratch.model.*;
 import scratch.model.actions.Action;
 import scratch.model.actions.Pen;
 import scratch.model.actions.Pen_Down;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class SceneViewModel {
     private final Scene scene;
@@ -22,6 +28,9 @@ public class SceneViewModel {
     private final BooleanProperty isExecuted = new SimpleBooleanProperty(false);
     private final BooleanProperty isAtLastAction = new SimpleBooleanProperty();
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
+
+
+    private final IntegerProperty fireSignal = new SimpleIntegerProperty(0); // sert de signal pour "cliquer sur le bouton Execute virtuellement
 
 
 
@@ -125,6 +134,7 @@ public class SceneViewModel {
             currentSelectedAction.get().execute(scene);
         // passer a l'action suivante
         currentActionIndex.set(currentActionIndex.get() + 1);
+        System.out.println("Next index = " + currentActionIndex.get());
     }
 
     public BooleanBinding isAtLastAction() {
@@ -179,4 +189,33 @@ public class SceneViewModel {
         );
     }
 
+    public void automaticExecution() throws InterruptedException { // https://docs.oracle.com/javase/8/javafx/api/javafx/animation/Timeline.html
+        executeProgram(); // on debute l'execution
+        // tant qu'on est dans la boucle, on appuie sur le bouton virtuellement avec fire
+            var timeline = new Timeline();
+            timeline.getKeyFrames().add(
+                    new KeyFrame(Duration.millis(200) ,event -> {
+                        fireSignal.set(fireSignal.get() + 1);
+                        if (isAtLastAction.get()){
+                            timeline.stop();
+                        }
+                        
+                    })
+            );
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+    }
+
+    private void refreshView() {
+        fireSignal.add(1);
+    }
+
+
+    public int getFireSignal() {
+        return fireSignal.get();
+    }
+
+    public IntegerProperty fireSignalProperty() {
+        return fireSignal;
+    }
 }
