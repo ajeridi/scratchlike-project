@@ -29,21 +29,34 @@ public class Program {
         return actionList.isEmptyProperty();
     }
 
-    // BUG A RESOUDRE, AJOUT DE FIN REPETER APRES AVOIR AJOUTER A DES INDEX, FAIT CRASH SI ON AJOUTE A L'INTERIEUR D'UN REPEAT -> FAUT GERER LES AJOUTS DANS LES BOUCLES REPEAT
-    // FAUT TENIR COMPTE DE L'INDEX DU REPEAT DE LA BOUCLE COURANTE POUR DEFINIR L'INDEX DU OU PAS BREF A VOIR
     public boolean addToActionList(Action action, String from, int indexToAdd){
+        Action actionToAdd = createActionToAdd(action, from);
+        // ON va separer l'ajout au milieu et l'ajout en fin
+        // si on a selectionne un index, on ne peut pas juste l'ajouter apres
+        // si on ajoute une action apres un repeat, il faut ajouter la bonne indentation
+        // techniquement ca va marcher comme un down
+        // donc on prends le depth de l'action qui precede, si c'est un repeat on ajoute + 1 au depth, sinon on garde le meme depth
+        System.out.println("Index to add " + indexToAdd);
+        if (indexToAdd > 0 && indexToAdd != getActions().size()){ // si index est selectionne
+            addToMiddleOfProgram(indexToAdd, actionToAdd);
+            return true;
+        }
+        return addToEndOfProgram(actionToAdd);
+    }
+
+    private Action createActionToAdd(Action action, String from) {
         Action actionToAdd;
-
-
         // creer une action avec une valeur par defaut, si on ajoute depuis le catalogue
         if (from.equals("from-catalogue"))
             actionToAdd = action.create_default();
         else //sinon on ajoute l'action (par ex depuis file)
             actionToAdd = action;
+        return actionToAdd;
+    }
 
-
+    private boolean addToEndOfProgram(Action actionToAdd) {
         // si l'action est un end_repeat, on retire le dernier element de la boucle courante
-        if (actionToAdd.getType().equals("END_REPEAT")){
+        if (actionToAdd.getType().equals("END_REPEAT") && !loops.isEmpty()){
             loops.pop();
         }
 
@@ -61,27 +74,38 @@ public class Program {
             loops.push(actionToAdd.getActions());
         }
 
-        // si on a selectionne un index, on ne peut pas juste l'ajouter apres
-        // si on ajoute une action apres un repeat, il faut ajouter la bonne indentation
-        // techniquement ca va marcher comme un down
-        // donc on prends le depth de l'action qui precede, si c'est un repeat on ajoute + 1 au depth, sinon on garde le meme depth
-        // la prise en compte de l'ajout au bon index dans la liste contenue dans repeat se fera plus tard, ici on se preoccupe uniquement de l'ajout dans la liste programme
-        System.out.println("Index to add " + indexToAdd);
-        if (indexToAdd > 0 && indexToAdd != getActions().size()){ // si index est selectionne
-            var upperAction = getActions().get(indexToAdd-1);
-            var upperActionDepth = upperAction.getLoopDepth();
-            if (upperAction.getType().equals("REPEAT"))
-                actionToAdd.setLoopDepth(upperActionDepth+1); // on fait plus 1 au depth
-            else
-                actionToAdd.setLoopDepth(upperActionDepth);
-            // si l'action a ajoute est un end repeat, on fait -1 au depth
-            if (actionToAdd.getType().equals("END_REPEAT"))
-                actionToAdd.setLoopDepth(upperActionDepth-1);
-            getActions().add(indexToAdd, actionToAdd);
-            return true;
-        }
 
         return actionList.add(actionToAdd);
+    }
+
+    private void addToMiddleOfProgram(int indexToAdd, Action actionToAdd) {
+        var upperAction = getActions().get(indexToAdd -1);
+        var upperActionDepth = upperAction.getLoopDepth();
+        String upperActionType = upperAction.getType();
+
+        // cas du end_repeat
+        if (actionToAdd.getType().equals("END_REPEAT")){
+            // si j'ajoute apres un repeat je garde le meme depth, vu que je ferme la boucle
+            if (upperActionType.equals("REPEAT")){
+                actionToAdd.setLoopDepth(upperActionDepth);
+            }
+            // sinon si la profondeur de l'action du dessus est > 0 (donc dans une boucle), on fait depth -1 (on ferme la boucle)
+            else if (upperActionDepth > 0) {
+                actionToAdd.setLoopDepth(upperActionDepth-1);
+            }
+        }
+        // si l'action n'est pas un repeat
+        else {
+            // si on ajoute apres une action, on doit garder la meme profondeur sauf si
+            if (upperActionType.equals("REPEAT")){
+                 // si ajout apres repeat, on rentre dans une boucle donc on augmente la profondeur
+                actionToAdd.setLoopDepth(upperActionDepth+1);
+            }
+            else {
+                actionToAdd.setLoopDepth(upperActionDepth);
+            }
+        }
+        getActions().add(indexToAdd, actionToAdd);
     }
 
     public void swapActions(int index1, int index2){
@@ -117,7 +141,7 @@ public class Program {
         Action lowerAction = list.get(selectedIndex+1);
         Action currentAction = list.get(selectedIndex);
         int lowerActionDepth = lowerAction.getLoopDepth();
-        if (lowerAction.getType().equals("REPEAT")){
+        if (lowerAction.getType().equals("REPEAT") && !currentAction.getType().equals("END_REPEAT")){ // si mon action a descendre est un end repeat, elle ne rentre pas dans la boucle d'un repeat
             // si l'action du dessous est un REPEAT, on rentre dans une boucle et donc on aura comme profondeur celle de REPEAT + 1
             currentAction.setLoopDepth(lowerActionDepth + 1);
         }
