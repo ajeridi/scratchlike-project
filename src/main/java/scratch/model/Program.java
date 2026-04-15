@@ -29,17 +29,8 @@ public class Program {
         return actionList.isEmptyProperty();
     }
 
-    // BUG A RESOUDRE, AJOUT DE FIN REPETER APRES AVOIR AJOUTER A DES INDEX, FAIT CRASH SI ON AJOUTE A L'INTERIEUR D'UN REPEAT -> FAUT GERER LES AJOUTS DANS LES BOUCLES REPEAT
-    // FAUT TENIR COMPTE DE L'INDEX DU REPEAT DE LA BOUCLE COURANTE POUR DEFINIR L'INDEX DU OU PAS BREF A VOIR
     public boolean addToActionList(Action action, String from, int indexToAdd){
-        Action actionToAdd;
-
-        // creer une action avec une valeur par defaut, si on ajoute depuis le catalogue
-        if (from.equals("from-catalogue"))
-            actionToAdd = action.create_default();
-        else //sinon on ajoute l'action (par ex depuis file)
-            actionToAdd = action;
-
+        Action actionToAdd = createActionToAdd(action, from);
         // ON va separer l'ajout au milieu et l'ajout en fin
         // si on a selectionne un index, on ne peut pas juste l'ajouter apres
         // si on ajoute une action apres un repeat, il faut ajouter la bonne indentation
@@ -50,8 +41,22 @@ public class Program {
             addToMiddleOfProgram(indexToAdd, actionToAdd);
             return true;
         }
+        return addToEndOfProgram(actionToAdd);
+    }
+
+    private Action createActionToAdd(Action action, String from) {
+        Action actionToAdd;
+        // creer une action avec une valeur par defaut, si on ajoute depuis le catalogue
+        if (from.equals("from-catalogue"))
+            actionToAdd = action.create_default();
+        else //sinon on ajoute l'action (par ex depuis file)
+            actionToAdd = action;
+        return actionToAdd;
+    }
+
+    private boolean addToEndOfProgram(Action actionToAdd) {
         // si l'action est un end_repeat, on retire le dernier element de la boucle courante
-        if (actionToAdd.getType().equals("END_REPEAT")){
+        if (actionToAdd.getType().equals("END_REPEAT") && !loops.isEmpty()){
             loops.pop();
         }
 
