@@ -44,7 +44,7 @@ public class Repeat extends Action {
 
     @Override
     public Action create_default() {
-        return new Repeat(0, DEFAULT_REPEAT_NAME, DEFAULT_REPEAT_COLOR);
+        return new Repeat(4, DEFAULT_REPEAT_NAME, DEFAULT_REPEAT_COLOR);
     }
 
     @Override
