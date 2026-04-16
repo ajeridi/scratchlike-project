@@ -45,6 +45,7 @@ public class Program {
         if (getActions().isEmpty())
             return false;
         Set<String> variables = new HashSet();
+        Stack<Action> openLoops = new Stack<>();
         int i = 0;
         while (i < getActions().size() && getActions().get(i).getType().equals("VAR_DECLARATION")){ // tant qu'on est dans lz zone de de declaration de variable,
             var action = getActions().get(i);
@@ -78,9 +79,21 @@ public class Program {
             if (action instanceof Pen)
                 current_pen_action = action;
 
+            // pour les boucles, chaque fois qu'on rencontre un repeat on rentre dans une boucle, donc on l'ajoute dans la pile de boucle ouvertes
+            if (actionType.equals("REPEAT")){
+                openLoops.push(action);
+            }
+            // si l'action est un end_repeat, on est cense ferme une boucle, donc si aucune boucle est ouverte, retourner false, sinon refermer la boucle
+            if (actionType.equals("END_REPEAT")){
+                if (openLoops.isEmpty()) // si aucune boucle a ferme, retourner faux
+                    return false;
+                else // sinon fermer la boucle en enlevant de la file une boucle ouverte
+                    openLoops.pop();
+            }
             i++;
         }
-        return true;
+        // si il nous reste des boucles ouvertes, retourner faux
+        return openLoops.isEmpty();
 
     }
 
