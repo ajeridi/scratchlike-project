@@ -1,16 +1,23 @@
 package scratch.viewmodel;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.util.Duration;
 import scratch.model.*;
 import scratch.model.actions.Action;
 import scratch.model.actions.Pen;
 import scratch.model.actions.Pen_Down;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class SceneViewModel {
     private final Scene scene;
@@ -22,6 +29,15 @@ public class SceneViewModel {
     private final BooleanProperty isExecuted = new SimpleBooleanProperty(false);
     private final BooleanProperty isAtLastAction = new SimpleBooleanProperty();
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
+
+
+    //execution automatique
+    private final IntegerProperty fireSignal = new SimpleIntegerProperty(0); // sert de signal pour "cliquer sur le bouton Execute virtuellement
+    private final Timeline timeline = new Timeline();
+    private final DoubleProperty sliderSpeed = new SimpleDoubleProperty(); // propriete de la vitesse d'execution, qui sera binde au slider de la vue
+
+
+    private final BooleanProperty programIsRunning = new SimpleBooleanProperty(false); // va permettre de savoir si le programme est en cours d'execution ou pas
 
 
 
@@ -87,6 +103,21 @@ public class SceneViewModel {
                         isExecuted.set(false); // fin de l'execution
                 })
         );
+
+        // listener sur le changement de valeur de vitesse, pour creer un nouveau keyframe et l'ajouter a la timeline
+        sliderSpeed.addListener(
+                ((observableValue, number, t1) -> {
+                    var newKeyFrame = createKeyFrame();
+                    // si on est en plein milieu d'execution
+                    if (timeline.getStatus().equals(Animation.Status.RUNNING)){
+                        timeline.stop(); // on pause l'execution
+                        var keyframes = timeline.getKeyFrames();
+                        keyframes.clear(); // on supprime le keyframe existant
+                        keyframes.add(newKeyFrame);
+                        timeline.play();
+                    }
+                })
+        );
     }
 
     public void loadProgram() {
@@ -125,6 +156,7 @@ public class SceneViewModel {
             currentSelectedAction.get().execute(scene);
         // passer a l'action suivante
         currentActionIndex.set(currentActionIndex.get() + 1);
+        System.out.println("Next index = " + currentActionIndex.get());
     }
 
     public BooleanBinding isAtLastAction() {
@@ -179,4 +211,69 @@ public class SceneViewModel {
         );
     }
 
+    public void automaticExecution() throws InterruptedException { // https://docs.oracle.com/javase/8/javafx/api/javafx/animation/Timeline.html
+        executeProgram(); // on debute l'execution
+        /*
+        * On cree une timeline, qui va contenir un keyFrame, c'est a dire une une boucle qui va s'executer puis se reexecuter apres une certaine duree
+        * Lors de l'execution automatique, ce qu'on fait c'est on appuie virtuellement sur le bouton suivant dans la vue, en envoyant un signal a la vue d'executer next action
+        * une fois qu'on arrive a la derniere action, on arrete la timeline
+        *
+        * Comme on ne peut pas directement modifier la duration de la timeline, lorsqu'on modifie la valeur du slider, il faut generer un nouveau KeyFrame
+        * et l'ajouter a la timeline
+        * https://stackoverflow.com/questions/19549852/javafx-binding-timelines-duration-to-a-property
+        * */
+        // tant qu'on est dans la boucle, on appuie sur le bouton virtuellement avec fire
+            timeline.getKeyFrames().add(createKeyFrame());
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+            programIsRunning.set(true);
+    }
+
+    private KeyFrame createKeyFrame(){
+        return new KeyFrame(
+                Duration.seconds(getSliderSpeed()),
+                actionEvent -> {
+                    fireSignal.set(fireSignal.get() + 1);
+                    if (isAtLastAction.get()){
+                        timeline.stop();
+                    }
+                }
+        );
+    }
+
+
+    private void refreshView() {
+        fireSignal.add(1);
+    }
+
+
+    public int getFireSignal() {
+        return fireSignal.get();
+    }
+
+    public IntegerProperty fireSignalProperty() {
+        return fireSignal;
+    }
+
+    public double getSliderSpeed() {
+        return sliderSpeed.get();
+    }
+
+    public DoubleProperty sliderSpeedProperty() {
+        return sliderSpeed;
+    }
+
+
+    public boolean isProgramIsRunning() {
+        return programIsRunning.get();
+    }
+
+    public BooleanProperty programIsRunningProperty() {
+        return programIsRunning;
+    }
+
+    public void stopProgram() {
+        timeline.stop(); // on arrete la timeline
+        programIsRunningProperty().set(false); // on que le programme est arrete
+    }
 }
