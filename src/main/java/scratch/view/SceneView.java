@@ -1,7 +1,9 @@
 package scratch.view;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -53,6 +55,7 @@ public class SceneView extends VBox {
     private final Slider automaticExecutionSpeedSlider = new Slider(0.01, 5, 0.25);
 
     private final IntegerProperty nextActionSignal = new SimpleIntegerProperty(0); // va binder au view model pour signaler l'appui sur le bouton execute
+    private final Button stopBtn = new Button("Arreter");
 
 
 
@@ -63,13 +66,8 @@ public class SceneView extends VBox {
         addListeners();
         setCanvas();
         setExecutionModeBox();
-
-
         setAutomaticExecutionSpeedSlider();
-
-
         this.getChildren().addAll(titleLbl, canvasHolder,executionModeBox, buttons, automaticExecutionSpeedSlider);
-
         setActions();
         buttons.setAlignment(Pos.CENTER);
     }
@@ -132,6 +130,17 @@ public class SceneView extends VBox {
 
         nextActionSignal.bind(sceneViewModel.fireSignalProperty()); // signal d'execution de la prochaine action, envoye par la VM pour signaler l'execution de la prochaine Action
         automaticExecutionSpeedSlider.valueProperty().bindBidirectional(sceneViewModel.sliderSpeedProperty()); // binding entre la valeur de la vitesse de la vue et celle dans le VM
+
+        // le bouton stop doit etre visible uniquement si on est en mode execution automatique
+        stopBtn.visibleProperty().bind(automaticModeCheckBox.selectedProperty());
+        // bouton stop actif uniquement si le program est en cours d'execution automatique
+        stopBtn.disableProperty().bind(programIsRunning().not());
+    }
+
+    private BooleanProperty programIsRunning() {
+        // retourne si le programme est en cours d'execution (donc si timeline is running)
+        return sceneViewModel.programIsRunningProperty();
+
     }
 
     private void addListeners() {
@@ -192,6 +201,12 @@ public class SceneView extends VBox {
                     nextAction();
             }
         });
+
+        stopBtn.setOnAction( // stopper le programme
+                actionEvent -> {
+                    sceneViewModel.stopProgram();
+                }
+        );
     }
 
     private void loadProgram() {
@@ -259,7 +274,7 @@ public class SceneView extends VBox {
     }
 
     public HBox makeButtonsHbox() {
-        return new HBox(loadBtn, executeBtn);
+        return new HBox(loadBtn, executeBtn, stopBtn);
     }
 
     private void drawTurtle(GraphicsContext gc) {

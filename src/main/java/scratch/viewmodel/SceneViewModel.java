@@ -37,6 +37,9 @@ public class SceneViewModel {
     private final DoubleProperty sliderSpeed = new SimpleDoubleProperty(); // propriete de la vitesse d'execution, qui sera binde au slider de la vue
 
 
+    private final BooleanProperty programIsRunning = new SimpleBooleanProperty(false); // va permettre de savoir si le programme est en cours d'execution ou pas
+
+
 
     private final ObjectProperty<Action> currentSelectedAction = new SimpleObjectProperty<>();
 
@@ -223,11 +226,11 @@ public class SceneViewModel {
             timeline.getKeyFrames().add(createKeyFrame());
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
+            programIsRunning.set(true);
     }
 
     private KeyFrame createKeyFrame(){
         return new KeyFrame(
-
                 Duration.seconds(getSliderSpeed()),
                 actionEvent -> {
                     fireSignal.set(fireSignal.get() + 1);
@@ -258,5 +261,19 @@ public class SceneViewModel {
 
     public DoubleProperty sliderSpeedProperty() {
         return sliderSpeed;
+    }
+
+
+    public boolean isProgramIsRunning() {
+        return programIsRunning.get();
+    }
+
+    public BooleanProperty programIsRunningProperty() {
+        return programIsRunning;
+    }
+
+    public void stopProgram() {
+        timeline.stop(); // on arrete la timeline
+        programIsRunningProperty().set(false); // on que le programme est arrete
     }
 }
