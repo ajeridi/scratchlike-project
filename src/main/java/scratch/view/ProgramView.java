@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import scratch.model.actions.Action;
 import scratch.model.actions.Pen;
 import scratch.viewmodel.ProgramViewModel;
@@ -344,6 +345,11 @@ public class ProgramView extends VBox {
                 // pour pouvoir faire un encadre rouge qui ne fait pas la longueur de la cellule, il faut mettre le string de l'action dans un label
                 // donc un setText(string) ne suffit plus
                 final Label actionLabel = new Label();
+                final Circle circle = new Circle(2);
+                final HBox box = new HBox();
+                box.setSpacing(3);
+                box.getChildren().addAll(circle, actionLabel);
+                box.setAlignment(Pos.BASELINE_LEFT);
                 if (empty || action == null) {
                     setGraphic(null);
 /*
@@ -353,12 +359,15 @@ public class ProgramView extends VBox {
                 } else {
                     // on ajoute autant d'indentation que
                     //System.out.println(action.toString());
-                    actionLabel.setText(action.getIndentation() + action.toString());
+                    actionLabel.setText(action.toString());
                     actionLabel.setStyle("-fx-text-fill: " + action.getColor() + ";");
                     // si y'a runtime error faut entourer l'action
                     if (action.isHasError()) // si le label runtime error est visible
                         actionLabel.setStyle("-fx-border-color: red; -fx-text-fill: " + action.getColor() + ";");
-                    setGraphic(actionLabel);
+                    circle.setStroke(Color.web(action.getColor()));
+                    circle.setFill(Color.web(action.getColor()));
+                    box.setPadding(new Insets(0,0,0, 25 * action.getLoopDepth()));
+                    setGraphic(box);
                 }
             }
         });
