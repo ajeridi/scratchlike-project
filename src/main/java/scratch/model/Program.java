@@ -1,21 +1,106 @@
 package scratch.model;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import scratch.model.actions.Action;
+import scratch.model.actions.Pen;
+import scratch.model.actions.Pen_Down;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class Program {
 
     private final ActionList actionList = new ActionList();
     private final Stack<ActionList> loops = new Stack<>();
+
+    public boolean isIsValidProgram() {
+        return isValidProgram.get();
+    }
+
+    public BooleanProperty isValidProgramProperty() {
+        return isValidProgram;
+    }
+
+    private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
+
+    public Program() {
+        getActions().addListener( (ListChangeListener<Action>)change -> {
+            isValidProgram.set(compileProgram());
+        });
+    }
+
+    private boolean compileProgram() {
+        // methode qui va proceder "compiler" le programme et dire s'il est chargeable ou pas
+        // on doit verifier que les declarations de variables sont bien en debut de programme
+        // on suppose que la valeur des variables est ok
+        if (getActions().isEmpty())
+            return false;
+        Set<String> variables = new HashSet();
+        Stack<Action> openLoops = new Stack<>();
+        int i = 0;
+        while (i < getActions().size() && getActions().get(i).getType().equals("VAR_DECLARATION")){ // tant qu'on est dans lz zone de de declaration de variable,
+            var action = getActions().get(i);
+            if (action.getVariable().getName().isEmpty()) // si aucune variable declaree
+                return false;
+            variables.add(getActions().get(i).variableName());  //on ajoute les noms des variables a un set, pour pouvoir verifier l'existance des variables plus tard
+            i++;
+        }
+
+        Action current_pen_action = new Pen_Down(); // pour verifier si on a deux Action pen successifs
+        while(i < getActions().size()){ // on continue la suite apres avoir depasse la zone de declaration
+            Action action = getActions().get(i);
+            String actionType = action.getType();
+            // si on a une declaration, pas bon
+            if (actionType.equals("VAR_DECLARATION"))
+                return false;
+
+            // si l'action a une variable non declaree
+            if (action.getVariable().hasName() && !variables.contains(action.getVariable().getName()))
+                return false;
+            // si on a une action avec une variable cible, celle ci doit exister aussi
+            if (actionType.equals("VAR_ASSIGNMENT") || actionType.equals("INCREMENT_VARIABLE")){
+                if (!variables.contains(action.getTarget()))
+                    return false;
+            }
+
+            if (actionType.equals(current_pen_action.getType())){
+                return false; // deux action pen du meme type se suivent
+            }
+            // s'ils ne sont pas du meme type et que action est de type Pen
+            if (action instanceof Pen)
+                current_pen_action = action;
+
+            // pour les boucles, chaque fois qu'on rencontre un repeat on rentre dans une boucle, donc on l'ajoute dans la pile de boucle ouvertes
+            if (actionType.equals("REPEAT")){
+                openLoops.push(action);
+            }
+            // si l'action est un end_repeat, on est cense ferme une boucle, donc si aucune boucle est ouverte, retourner false, sinon refermer la boucle
+            if (actionType.equals("END_REPEAT")){
+                if (openLoops.isEmpty()) // si aucune boucle a ferme, retourner faux
+                    return false;
+                else // sinon fermer la boucle en enlevant de la file une boucle ouverte
+                    openLoops.pop();
+            }
+
+            // si l'action est un increment, si il est dans une boucle et que le target est le meme que la variable de la boucle, return false
+            if (actionType.equals("INCREMENT_VARIABLE") && !openLoops.isEmpty() && openLoops.peek().getVariable().getName().equals(action.getTarget())){
+                    return false;
+            }
+            i++;
+        }
+        // si il nous reste des boucles ouvertes, retourner faux
+        return openLoops.isEmpty();
+
+    }
 
     public ObservableList<Action> getActions() {
         return actionList.getActions();
@@ -36,7 +121,7 @@ public class Program {
         // si on ajoute une action apres un repeat, il faut ajouter la bonne indentation
         // techniquement ca va marcher comme un down
         // donc on prends le depth de l'action qui precede, si c'est un repeat on ajoute + 1 au depth, sinon on garde le meme depth
-        System.out.println("Index to add " + indexToAdd);
+        //System.out.println("Index to add " + indexToAdd);
         if (indexToAdd > 0 && indexToAdd != getActions().size()){ // si index est selectionne
             addToMiddleOfProgram(indexToAdd, actionToAdd);
             return true;
@@ -211,5 +296,17 @@ public class Program {
         for (String action : newFileContent){
             Files.write(file.toPath(), newFileContent);
         }
+    }
+
+    public BooleanBinding isValid() {
+        // Boolean binding sur la compilation du programme, executee a chaque changement sur la liste d'actions
+        return Bindings.createBooleanBinding(
+                () -> {
+                    var ok = compileProgram();
+                    System.out.println("Program compiled = " + ok);
+                    return ok;
+                },
+                getActions()
+        );
     }
 }

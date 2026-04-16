@@ -11,13 +11,8 @@ import javafx.collections.ObservableList;
 import javafx.util.Duration;
 import scratch.model.*;
 import scratch.model.actions.Action;
-import scratch.model.actions.Pen;
-import scratch.model.actions.Pen_Down;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class SceneViewModel {
     private final Scene scene;
@@ -29,6 +24,9 @@ public class SceneViewModel {
     private final BooleanProperty isExecuted = new SimpleBooleanProperty(false);
     private final BooleanProperty isAtLastAction = new SimpleBooleanProperty();
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
+    private BooleanProperty automaticModeSelected = new SimpleBooleanProperty(false);
+    private BooleanProperty manualModeSelected = new SimpleBooleanProperty(false);
+    private Action faultyAction;
 
 
     //execution automatique
@@ -36,6 +34,7 @@ public class SceneViewModel {
     private final Timeline timeline = new Timeline();
     private final DoubleProperty sliderSpeed = new SimpleDoubleProperty(); // propriete de la vitesse d'execution, qui sera binde au slider de la vue
     private final BooleanProperty programIsRunning = new SimpleBooleanProperty(false); // va permettre de savoir si le programme est en cours d'execution ou pas
+    private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
 
 
 
@@ -70,14 +69,17 @@ public class SceneViewModel {
         ObservableList<Action> actions = mainViewModel.getActionsList();
 
         // si la liste d'actions du programme est modifiee, isLoaded = false
+        // pour ca que si les actions on un target, on rajoute un observable sur le target
         actions.addListener((ListChangeListener<? super Action>) change -> {
             while (change.next()){
-                programChanged.set(true);
-                isLoaded.set(false);
+                programChanged.set(true); //on notifie que le programme a change
+                isLoaded.set(false); // le programme doit etre recharge
             }
         });
 
-        isValidProgram.bind(Bindings.createBooleanBinding(
+        isValidProgram.bind(mainViewModel.isValidProgramProperty());
+/*
+                Bindings.createBooleanBinding(
                 () -> {
                     Action current_pen_action = new Pen_Down();
                     for (Action action : actions){
@@ -91,7 +93,7 @@ public class SceneViewModel {
                     return true;
                 },
                 actions
-        ));
+*/
 
         isAtLastAction.bind(isAtLastAction());
 
@@ -131,7 +133,12 @@ public class SceneViewModel {
         programChanged.set(false);
         isExecuted.set(false);
         currentActionIndex.set(-1); // forcer le changement d'index
-        Variable_Table.getVariables().clear();
+        Variable_Table.getVariables().clear(); // clear la table de variables
+        runtimeError.set(false); // runtime error cleared
+        if (faultyAction != null) {
+            faultyAction.setHasError(false); // on dit que l'action n'a plus d'erreur
+            faultyAction = null;
+        }
     }
 
     public void newProgram() {
@@ -150,11 +157,26 @@ public class SceneViewModel {
 
     public void nextAction() {
         // executer l'action
-        if (currentSelectedAction.get() != null)
+        Action action = currentSelectedAction.get();
+        if (action != null){
+            // pendant l'execution il faut verifier la validite de l'action dans le cas ou elle a une variable entiere non variable
+            if (!action.getType().equals("VAR_DECLARATION") && !action.isValidValue(action.getValue())) { // si la valeur de l'action n'est pas valide (on saute si c'est une var declaration)
+                // on arrete le programme
+                stopProgram();
+                runtimeError.set(true); // on dit qu'on a une runtime error
+                action.setHasError(true);
+                faultyAction = action;
+                return; // return pour ne pas executer l'action et passer a la suivante
+            }
             currentSelectedAction.get().execute(scene);
+        }
         // passer a l'action suivante
         currentActionIndex.set(currentActionIndex.get() + 1);
-        System.out.println("Next index = " + currentActionIndex.get());
+        //System.out.println("Next index = " + currentActionIndex.get());
+    }
+
+    public BooleanProperty runtimeErrorProperty(){
+        return runtimeError;
     }
 
     public BooleanBinding isAtLastAction() {
@@ -191,19 +213,22 @@ public class SceneViewModel {
     }
 
     // correction iteration 1
-    public BooleanBinding canExecute() {
+    public BooleanBinding cannotExecute() {
         return Bindings.createBooleanBinding(
                 () -> {
-                    return !isLoaded.get() || (isLoaded.get() && isAtLastAction.get()) || (!isValidProgram.get());
+                    // ne peut pas s'executer si non charge, si charge et a la derniere action ou si programme non valide, si runtime error, si aucun mode  d'execution selectionne
+                    return !isLoaded.get() || (isLoaded.get() && isAtLastAction.get()) || (!isValidProgram.get()) || runtimeError.get() || (!automaticModeSelected.get()  && !manualModeSelected.get()) ;
                 },
-                isLoaded, isAtLastAction, isValidProgram
+                isLoaded, isAtLastAction, isValidProgram, runtimeError, automaticModeSelected, manualModeSelected
         );
     }
+
 
     public BooleanBinding canLoad() {
         return Bindings.createBooleanBinding(
                 () -> {
-                    return isActionsListEmpty().get() || !isValidProgram.get();
+                    return isValidProgram.get(); // on verifie si le programme est vide dans la validation du programme
+                    //!isActionsListEmpty().get() && isValidProgram.get();
                 },
                 isActionsListEmpty(), isValidProgram
         );
@@ -273,5 +298,13 @@ public class SceneViewModel {
     public void stopProgram() {
         timeline.stop(); // on arrete la timeline
         programIsRunningProperty().set(false); // on que le programme est arrete
+    }
+
+    public BooleanProperty automaticModeSelectedProperty() {
+        return automaticModeSelected;
+    }
+
+    public BooleanProperty manualModeSelectedProperty(){
+        return manualModeSelected;
     }
 }

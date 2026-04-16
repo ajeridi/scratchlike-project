@@ -10,6 +10,7 @@ public abstract class Action {
     private final String nom;
    // private final SimpleDoubleProperty value = new SimpleDoubleProperty();
     private static final double DEFAULT_ACTION_VALUE = 0;
+    private boolean hasError = false; // va servir pour encadrer l'Action dans la listView en rouge
 
     public Variable getVariable() {
         return variable;
@@ -132,5 +133,13 @@ public abstract class Action {
 
     public String getStringValue() {
         return variable.getStringValue();
+    }
+
+    public boolean isHasError() {
+        return hasError;
+    }
+
+    public void setHasError(boolean hasError) {
+        this.hasError = hasError;
     }
 }

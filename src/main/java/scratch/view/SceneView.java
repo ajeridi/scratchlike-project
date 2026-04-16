@@ -3,7 +3,6 @@ package scratch.view;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -51,7 +50,6 @@ public class SceneView extends VBox {
     private final CheckBox automaticModeCheckBox = new CheckBox("Execution automatique");
     private final CheckBox manualModeCheckBox = new CheckBox("Execution manuelle");
     private final HBox executionModeBox = new HBox();
-
     private final Slider automaticExecutionSpeedSlider = new Slider(0.01, 5, 0.25);
 
     private final IntegerProperty nextActionSignal = new SimpleIntegerProperty(0); // va binder au view model pour signaler l'appui sur le bouton execute
@@ -123,9 +121,11 @@ public class SceneView extends VBox {
         executeBtn.disableProperty().bind(isLoaded.not().or(isLoaded.and(sceneViewModel.isAtLastAction())).or(isValidProgram.not()));
         loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty().or(isValidProgram.not()));
 */
+        automaticModeCheckBox.selectedProperty().bindBidirectional(sceneViewModel.automaticModeSelectedProperty());
+        manualModeCheckBox.selectedProperty().bindBidirectional(sceneViewModel.manualModeSelectedProperty());
         // correction iteration 1
-        executeBtn.disableProperty().bind(sceneViewModel.canExecute());
-        loadBtn.disableProperty().bind(sceneViewModel.canLoad());
+        executeBtn.disableProperty().bind(sceneViewModel.cannotExecute());
+        loadBtn.disableProperty().bind(sceneViewModel.canLoad().not());
 
 
         nextActionSignal.bind(sceneViewModel.fireSignalProperty()); // signal d'execution de la prochaine action, envoye par la VM pour signaler l'execution de la prochaine Action

@@ -14,6 +14,7 @@ import scratch.model.actions.Var_Declaration;
 public class ProgramViewModel {
 
     private final Program program;
+    private final MainViewModel mainViewModel;
     private final IntegerProperty selectedIndex = new SimpleIntegerProperty(); // index qui va selectionner l'action pendant execution donc de VM -> View
     private int indexToAdd; // index d'insertion de la nouvelle action a partir de l'index selectionne dans la vue , View -> VM
     private final ObjectProperty<Action> currentSelectedAction = new SimpleObjectProperty<>();
@@ -22,9 +23,20 @@ public class ProgramViewModel {
     private final StringProperty targetInput = new SimpleStringProperty();
 
 
-    public ProgramViewModel(Program program) {
-        this.program = program;
+    private final BooleanProperty isValidProgram = new SimpleBooleanProperty(); // propriete de validation du programme
+    private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
+    private final IntegerProperty refreshListViewSignal = new SimpleIntegerProperty(0);
 
+
+    public ProgramViewModel(Program program, MainViewModel mainViewModel) {
+        this.program = program;
+        this.mainViewModel = mainViewModel;
+
+        setListeners();
+        setBindings();
+    }
+
+    private void setListeners() {
         variableInput.addListener(
                 // au changement de user input, valider l'entree, puis modifier la variable
                 ((observableValue, s, t1) -> {
@@ -54,7 +66,18 @@ public class ProgramViewModel {
                     }
                 })
         );
-        setBindings();
+
+        runtimeError.addListener(
+                ((observableValue, aBoolean, t1) -> {
+                    if (t1){ // si runtimeError est vrai, rafrachir la listView pour voir le border rouge de l'action
+                        refreshListViewSignal.set(refreshListViewSignal.get() + 1);
+                    }
+                })
+        );
+    }
+
+    public ReadOnlyIntegerProperty refreshListViewSignal() {
+        return refreshListViewSignal;
     }
 
     private void setBindings() {
@@ -76,6 +99,9 @@ public class ProgramViewModel {
                 },
                 variableInput
         ));
+
+        isValidProgram.bind(program.isValidProgramProperty());
+        runtimeError.bind(mainViewModel.runtimeErrorProperty());
     }
 
     public boolean isDouble(String s) {
@@ -242,5 +268,18 @@ public class ProgramViewModel {
 
     public void setIndexToAdd(int i) {
         indexToAdd = i;
+    }
+
+
+    public boolean isIsValidProgram() {
+        return isValidProgram.get();
+    }
+
+    public BooleanProperty isValidProgramProperty() {
+        return isValidProgram;
+    }
+
+    public BooleanProperty runtimeErrorProperty() {
+        return runtimeError;
     }
 }
