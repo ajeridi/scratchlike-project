@@ -5,6 +5,7 @@ import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import scratch.model.actions.Action;
@@ -24,15 +25,19 @@ public class MainViewModel {
     private final Program program;
     private final Scene scene;
 
+    private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
+
 
     public MainViewModel(Catalogue catalogue, Program program, Scene scene) {
         this.catalogueViewModel = new CatalogueViewModel(catalogue, this);
-        this.programViewModel = new ProgramViewModel(program);
+        this.programViewModel = new ProgramViewModel(program, this);
         this.sceneViewModel = new SceneViewModel(scene, this);
         this.informationViewModel = new InformationViewModel(scene);
         this.catalogue = catalogue;
         this.program = program;
         this.scene = scene;
+
+        runtimeError.bind(sceneViewModel.runtimeErrorProperty());
     }
 
     public CatalogueViewModel getCatalogueViewModel() {
@@ -91,5 +96,9 @@ public class MainViewModel {
 
     public BooleanProperty isValidProgramProperty() {
         return programViewModel.isValidProgramProperty();
+    }
+
+    public BooleanProperty runtimeErrorProperty() {
+        return runtimeError;
     }
 }

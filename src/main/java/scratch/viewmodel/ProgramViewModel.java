@@ -14,6 +14,7 @@ import scratch.model.actions.Var_Declaration;
 public class ProgramViewModel {
 
     private final Program program;
+    private final MainViewModel mainViewModel;
     private final IntegerProperty selectedIndex = new SimpleIntegerProperty(); // index qui va selectionner l'action pendant execution donc de VM -> View
     private int indexToAdd; // index d'insertion de la nouvelle action a partir de l'index selectionne dans la vue , View -> VM
     private final ObjectProperty<Action> currentSelectedAction = new SimpleObjectProperty<>();
@@ -23,10 +24,12 @@ public class ProgramViewModel {
 
 
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty(); // propriete de validation du programme
+    private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
 
 
-    public ProgramViewModel(Program program) {
+    public ProgramViewModel(Program program, MainViewModel mainViewModel) {
         this.program = program;
+        this.mainViewModel = mainViewModel;
 
         setListeners();
         setBindings();
@@ -85,6 +88,7 @@ public class ProgramViewModel {
         ));
 
         isValidProgram.bind(program.isValidProgramProperty());
+        runtimeError.bind(mainViewModel.runtimeErrorProperty());
     }
 
     public boolean isDouble(String s) {
@@ -260,5 +264,9 @@ public class ProgramViewModel {
 
     public BooleanProperty isValidProgramProperty() {
         return isValidProgram;
+    }
+
+    public BooleanProperty runtimeErrorProperty() {
+        return runtimeError;
     }
 }

@@ -42,6 +42,9 @@ public class ProgramView extends VBox {
     private final IntegerProperty indexToSelect = new SimpleIntegerProperty(); // va servir lors de l'execution du programme
     private final BooleanProperty isValidValue = new SimpleBooleanProperty();
 
+    // runtime error
+    private final Label runtimeErrorLabel = new Label("RUNTIME ERROR");
+
 
     private final ProgramViewModel programViewModel;
 
@@ -61,7 +64,7 @@ public class ProgramView extends VBox {
         setActions();
         setListeners();
 
-        this.getChildren().addAll(titleLbl, actions, buttons, accordion);
+        this.getChildren().addAll(titleLbl, actions, buttons, accordion, runtimeErrorLabel);
 
     }
 
@@ -181,6 +184,9 @@ public class ProgramView extends VBox {
         // la box contenant le plus et le moins apparait uniquement si la valeur contenue dans le textfield est un nombre, et si le textfield value est visible
         valueIncrementDecrementBox.visibleProperty().bind(programViewModel.isValueNumeric().and(detailActionValueTextField.visibleProperty()));
         valueIncrementDecrementBox.managedProperty().bind(valueIncrementDecrementBox.visibleProperty()); // si invisible, espace rempli par d'autres composants
+
+        //label runtime error visible uniquement si y'a une runtime error
+        runtimeErrorLabel.visibleProperty().bind(programViewModel.runtimeErrorProperty());
 
         setDetailElementsBindings();
         setButtonsBindings();
