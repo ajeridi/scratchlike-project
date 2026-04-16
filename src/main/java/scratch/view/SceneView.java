@@ -81,6 +81,7 @@ public class SceneView extends VBox {
 
         automaticExecutionSpeedSlider.visibleProperty().bind(automaticModeCheckBox.selectedProperty());
         automaticExecutionSpeedSlider.setPadding(new Insets(5));
+        automaticExecutionSpeedSlider.setValue(automaticExecutionSpeedSlider.getMin() + 0.01); // on set pour envoyer la valeur au VM a l'initalisation, car il commencait a 0;
     }
 
     private void setExecutionModeBox() {
@@ -184,12 +185,12 @@ public class SceneView extends VBox {
                     throw new RuntimeException(e);
                 }
             }
-
-
-            if (!isExecuted.get())
-                executeProgram();
-            else
-                nextAction();
+            else {
+                if (!isExecuted.get())
+                    executeProgram();
+                else
+                    nextAction();
+            }
         });
     }
 

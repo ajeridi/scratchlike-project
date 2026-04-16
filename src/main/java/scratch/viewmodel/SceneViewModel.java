@@ -220,24 +220,14 @@ public class SceneViewModel {
         * https://stackoverflow.com/questions/19549852/javafx-binding-timelines-duration-to-a-property
         * */
         // tant qu'on est dans la boucle, on appuie sur le bouton virtuellement avec fire
-            timeline.getKeyFrames().add(
-                    createKeyFrame()
-/*
-                    new KeyFrame(Duration.millis(200) ,event -> {
-                        fireSignal.set(fireSignal.get() + 1);
-                        if (isAtLastAction.get()){
-                            timeline.stop();
-                        }
-                    })
-*/
-            );
+            timeline.getKeyFrames().add(createKeyFrame());
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
-        System.out.println(timeline.getStatus());
     }
 
     private KeyFrame createKeyFrame(){
         return new KeyFrame(
+
                 Duration.seconds(getSliderSpeed()),
                 actionEvent -> {
                     fireSignal.set(fireSignal.get() + 1);
