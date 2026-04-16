@@ -43,7 +43,7 @@ public class SceneView extends VBox {
     private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
     private final BooleanProperty atLastAction = new SimpleBooleanProperty();
     private final BooleanProperty programChanged = new SimpleBooleanProperty();
-    private final IntegerProperty refreshCounter = new SimpleIntegerProperty();
+    private final IntegerProperty refreshCounter = new SimpleIntegerProperty(); // sert de recepteur de signal de refresh de la part du VM
     private final BooleanProperty isExecuted = new SimpleBooleanProperty();
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
 

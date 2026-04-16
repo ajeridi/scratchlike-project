@@ -25,7 +25,7 @@ public class SceneViewModel {
     private final IntegerProperty currentActionIndex = new SimpleIntegerProperty();
     private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
     private final BooleanProperty programChanged = new SimpleBooleanProperty(false);
-    private final IntegerProperty refreshCounter = new SimpleIntegerProperty(0);
+    private final IntegerProperty refreshCounter = new SimpleIntegerProperty(0); // compteur de refresh, qui va donner le signal a la vue de refresh le canvas
     private final BooleanProperty isExecuted = new SimpleBooleanProperty(false);
     private final BooleanProperty isAtLastAction = new SimpleBooleanProperty();
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
@@ -35,8 +35,6 @@ public class SceneViewModel {
     private final IntegerProperty fireSignal = new SimpleIntegerProperty(0); // sert de signal pour "cliquer sur le bouton Execute virtuellement
     private final Timeline timeline = new Timeline();
     private final DoubleProperty sliderSpeed = new SimpleDoubleProperty(); // propriete de la vitesse d'execution, qui sera binde au slider de la vue
-
-
     private final BooleanProperty programIsRunning = new SimpleBooleanProperty(false); // va permettre de savoir si le programme est en cours d'execution ou pas
 
 
