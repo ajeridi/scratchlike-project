@@ -90,6 +90,11 @@ public class Program {
                 else // sinon fermer la boucle en enlevant de la file une boucle ouverte
                     openLoops.pop();
             }
+
+            // si l'action est un increment, si il est dans une boucle et que le target est le meme que la variable de la boucle, return false
+            if (actionType.equals("INCREMENT_VARIABLE") && !openLoops.isEmpty() && openLoops.peek().getVariable().getName().equals(action.getTarget())){
+                    return false;
+            }
             i++;
         }
         // si il nous reste des boucles ouvertes, retourner faux

@@ -69,10 +69,11 @@ public class SceneViewModel {
         ObservableList<Action> actions = mainViewModel.getActionsList();
 
         // si la liste d'actions du programme est modifiee, isLoaded = false
+        // pour ca que si les actions on un target, on rajoute un observable sur le target
         actions.addListener((ListChangeListener<? super Action>) change -> {
             while (change.next()){
-                programChanged.set(true);
-                isLoaded.set(false);
+                programChanged.set(true); //on notifie que le programme a change
+                isLoaded.set(false); // le programme doit etre recharge
             }
         });
 
