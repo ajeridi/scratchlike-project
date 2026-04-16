@@ -205,7 +205,8 @@ public class SceneViewModel {
     public BooleanBinding canLoad() {
         return Bindings.createBooleanBinding(
                 () -> {
-                    return isActionsListEmpty().get() || !isValidProgram.get();
+                    return isValidProgram.get(); // on verifie si le programme est vide dans la validation du programme
+                    //!isActionsListEmpty().get() && isValidProgram.get();
                 },
                 isActionsListEmpty(), isValidProgram
         );

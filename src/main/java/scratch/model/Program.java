@@ -3,6 +3,8 @@ package scratch.model;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -20,10 +22,28 @@ public class Program {
     private final ActionList actionList = new ActionList();
     private final Stack<ActionList> loops = new Stack<>();
 
+    public boolean isIsValidProgram() {
+        return isValidProgram.get();
+    }
+
+    public BooleanProperty isValidProgramProperty() {
+        return isValidProgram;
+    }
+
+    private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
+
+    public Program() {
+        getActions().addListener( (ListChangeListener<Action>)change -> {
+            isValidProgram.set(compileProgram());
+        });
+    }
+
     private boolean compileProgram() {
         // methode qui va proceder "compiler" le programme et dire s'il est chargeable ou pas
         // on doit verifier que les declarations de variables sont bien en debut de programme
         // on suppose que la valeur des variables est ok
+        if (getActions().isEmpty())
+            return false;
         Set<String> variables = new HashSet();
         int i = 0;
         while (i < getActions().size() && getActions().get(i).getType().equals("VAR_DECLARATION")){ // tant qu'on est dans lz zone de de declaration de variable,
@@ -265,7 +285,7 @@ public class Program {
         return Bindings.createBooleanBinding(
                 () -> {
                     var ok = compileProgram();
-                    System.out.println(ok);
+                    System.out.println("Program compiled = " + ok);
                     return ok;
                 },
                 getActions()

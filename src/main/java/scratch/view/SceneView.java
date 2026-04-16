@@ -125,7 +125,7 @@ public class SceneView extends VBox {
 */
         // correction iteration 1
         executeBtn.disableProperty().bind(sceneViewModel.canExecute());
-        loadBtn.disableProperty().bind(sceneViewModel.canLoad());
+        loadBtn.disableProperty().bind(sceneViewModel.canLoad().not());
 
 
         nextActionSignal.bind(sceneViewModel.fireSignalProperty()); // signal d'execution de la prochaine action, envoye par la VM pour signaler l'execution de la prochaine Action

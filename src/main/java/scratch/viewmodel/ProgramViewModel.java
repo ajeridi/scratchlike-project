@@ -84,7 +84,7 @@ public class ProgramViewModel {
                 variableInput
         ));
 
-        isValidProgram.bind(program.isValid());
+        isValidProgram.bind(program.isValidProgramProperty());
     }
 
     public boolean isDouble(String s) {
