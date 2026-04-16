@@ -22,9 +22,17 @@ public class ProgramViewModel {
     private final StringProperty targetInput = new SimpleStringProperty();
 
 
+    private final BooleanProperty isValidProgram = new SimpleBooleanProperty(); // propriete de validation du programme
+
+
     public ProgramViewModel(Program program) {
         this.program = program;
 
+        setListeners();
+        setBindings();
+    }
+
+    private void setListeners() {
         variableInput.addListener(
                 // au changement de user input, valider l'entree, puis modifier la variable
                 ((observableValue, s, t1) -> {
@@ -54,7 +62,6 @@ public class ProgramViewModel {
                     }
                 })
         );
-        setBindings();
     }
 
     private void setBindings() {
@@ -76,6 +83,8 @@ public class ProgramViewModel {
                 },
                 variableInput
         ));
+
+        isValidProgram.bind(program.isValid());
     }
 
     public boolean isDouble(String s) {
@@ -242,5 +251,14 @@ public class ProgramViewModel {
 
     public void setIndexToAdd(int i) {
         indexToAdd = i;
+    }
+
+
+    public boolean isIsValidProgram() {
+        return isValidProgram.get();
+    }
+
+    public BooleanProperty isValidProgramProperty() {
+        return isValidProgram;
     }
 }

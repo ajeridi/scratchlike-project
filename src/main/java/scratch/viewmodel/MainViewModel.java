@@ -2,8 +2,10 @@ package scratch.viewmodel;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import scratch.model.actions.Action;
 import scratch.model.Catalogue;
@@ -21,6 +23,7 @@ public class MainViewModel {
     private final Catalogue catalogue;
     private final Program program;
     private final Scene scene;
+
 
     public MainViewModel(Catalogue catalogue, Program program, Scene scene) {
         this.catalogueViewModel = new CatalogueViewModel(catalogue, this);
@@ -84,5 +87,9 @@ public class MainViewModel {
 
     public InformationViewModel getInformationViewModel() {
         return informationViewModel;
+    }
+
+    public BooleanProperty isValidProgramProperty() {
+        return programViewModel.isValidProgramProperty();
     }
 }

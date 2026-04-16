@@ -77,7 +77,9 @@ public class SceneViewModel {
             }
         });
 
-        isValidProgram.bind(Bindings.createBooleanBinding(
+        isValidProgram.bind(mainViewModel.isValidProgramProperty());
+/*
+                Bindings.createBooleanBinding(
                 () -> {
                     Action current_pen_action = new Pen_Down();
                     for (Action action : actions){
@@ -91,7 +93,7 @@ public class SceneViewModel {
                     return true;
                 },
                 actions
-        ));
+*/
 
         isAtLastAction.bind(isAtLastAction());
 
@@ -154,7 +156,7 @@ public class SceneViewModel {
             currentSelectedAction.get().execute(scene);
         // passer a l'action suivante
         currentActionIndex.set(currentActionIndex.get() + 1);
-        System.out.println("Next index = " + currentActionIndex.get());
+        //System.out.println("Next index = " + currentActionIndex.get());
     }
 
     public BooleanBinding isAtLastAction() {

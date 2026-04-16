@@ -331,7 +331,7 @@ public class ProgramView extends VBox {
                     setStyle("");
                 } else {
                     // on ajoute autant d'indentation que
-                    System.out.println(action.toString());
+                    //System.out.println(action.toString());
                     setText(action.getIndentation() + action.toString());
                     setStyle("-fx-text-fill: " + action.getColor() + ";");
                 }
