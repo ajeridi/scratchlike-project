@@ -44,6 +44,7 @@ public class ProgramView extends VBox {
 
     // runtime error
     private final Label runtimeErrorLabel = new Label("RUNTIME ERROR");
+    private final IntegerProperty refreshListViewSignal = new SimpleIntegerProperty();
 
 
     private final ProgramViewModel programViewModel;
@@ -64,6 +65,7 @@ public class ProgramView extends VBox {
         setActions();
         setListeners();
 
+        runtimeErrorLabel.setTextFill(Color.RED);
         this.getChildren().addAll(titleLbl, actions, buttons, accordion, runtimeErrorLabel);
 
     }
@@ -131,6 +133,12 @@ public class ProgramView extends VBox {
                     programViewModel.setIndexToAdd(getSelectedIndex() +1);
                 })
         );
+
+        refreshListViewSignal.addListener(
+                ((observableValue, number, t1) -> {
+                    actions.refresh();
+                })
+        );
     }
 
     private void selectAction(int index){
@@ -187,6 +195,8 @@ public class ProgramView extends VBox {
 
         //label runtime error visible uniquement si y'a une runtime error
         runtimeErrorLabel.visibleProperty().bind(programViewModel.runtimeErrorProperty());
+
+        refreshListViewSignal.bind(programViewModel.refreshListViewSignal());
 
         setDetailElementsBindings();
         setButtonsBindings();
@@ -331,15 +341,24 @@ public class ProgramView extends VBox {
             @Override
             protected void updateItem(Action action, boolean empty) {
                 super.updateItem(action, empty);
-
+                // pour pouvoir faire un encadre rouge qui ne fait pas la longueur de la cellule, il faut mettre le string de l'action dans un label
+                // donc un setText(string) ne suffit plus
+                final Label actionLabel = new Label();
                 if (empty || action == null) {
+                    setGraphic(null);
+/*
                     setText(null);
                     setStyle("");
+*/
                 } else {
                     // on ajoute autant d'indentation que
                     //System.out.println(action.toString());
-                    setText(action.getIndentation() + action.toString());
-                    setStyle("-fx-text-fill: " + action.getColor() + ";");
+                    actionLabel.setText(action.getIndentation() + action.toString());
+                    actionLabel.setStyle("-fx-text-fill: " + action.getColor() + ";");
+                    // si y'a runtime error faut entourer l'action
+                    if (action.isHasError()) // si le label runtime error est visible
+                        actionLabel.setStyle("-fx-border-color: red; -fx-text-fill: " + action.getColor() + ";");
+                    setGraphic(actionLabel);
                 }
             }
         });

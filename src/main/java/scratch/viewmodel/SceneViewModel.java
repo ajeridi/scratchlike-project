@@ -26,6 +26,7 @@ public class SceneViewModel {
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
     private BooleanProperty automaticModeSelected = new SimpleBooleanProperty(false);
     private BooleanProperty manualModeSelected = new SimpleBooleanProperty(false);
+    private Action faultyAction;
 
 
     //execution automatique
@@ -133,6 +134,10 @@ public class SceneViewModel {
         currentActionIndex.set(-1); // forcer le changement d'index
         Variable_Table.getVariables().clear(); // clear la table de variables
         runtimeError.set(false); // runtime error cleared
+        if (faultyAction != null) {
+            faultyAction.setHasError(false); // on dit que l'action n'a plus d'erreur
+            faultyAction = null;
+        }
     }
 
     public void newProgram() {
@@ -158,6 +163,8 @@ public class SceneViewModel {
                 // on arrete le programme
                 stopProgram();
                 runtimeError.set(true); // on dit qu'on a une runtime error
+                action.setHasError(true);
+                faultyAction = action;
                 return; // return pour ne pas executer l'action et passer a la suivante
             }
             currentSelectedAction.get().execute(scene);

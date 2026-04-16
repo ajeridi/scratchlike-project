@@ -25,6 +25,7 @@ public class ProgramViewModel {
 
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty(); // propriete de validation du programme
     private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
+    private final IntegerProperty refreshListViewSignal = new SimpleIntegerProperty(0);
 
 
     public ProgramViewModel(Program program, MainViewModel mainViewModel) {
@@ -65,6 +66,18 @@ public class ProgramViewModel {
                     }
                 })
         );
+
+        runtimeError.addListener(
+                ((observableValue, aBoolean, t1) -> {
+                    if (t1){ // si runtimeError est vrai, rafrachir la listView pour voir le border rouge de l'action
+                        refreshListViewSignal.set(refreshListViewSignal.get() + 1);
+                    }
+                })
+        );
+    }
+
+    public ReadOnlyIntegerProperty refreshListViewSignal() {
+        return refreshListViewSignal;
     }
 
     private void setBindings() {
