@@ -1,5 +1,6 @@
 package scratch.viewmodel;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
@@ -30,7 +31,10 @@ public class SceneViewModel {
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
 
 
+    //execution automatique
     private final IntegerProperty fireSignal = new SimpleIntegerProperty(0); // sert de signal pour "cliquer sur le bouton Execute virtuellement
+    private final Timeline timeline = new Timeline();
+    private final DoubleProperty sliderSpeed = new SimpleDoubleProperty(); // propriete de la vitesse d'execution, qui sera binde au slider de la vue
 
 
 
@@ -94,6 +98,21 @@ public class SceneViewModel {
                 ((obs, o, n) -> {
                     if (n) // si on arrive en fin de programme
                         isExecuted.set(false); // fin de l'execution
+                })
+        );
+
+        // listener sur le changement de valeur de vitesse, pour creer un nouveau keyframe et l'ajouter a la timeline
+        sliderSpeed.addListener(
+                ((observableValue, number, t1) -> {
+                    var newKeyFrame = createKeyFrame();
+                    // si on est en plein milieu d'execution
+                    if (timeline.getStatus().equals(Animation.Status.RUNNING)){
+                        timeline.stop(); // on pause l'execution
+                        var keyframes = timeline.getKeyFrames();
+                        keyframes.clear(); // on supprime le keyframe existant
+                        keyframes.add(newKeyFrame);
+                        timeline.play();
+                    }
                 })
         );
     }
@@ -191,20 +210,44 @@ public class SceneViewModel {
 
     public void automaticExecution() throws InterruptedException { // https://docs.oracle.com/javase/8/javafx/api/javafx/animation/Timeline.html
         executeProgram(); // on debute l'execution
+        /*
+        * On cree une timeline, qui va contenir un keyFrame, c'est a dire une une boucle qui va s'executer puis se reexecuter apres une certaine duree
+        * Lors de l'execution automatique, ce qu'on fait c'est on appuie virtuellement sur le bouton suivant dans la vue, en envoyant un signal a la vue d'executer next action
+        * une fois qu'on arrive a la derniere action, on arrete la timeline
+        *
+        * Comme on ne peut pas directement modifier la duration de la timeline, lorsqu'on modifie la valeur du slider, il faut generer un nouveau KeyFrame
+        * et l'ajouter a la timeline
+        * https://stackoverflow.com/questions/19549852/javafx-binding-timelines-duration-to-a-property
+        * */
         // tant qu'on est dans la boucle, on appuie sur le bouton virtuellement avec fire
-            var timeline = new Timeline();
             timeline.getKeyFrames().add(
+                    createKeyFrame()
+/*
                     new KeyFrame(Duration.millis(200) ,event -> {
                         fireSignal.set(fireSignal.get() + 1);
                         if (isAtLastAction.get()){
                             timeline.stop();
                         }
-                        
                     })
+*/
             );
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
+        System.out.println(timeline.getStatus());
     }
+
+    private KeyFrame createKeyFrame(){
+        return new KeyFrame(
+                Duration.seconds(getSliderSpeed()),
+                actionEvent -> {
+                    fireSignal.set(fireSignal.get() + 1);
+                    if (isAtLastAction.get()){
+                        timeline.stop();
+                    }
+                }
+        );
+    }
+
 
     private void refreshView() {
         fireSignal.add(1);
@@ -217,5 +260,13 @@ public class SceneViewModel {
 
     public IntegerProperty fireSignalProperty() {
         return fireSignal;
+    }
+
+    public double getSliderSpeed() {
+        return sliderSpeed.get();
+    }
+
+    public DoubleProperty sliderSpeedProperty() {
+        return sliderSpeed;
     }
 }

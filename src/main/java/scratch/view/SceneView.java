@@ -66,13 +66,6 @@ public class SceneView extends VBox {
 
 
         setAutomaticExecutionSpeedSlider();
-        nextActionSignal.bind(sceneViewModel.fireSignalProperty());
-        nextActionSignal.addListener(
-                // signal recu par le view model pour appuyer sur le bouton execute lors de l'execution automatique
-                ((observableValue, number, t1) -> {
-                    nextAction();
-                })
-        );
 
 
         this.getChildren().addAll(titleLbl, canvasHolder,executionModeBox, buttons, automaticExecutionSpeedSlider);
@@ -134,6 +127,10 @@ public class SceneView extends VBox {
         // correction iteration 1
         executeBtn.disableProperty().bind(sceneViewModel.canExecute());
         loadBtn.disableProperty().bind(sceneViewModel.canLoad());
+
+
+        nextActionSignal.bind(sceneViewModel.fireSignalProperty()); // signal d'execution de la prochaine action, envoye par la VM pour signaler l'execution de la prochaine Action
+        automaticExecutionSpeedSlider.valueProperty().bindBidirectional(sceneViewModel.sliderSpeedProperty()); // binding entre la valeur de la vitesse de la vue et celle dans le VM
     }
 
     private void addListeners() {
@@ -158,6 +155,13 @@ public class SceneView extends VBox {
                     if (automaticModeCheckBox.isSelected()){
                         automaticModeCheckBox.setSelected(false);
                     }
+                })
+        );
+
+        nextActionSignal.addListener(
+                // signal recu par le view model pour appuyer sur le bouton execute lors de l'execution automatique
+                ((observableValue, number, t1) -> {
+                    nextAction();
                 })
         );
     }
