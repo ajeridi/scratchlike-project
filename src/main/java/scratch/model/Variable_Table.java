@@ -19,7 +19,7 @@ public class Variable_Table {
 
 
     public static void setValue(String target, double value) {
-        variables.get(target).setValue(String.format("%.2f", value));
+        variables.get(target).setValue(String.format("%.0f", value));
     }
 
     public static void putVariable(String s, SimpleStringProperty simpleStringProperty) {
