@@ -1,7 +1,11 @@
-package scratch.model;
+package scratch.model.actions;
+import scratch.model.Cursor;
+import scratch.model.Point;
+import scratch.model.Scene;
+
 import java.lang.Math;
 
-public class Move_Forward extends Action{
+public class Move_Forward extends Action {
 
     private static final double DEFAULT_MOVE_FORWARD_VALUE = 30;
     private static final String DEFAULT_MOVE_FORWARD_COLOR = "blue";
@@ -22,9 +26,19 @@ public class Move_Forward extends Action{
         super(value, nom, color);
     }
 
+    public Move_Forward(String variable){
+        super(variable, "Avancer de", DEFAULT_MOVE_FORWARD_COLOR);
+    }
+
     @Override
     public void execute(Scene scene) {
         Cursor cursor = scene.getCursor();
+
+//        double value;
+//        if (variableHasName())
+//            value = Double.parseDouble(scene.getVariables().get(variableName()).getValue().replace(",", "."));
+//        else
+//            value = getValue();
 
         Point end = createEnd(cursor);
 
@@ -55,6 +69,16 @@ public class Move_Forward extends Action{
     @Override
     public String getType() {
         return "MOVE_FORWARD";
+    }
+
+    @Override
+    public String getDetailString() {
+        return getNom();
+    }
+
+    @Override
+    public String getTarget() {
+        return "";
     }
 
     private Point createEnd(Cursor cursor) {

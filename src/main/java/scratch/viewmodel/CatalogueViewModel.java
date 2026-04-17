@@ -1,11 +1,7 @@
 package scratch.viewmodel;
 
-import javafx.beans.Observable;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
-import scratch.model.Action;
+import scratch.model.actions.Action;
 import scratch.model.Catalogue;
 
 public class CatalogueViewModel {
@@ -22,8 +18,8 @@ public class CatalogueViewModel {
         return catalogue.getCatalogue();
     }
 
-    public boolean addToProgram(Action selectedAction){
-        return mainViewModel.addToProgram(selectedAction);
+    public boolean addToProgram(Action selectedAction, String from){
+        return mainViewModel.addToProgram(selectedAction, "from-catalogue");
     }
 
 

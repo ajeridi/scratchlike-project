@@ -35,7 +35,7 @@ public class App extends Application {
         MainView mainView = new MainView(mainViewModel, primaryStage);
 
 
-        Scene scene = new Scene(mainView, 1280, 720 );
+        Scene scene = new Scene(mainView, 1600, 900 );
         primaryStage.setTitle("Scratch");
         primaryStage.setScene(scene);
         primaryStage.show();

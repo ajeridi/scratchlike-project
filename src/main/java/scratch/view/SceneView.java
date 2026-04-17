@@ -1,13 +1,16 @@
 package scratch.view;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -21,7 +24,7 @@ public class SceneView extends VBox {
 
     private final double TURTLE_SIZE = 20;
     private final double TURTLE_HEAD_SIZE = 7;
-    private final double CANVAS_DIMENSION = 500;
+    private final double CANVAS_DIMENSION = 400;
 
     private final Label titleLbl = new Label("Scène");
 
@@ -39,9 +42,18 @@ public class SceneView extends VBox {
     private final BooleanProperty isLoaded = new SimpleBooleanProperty(false);
     private final BooleanProperty atLastAction = new SimpleBooleanProperty();
     private final BooleanProperty programChanged = new SimpleBooleanProperty();
-    private final IntegerProperty refreshCounter = new SimpleIntegerProperty();
+    private final IntegerProperty refreshCounter = new SimpleIntegerProperty(); // sert de recepteur de signal de refresh de la part du VM
     private final BooleanProperty isExecuted = new SimpleBooleanProperty();
     private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
+
+    // a ajouter plus tard a une vue ExecutionModeView
+    private final CheckBox automaticModeCheckBox = new CheckBox("Execution automatique");
+    private final CheckBox manualModeCheckBox = new CheckBox("Execution manuelle");
+    private final HBox executionModeBox = new HBox();
+    private final Slider automaticExecutionSpeedSlider = new Slider(0.01, 5, 0.25);
+
+    private final IntegerProperty nextActionSignal = new SimpleIntegerProperty(0); // va binder au view model pour signaler l'appui sur le bouton execute
+    private final Button stopBtn = new Button("Arreter");
 
 
 
@@ -51,10 +63,28 @@ public class SceneView extends VBox {
         setBindings();
         addListeners();
         setCanvas();
-        this.getChildren().addAll(titleLbl, canvasHolder, buttons);
-
+        setExecutionModeBox();
+        setAutomaticExecutionSpeedSlider();
+        this.getChildren().addAll(titleLbl, canvasHolder,executionModeBox, buttons, automaticExecutionSpeedSlider);
         setActions();
         buttons.setAlignment(Pos.CENTER);
+    }
+
+    private void setAutomaticExecutionSpeedSlider() {
+        automaticExecutionSpeedSlider.setShowTickLabels(true);
+        automaticExecutionSpeedSlider.setShowTickMarks(true);
+        automaticExecutionSpeedSlider.setMajorTickUnit(1);
+
+        automaticExecutionSpeedSlider.visibleProperty().bind(automaticModeCheckBox.selectedProperty());
+        automaticExecutionSpeedSlider.setPadding(new Insets(5));
+        automaticExecutionSpeedSlider.setValue(automaticExecutionSpeedSlider.getMin() + 0.01); // on set pour envoyer la valeur au VM a l'initalisation, car il commencait a 0;
+    }
+
+    private void setExecutionModeBox() {
+        executionModeBox.setSpacing(10);
+        executionModeBox.getChildren().addAll(automaticModeCheckBox, manualModeCheckBox);
+        executionModeBox.setAlignment(Pos.BASELINE_CENTER);
+        executionModeBox.setPadding(new Insets(10));
     }
 
     private void setCanvas() {
@@ -86,14 +116,62 @@ public class SceneView extends VBox {
                 isExecuted
         ));
 
+        // Logique applicative a bouger dans le VM
+/*
         executeBtn.disableProperty().bind(isLoaded.not().or(isLoaded.and(sceneViewModel.isAtLastAction())).or(isValidProgram.not()));
         loadBtn.disableProperty().bind(sceneViewModel.isActionsListEmpty().or(isValidProgram.not()));
+*/
+        automaticModeCheckBox.selectedProperty().bindBidirectional(sceneViewModel.automaticModeSelectedProperty());
+        manualModeCheckBox.selectedProperty().bindBidirectional(sceneViewModel.manualModeSelectedProperty());
+        // correction iteration 1
+        executeBtn.disableProperty().bind(sceneViewModel.cannotExecute());
+        loadBtn.disableProperty().bind(sceneViewModel.canLoad().not());
+
+
+        nextActionSignal.bind(sceneViewModel.fireSignalProperty()); // signal d'execution de la prochaine action, envoye par la VM pour signaler l'execution de la prochaine Action
+        automaticExecutionSpeedSlider.valueProperty().bindBidirectional(sceneViewModel.sliderSpeedProperty()); // binding entre la valeur de la vitesse de la vue et celle dans le VM
+
+        // le bouton stop doit etre visible uniquement si on est en mode execution automatique
+        stopBtn.visibleProperty().bind(automaticModeCheckBox.selectedProperty());
+        // bouton stop actif uniquement si le program est en cours d'execution automatique
+        stopBtn.disableProperty().bind(programIsRunning().not());
+    }
+
+    private BooleanProperty programIsRunning() {
+        // retourne si le programme est en cours d'execution (donc si timeline is running)
+        return sceneViewModel.programIsRunningProperty();
+
     }
 
     private void addListeners() {
         refreshCounter.addListener(
                 ((observableValue, number, t1) -> {
                     refreshCanvas();
+                })
+        );
+
+        automaticModeCheckBox.selectedProperty().addListener(
+                ((observableValue, aBoolean, t1) -> {
+                    // si l'autre mode est deselectionne, on le deselectionne
+                    if (manualModeCheckBox.isSelected()) {
+                        manualModeCheckBox.setSelected(false);
+                    }
+                })
+        );
+
+        manualModeCheckBox.selectedProperty().addListener(
+                ((observableValue, aBoolean, t1) -> {
+                    // si l'autre mode est selectionne, on le deselectionne
+                    if (automaticModeCheckBox.isSelected()){
+                        automaticModeCheckBox.setSelected(false);
+                    }
+                })
+        );
+
+        nextActionSignal.addListener(
+                // signal recu par le view model pour appuyer sur le bouton execute lors de l'execution automatique
+                ((observableValue, number, t1) -> {
+                    nextAction();
                 })
         );
     }
@@ -107,11 +185,28 @@ public class SceneView extends VBox {
         });
 
         executeBtn.setOnAction(actionEvent -> {
-            if (!isExecuted.get())
-                executeProgram();
-            else
-                nextAction();
+
+            if (automaticModeCheckBox.isSelected() ){
+                // execution automatique
+                try {
+                    sceneViewModel.automaticExecution();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else {
+                if (!isExecuted.get())
+                    executeProgram();
+                else
+                    nextAction();
+            }
         });
+
+        stopBtn.setOnAction( // stopper le programme
+                actionEvent -> {
+                    sceneViewModel.stopProgram();
+                }
+        );
     }
 
     private void loadProgram() {
@@ -179,7 +274,7 @@ public class SceneView extends VBox {
     }
 
     public HBox makeButtonsHbox() {
-        return new HBox(loadBtn, executeBtn);
+        return new HBox(loadBtn, executeBtn, stopBtn);
     }
 
     private void drawTurtle(GraphicsContext gc) {

@@ -1,4 +1,6 @@
-package scratch.model;
+package scratch.model.actions;
+
+import scratch.model.Cursor;
 
 public class Pen_Up extends Pen {
 
@@ -28,5 +30,10 @@ public class Pen_Up extends Pen {
     @Override
     public String getType() {
         return "PEN_UP";
+    }
+
+    @Override
+    public String getDetailString() {
+        return getNom();
     }
 }

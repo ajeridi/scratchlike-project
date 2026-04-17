@@ -4,18 +4,15 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
-import scratch.model.Action;
-import scratch.model.Pen;
+import javafx.scene.shape.Circle;
+import scratch.model.actions.Action;
+import scratch.model.actions.Pen;
 import scratch.viewmodel.ProgramViewModel;
 
 public class ProgramView extends VBox {
@@ -30,15 +27,25 @@ public class ProgramView extends VBox {
     private final Button deleteAllBtn = new Button("Vider tout");
     private final Accordion accordion = new Accordion();
 
+    // detail de l'action
     private final TitledPane detailActionPane = new TitledPane();
     private final Label detailActionLabel = new Label();
     private final Label detailActionUnitLabel = new Label();
     private final TextField detailActionValueTextField = new TextField();
     private final Label valueErrorLabel = new Label("Erreur valeur");
+    private final HBox targetHbox = new HBox();
+    private final TextField detailTargetTextField = new TextField();
+    private final HBox valueIncrementDecrementBox = new HBox(); // box qui va contenir les boutons + et - pour augmenter la valeur des valeur literale
+    private final Button plus = new Button("+");
+    private final Button minus = new Button("-");
 
     private Action currentBindedAction;
     private final IntegerProperty indexToSelect = new SimpleIntegerProperty(); // va servir lors de l'execution du programme
     private final BooleanProperty isValidValue = new SimpleBooleanProperty();
+
+    // runtime error
+    private final Label runtimeErrorLabel = new Label("RUNTIME ERROR");
+    private final IntegerProperty refreshListViewSignal = new SimpleIntegerProperty();
 
 
     private final ProgramViewModel programViewModel;
@@ -59,7 +66,8 @@ public class ProgramView extends VBox {
         setActions();
         setListeners();
 
-        this.getChildren().addAll(titleLbl, actions, buttons, accordion);
+        runtimeErrorLabel.setTextFill(Color.RED);
+        this.getChildren().addAll(titleLbl, actions, buttons, accordion, runtimeErrorLabel);
 
     }
 
@@ -95,12 +103,41 @@ public class ProgramView extends VBox {
         deleteAllBtn.setOnAction(actionEvent -> {
             deleteAllActions();
         });
+
+        // pour le bouton plus et le bouton moins, quand on clique dessus, on incremente la valeur contenue dans detailActionValueTextField
+        plus.setOnAction( actionEvent -> {
+            incrementValue();
+        });
+        minus.setOnAction(actionEvent -> {
+            decrementValue();
+        });
+    }
+
+    private void decrementValue() {
+        programViewModel.decrementValue();
+    }
+
+    private void incrementValue() {
+        programViewModel.incrementValue();
     }
 
     private void setListeners() {
         indexToSelect.addListener(
                 ((observableValue, number, t1) -> {
                     selectAction(indexToSelect.getValue()); // selection depuis la scene permet de selectionner ici
+                })
+        );
+
+        getActionsSelectedIndexProperty().addListener(
+                // si on veut ajouter une action apres l'index selectionne il faut notifier le viewModel
+                ((observableValue, number, t1) -> {
+                    programViewModel.setIndexToAdd(getSelectedIndex() +1);
+                })
+        );
+
+        refreshListViewSignal.addListener(
+                ((observableValue, number, t1) -> {
+                    actions.refresh();
                 })
         );
     }
@@ -147,7 +184,20 @@ public class ProgramView extends VBox {
 
         isValidValue.bind(programViewModel.isValidValueProperty());
         valueErrorLabel.visibleProperty().bind(isValidValue.not().and(getSelectedItemProperty().isNotNull()));
-        detailActionValueTextField.textProperty().bindBidirectional(programViewModel.getUserInputProperty());
+        detailActionValueTextField.textProperty().bindBidirectional(programViewModel.getVariableInputProperty());
+        detailTargetTextField.textProperty().bindBidirectional(programViewModel.getTargetInputProperty());
+
+        targetHbox.visibleProperty().bind(programViewModel.isTargetAction());
+        targetHbox.managedProperty().bind(targetHbox.visibleProperty()); // si invisible, espace rempli par d'autres composants
+
+        // la box contenant le plus et le moins apparait uniquement si la valeur contenue dans le textfield est un nombre, et si le textfield value est visible
+        valueIncrementDecrementBox.visibleProperty().bind(programViewModel.isValueNumeric().and(detailActionValueTextField.visibleProperty()));
+        valueIncrementDecrementBox.managedProperty().bind(valueIncrementDecrementBox.visibleProperty()); // si invisible, espace rempli par d'autres composants
+
+        //label runtime error visible uniquement si y'a une runtime error
+        runtimeErrorLabel.visibleProperty().bind(programViewModel.runtimeErrorProperty());
+
+        refreshListViewSignal.bind(programViewModel.refreshListViewSignal());
 
         setDetailElementsBindings();
         setButtonsBindings();
@@ -174,6 +224,8 @@ public class ProgramView extends VBox {
                 },
                 getSelectedItemProperty()
         ));
+
+        detailActionValueTextField.visibleProperty().bind(programViewModel.isActionWithValue());
     }
 
     private void setDetailActionUnitLabelBindings() { // fait le binding entre le label de l'unite de la valeur de l'action et le string valueUNit de action
@@ -193,7 +245,7 @@ public class ProgramView extends VBox {
                 () -> {
                     var selectedAction = getSelectedAction();
                     if (selectedAction != null)
-                        return selectedAction.getNom();
+                        return selectedAction.getDetailString();
                     return "aucune action selectionnee";
                 },
                 getSelectedItemProperty()
@@ -249,13 +301,22 @@ public class ProgramView extends VBox {
     private void createAccordion(){
         VBox actionPaneBox = new VBox();
 
-        HBox topSection = new HBox(detailActionLabel, detailActionValueTextField, detailActionUnitLabel);
+        HBox topSection = new HBox(detailActionLabel, targetHbox, detailActionValueTextField, valueIncrementDecrementBox, detailActionUnitLabel);
 
+        Label de = new Label("de");
+        targetHbox.getChildren().addAll(detailTargetTextField, de);
+        targetHbox.setAlignment(Pos.CENTER_LEFT);
+        targetHbox.setSpacing(5);
         valueErrorLabel.setTextFill(Color.RED);
         setActionPaneBox(topSection);
 
         detailActionPane.setText("Detail de l'action");
         detailActionValueTextField.setPrefWidth(45);
+        detailTargetTextField.setPrefWidth(45);
+
+
+        valueIncrementDecrementBox.setSpacing(5);
+        valueIncrementDecrementBox.getChildren().addAll(plus, minus);
 
        actionPaneBox.getChildren().addAll(topSection, valueErrorLabel);
         detailActionPane.setContent(actionPaneBox);
@@ -271,6 +332,7 @@ public class ProgramView extends VBox {
 
     private void updateTextField() {
         programViewModel.updateUserInput();
+        programViewModel.updateTargetInput();
     }
 
 
@@ -280,13 +342,32 @@ public class ProgramView extends VBox {
             @Override
             protected void updateItem(Action action, boolean empty) {
                 super.updateItem(action, empty);
-
+                // pour pouvoir faire un encadre rouge qui ne fait pas la longueur de la cellule, il faut mettre le string de l'action dans un label
+                // donc un setText(string) ne suffit plus
+                final Label actionLabel = new Label();
+                final Circle circle = new Circle(2);
+                final HBox box = new HBox();
+                box.setSpacing(3);
+                box.getChildren().addAll(circle, actionLabel);
+                box.setAlignment(Pos.BASELINE_LEFT);
                 if (empty || action == null) {
+                    setGraphic(null);
+/*
                     setText(null);
                     setStyle("");
+*/
                 } else {
-                    setText(action.toString());
-                    setStyle("-fx-text-fill: " + action.getColor() + ";");
+                    // on ajoute autant d'indentation que
+                    //System.out.println(action.toString());
+                    actionLabel.setText(action.toString());
+                    actionLabel.setStyle("-fx-text-fill: " + action.getColor() + ";");
+                    // si y'a runtime error faut entourer l'action
+                    if (action.isHasError()) // si le label runtime error est visible
+                        actionLabel.setStyle("-fx-border-color: red; -fx-text-fill: " + action.getColor() + ";");
+                    circle.setStroke(Color.web(action.getColor()));
+                    circle.setFill(Color.web(action.getColor()));
+                    box.setPadding(new Insets(0,0,0, 25 * action.getLoopDepth()));
+                    setGraphic(box);
                 }
             }
         });

@@ -8,31 +8,43 @@ skinparam defaultFontName Consolas      /' Utilisation de la police Consolas par
 
 class Program {
      - ActionList
-     + up() : void
-     + down() : void
-     + duplicate() : Action
-     + delete() : Action
+     + up(Action) : void
+     + down(Action) : void
+     + duplicate(Action) : Action
+     + delete(Action) : Action
      + deleteAll() : void
 }
 
 class ActionList{
-    -List<Action>
+    - List<Action>
     + add(Action) : boolean
 }
 
 
 class Catalogue {
-    -Set<Action>
+    - ActionList
     + addToCatalogue() : boolean
     + addToProgram() : boolean
 }
 
+class ActionFactory {
+    + mapStringToAction(String line) : Action
+    +  mapActionsToString(ActionList actions) : List<String>
+}
+
 abstract class Action {
     - nom : String
+    - variable : Variable
+    + {abstract} execute(ExecutionState) : void
+    + {abstract} create_default() : Action
+    + {abstract} copy() : Action
+}
+
+
+class Variable {
+    - name : String
     - value : double
-    + execute(Scene) : void
-    + create_default() : Action
-    + copy() : Action
+    + hasName() : boolean
 }
 
 class Move_Forward {
@@ -57,16 +69,48 @@ class Pen_Up {
 class Pen_Down {
 }
 
+class Var_Declaration {
+    /'declare une variable'/
+}
+
+class Var_Assignment {
+    /'Assigne une variable'/
+    - target_name : String
+}
+
+class Inc_Dec_Variable {
+    /'Incrémente ou décrémente la variable'/
+    - target_name : String
+}
+
+abstract class Target_Action {
+    + getTargetted() : String
+    + setTarget(String) : void
+}
+
+class Repeat {
+    - List<Action>
+}
+
+class End_Repeat{
+}
+
+class VariableTable {
+    - table : Map<String, Variable>
+}
+
+class ExecutionState {
+    - Scene
+    - VariableTable
+    + nextAction() : void
+    + load() : void
+    + reset() : void
+}
 
 class Scene {
-    - canevas : Canevas
     - cursor : Cursor
     - lineList
-    - ActionList
-    + repaint() : void
-    + suivant() : void
-    + charger() : void
-    + reinitialiser() : void
+    + createLine(Point) : void
 }
 
 class Cursor {
@@ -76,44 +120,57 @@ class Cursor {
 }
 
 class LineList {
-    - List<Line>
+    - List<MyLine>
     + add(Line) : boolean
 }
 
-class Line {
-    - toAdd : boolean;
+class MyLine {
+    - origine : Point
+    - arrivee : Point
 }
 
 class Point {
     - x : double
     - y : double
-    + translate() : Point
+    + translate(double dx, double dy) : Point
 }
 
-Program -[hidden]l LineList
-Point -[hidden]r Cursor
-LineList -[hidden]r Scene
-Scene --> Program : > gets ActionList from
-Program "1"*->"1" ActionList : > contains
-ActionList "1"*-->"many" Action : > contains
-Catalogue "1"o-->"many" Action : > has
+
 Move_Forward --|> Action : is
 Turn --|> Action : is
 Turn_Right --|> Turn : is
 Turn_Left --|> Turn : is
+
 Pen --|> Action : is
 Pen_Up --|> Pen : is
 Pen_Down --|> Pen : is
+Var_Declaration --|> Action: is
+Target_Action --|> Action: is
+Repeat --|> Action : is
+End_Repeat --|> Action : is
 
-Scene "many"o->"1" Cursor : > contains
-Scene "1"*->"1" LineList : > contains
-LineList "1"*->"many" Line : > contains
-Cursor "1"*->"1" Point : > contains
-Line "1"*->"2" Point : > contains
+ActionFactory --> ActionList : > converts Actions to File
+Action --> ExecutionState : > Executes on
+Program "1"*--"1" ActionList
+ActionList "1"*--"*" Action : > contains
+Catalogue "1"*--"1" ActionList
+Action "1"*--"1" Variable : > has
 
-Action --> Cursor : > uses
-ActionList --> Catalogue : >  gets Actions from
+VariableTable "1"*--"*" Variable : > contains
 
-Action --> Line : > instantiates
+ExecutionState "1"*--"1" Scene : > contains
+ExecutionState "1"*--"1" VariableTable : > contains
 
+Scene "1"*--"1" Cursor : > contains
+Scene "1"*--"1" LineList : > has
+LineList "1"*--"*" MyLine : > contains
+Cursor "1"*--"1" Point : > has
+MyLine "1"*--"2" Point : > contains
+
+ExecutionState "1"-->"1" Program : > gets modified by Actions from
+
+Program --> Catalogue : >  gets Actions from
+
+class Var_Assignment extends Target_Action
+class Inc_Dec_Variable extends Target_Action
 @enduml

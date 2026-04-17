@@ -1,4 +1,7 @@
-package scratch.model;
+package scratch.model.actions;
+
+import scratch.model.Cursor;
+import scratch.model.Scene;
 
 public abstract class Turn extends Action {
 
@@ -18,6 +21,10 @@ public abstract class Turn extends Action {
     }
 
     public Turn(double value, String nom){
+        super(value, nom, DEFAULT_TURN_COLOR);
+    }
+
+    public Turn(String value, String nom){
         super(value, nom, DEFAULT_TURN_COLOR);
     }
 
@@ -41,5 +48,10 @@ public abstract class Turn extends Action {
     @Override
     public boolean isValidValue(double value) {
         return value >= 1 && value <= 180;
+    }
+
+    @Override
+    public String getTarget() {
+        return "";
     }
 }

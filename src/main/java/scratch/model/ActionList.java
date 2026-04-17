@@ -4,18 +4,29 @@ import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import java.util.ArrayList;
-import java.util.List;
+import scratch.model.actions.Action;
+import scratch.model.actions.Target_Action;
 
 public class ActionList {
 
     private final ObservableList<Action> actions =
             FXCollections.observableArrayList(
-                    action -> new Observable[]{action.valueProperty()}
+                    // si une action est de type Target_Action, on rajoute une observation sur target_name
+                    action -> {
+                        if (action instanceof Target_Action ta) {
+                            return new Observable[]{
+                                    action.valueProperty(),
+                                    action.variableNameProperty(),
+                                    ta.getTargetNameProperty()
+                            };
+                        }
+                        return new Observable[]{
+                                action.valueProperty(),
+                                action.variableNameProperty(),
+                        };
+                    }
             );
 
     public boolean add(Action action) {

@@ -1,11 +1,7 @@
 package scratch.model;
 
-import javafx.beans.Observable;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import java.util.HashSet;
-import java.util.Set;
+import scratch.model.actions.*;
 
 public class Catalogue {
     //private final Set<Action> catalogue = new HashSet<>();
@@ -13,9 +9,14 @@ public class Catalogue {
     private final ActionList catalogue = new ActionList();
 
     public Catalogue(){
+        catalogue.add(new Var_Declaration());
+        catalogue.add(new Var_Assignment());
+        catalogue.add(new Increment_Variable());
         catalogue.add(new Move_Forward());
         catalogue.add(new Turn_Left());
         catalogue.add(new Turn_Right());
+        catalogue.add(new Repeat());
+        catalogue.add(new End_Repeat());
         catalogue.add(new Pen_Up());
         catalogue.add(new Pen_Down());
     }

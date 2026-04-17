@@ -1,13 +1,54 @@
 package scratch.model;
 
-import javafx.scene.shape.Line;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
+import scratch.model.actions.Action;
 
 import java.util.List;
+import java.util.Stack;
 
 public class Scene {
     private final Cursor cursor = new Cursor(new Point(0,0));
     private final LineList lines = new LineList();
 
+    public int getCurrentIndex() {
+        return currentIndex.get();
+    }
+
+    public IntegerProperty currentIndexProperty() {
+        return currentIndex;
+    }
+
+    // a refactoriser dans ExecutionState
+    private final IntegerProperty currentIndex = new SimpleIntegerProperty();
+
+    public Stack<Action> getLoopActions() {
+        return loopActions;
+    }
+
+    private final Stack<Action> loopActions = new Stack<>();
+
+    public Stack<Integer> getLoopCounters() {
+        return loopCounters;
+    }
+
+    private final Stack<Integer> loopCounters = new Stack<>();
+
+    public Stack<Integer> getCurrentLoopIndexes() {
+        return currentLoopIndexes;
+    }
+
+    private final Stack<Integer> currentLoopIndexes = new Stack<>();
+
+
+
+    // map qui va contenir toutes les variable, sera dans ExecutionState
+    //private final ObservableMap<String, StringProperty> variables = FXCollections.observableHashMap();
+
+//    public ObservableMap<String, StringProperty> getVariables() {
+//        return variables;
+//    }
 
     public Cursor getCursor() {
         return cursor;
@@ -16,6 +57,8 @@ public class Scene {
     public List<MyLine> getLines() {
         return lines.getLines();
     }
+
+
 
 
     public void createLine(Point end) {

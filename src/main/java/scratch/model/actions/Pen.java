@@ -1,4 +1,7 @@
-package scratch.model;
+package scratch.model.actions;
+
+import scratch.model.Cursor;
+import scratch.model.Scene;
 
 public  abstract class Pen extends Action {
 
@@ -23,5 +26,15 @@ public  abstract class Pen extends Action {
     @Override
     public boolean isValidValue(double value) {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.getNom();
+    }
+
+    @Override
+    public String getTarget(){
+        return "";
     }
 }
