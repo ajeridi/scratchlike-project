@@ -91,8 +91,8 @@ public class Program {
                     openLoops.pop();
             }
 
-            // si l'action est un increment, si il est dans une boucle et que le target est le meme que la variable de la boucle, return false
-            if (actionType.equals("INCREMENT_VARIABLE") && !openLoops.isEmpty() && openLoops.peek().getVariable().getName().equals(action.getTarget())){
+            // si l'action est un increment ou assign, si il est dans une boucle et que le target est le meme que la variable de la boucle, return false
+            if ((actionType.equals("INCREMENT_VARIABLE") || actionType.equals("VAR_ASSIGNMENT")) && !openLoops.isEmpty() && openLoops.peek().getVariable().getName().equals(action.getTarget())){
                     return false;
             }
             i++;
