@@ -150,6 +150,7 @@ public class SceneViewModel {
     }
 
     public void executeProgram() {
+        Variable_Table.getVariables().clear(); // clear la table de variables
         currentActionIndex.set(0);
         //isExecuting.set(true);
         isExecuted.set(true); // debut de l'execution
@@ -235,7 +236,8 @@ public class SceneViewModel {
     }
 
     public void automaticExecution() throws InterruptedException { // https://docs.oracle.com/javase/8/javafx/api/javafx/animation/Timeline.html
-        executeProgram(); // on debute l'execution
+        if (!programIsRunning.get()) // si le programme n'est pas en cours d'execution, on l'execute
+            executeProgram(); // on debute l'execution
         /*
         * On cree une timeline, qui va contenir un keyFrame, c'est a dire une une boucle qui va s'executer puis se reexecuter apres une certaine duree
         * Lors de l'execution automatique, ce qu'on fait c'est on appuie virtuellement sur le bouton suivant dans la vue, en envoyant un signal a la vue d'executer next action
@@ -246,10 +248,10 @@ public class SceneViewModel {
         * https://stackoverflow.com/questions/19549852/javafx-binding-timelines-duration-to-a-property
         * */
         // tant qu'on est dans la boucle, on appuie sur le bouton virtuellement avec fire
-            timeline.getKeyFrames().add(createKeyFrame());
-            timeline.setCycleCount(Timeline.INDEFINITE);
-            timeline.play();
-            programIsRunning.set(true);
+        timeline.getKeyFrames().add(createKeyFrame());
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+        programIsRunning.set(true);
     }
 
     private KeyFrame createKeyFrame(){
