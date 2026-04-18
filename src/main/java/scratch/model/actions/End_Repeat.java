@@ -2,6 +2,8 @@ package scratch.model.actions;
 
 import scratch.model.Scene;
 
+import java.util.Stack;
+
 public class End_Repeat extends Action{
 
     private static final String DEFAULT_END_REPEAT_NAME = "Fin repeter";
@@ -20,19 +22,28 @@ public class End_Repeat extends Action{
 
     @Override
     public void execute(Scene scene) {
-        var loopCounters = scene.getLoopCounters();
-        var counter = loopCounters.peek();
-        var loopIndexes = scene.getCurrentLoopIndexes();
-        Action currentLoopAction = scene.getLoopActions().peek();
-        if (counter != currentLoopAction.getValue()){
-            scene.currentIndexProperty().set(loopIndexes.peek());
-            loopCounters.pop();
-            counter++;
-            loopCounters.push(counter);
+        /*
+        * Idee du end repeat.
+        * On compare la valeur du compteur de la boucle courante (a la fin de la pile de compteurs) avec la valeur du repeat (a la fin de la pile de Repeats)
+        * Si la valeur du compteur est en dessous de de la valeur du repeat, on retourne a la premiere action de la boucle (a la fin de la pile des index)
+        *
+        * */
+        Stack<Integer> loopCounters = scene.getLoopCounters(); // pile des compteurs
+        int counter = loopCounters.peek();
+        Stack<Action> repeats = scene.getLoopActions();
+        Stack<Integer> loopIndexes = scene.getCurrentLoopIndexes();
+        Action currentLoopAction = repeats.peek();
+        if (counter < currentLoopAction.getValue()){
+            scene.currentIndexProperty().set(loopIndexes.peek()); // on retourne en debut de boucle
+            loopCounters.pop(); // on retire le compteur de la pile
+            counter++; // on incremente le compteur
+            loopCounters.push(counter); // on le rajoute
         }
-        else {
-            loopCounters.pop();
-            loopIndexes.pop();
+        else { // si on a fini la boucle
+            loopCounters.pop(); // on retire le compteur de la pile
+            loopIndexes.pop(); // 0n retire l'index de la pile
+            // VOICI L'ERREUR DU BUG, J'AI OUBLIE DE SUPPRIMER LE DERNIER REPEAT DE LA PILE DE REPEAT, ET DONC ON FAIT QUE COMPARER AVEC LE REPEAT LE PLUS PROFOND
+            repeats.pop(); // on retire le repeat de la pile de repeats !!!!!!!!!!!!!
         }
     }
 

@@ -22,12 +22,13 @@ public class Scene {
 
     // a refactoriser dans ExecutionState
     private final IntegerProperty currentIndex = new SimpleIntegerProperty();
+    private final Stack<Integer> currentLoopIndexes = new Stack<>(); // va contenir les index de chaque debut de boucle
+    private final Stack<Action> loopActions = new Stack<>(); // pile de chaque repeat, le dernier de la pile est celui de la derniere boucle courante
 
     public Stack<Action> getLoopActions() {
         return loopActions;
     }
 
-    private final Stack<Action> loopActions = new Stack<>();
 
     public Stack<Integer> getLoopCounters() {
         return loopCounters;
@@ -38,10 +39,6 @@ public class Scene {
     public Stack<Integer> getCurrentLoopIndexes() {
         return currentLoopIndexes;
     }
-
-    private final Stack<Integer> currentLoopIndexes = new Stack<>();
-
-
 
     // map qui va contenir toutes les variable, sera dans ExecutionState
     //private final ObservableMap<String, StringProperty> variables = FXCollections.observableHashMap();

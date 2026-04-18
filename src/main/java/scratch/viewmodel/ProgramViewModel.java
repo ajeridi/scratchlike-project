@@ -111,7 +111,7 @@ public class ProgramViewModel {
             Double.parseDouble(variableInput.getValue());
             result = true;
         } catch (NumberFormatException e) {
-            System.out.println(e.getMessage());
+            //System.out.println(e.getMessage());
             result = false;
         }
         return result;

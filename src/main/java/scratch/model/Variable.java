@@ -86,7 +86,7 @@ public class Variable {
         s = s.toLowerCase();
         for (int i = 0; i < s.length(); ++i) {
             char c = s.charAt(i);
-            System.out.println(c);
+            //System.out.println(c);
             if (i == 0 && isNumeric(c)) { // si on commence par un chiffre
                 System.out.println("first letter is numeric");
                 return false;
