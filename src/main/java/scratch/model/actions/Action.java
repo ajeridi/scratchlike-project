@@ -3,6 +3,7 @@ package scratch.model.actions;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import scratch.model.ActionList;
+import scratch.model.ExecutionState;
 import scratch.model.Scene;
 import scratch.model.Variable;
 
@@ -92,7 +93,7 @@ public abstract class Action {
         variable.setVariable(value);
     }
 
-    abstract public void execute(Scene scene);
+    abstract public void execute(ExecutionState executionState);
 
     abstract public boolean isValidValue(double value);
 
