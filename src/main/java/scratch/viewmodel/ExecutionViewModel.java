@@ -44,6 +44,7 @@ public class ExecutionViewModel {
     public ExecutionViewModel(ExecutionState executionState, MainViewModel mainViewModel){
         this.executionState = executionState;
         this.mainViewModel = mainViewModel;
+        addListeners();
         currentActionIndex.bindBidirectional(executionState.currentIndexProperty()); // pour les repeats
         refreshCounter.bindBidirectional(mainViewModel.getRefreshCounterProperty()); // comme ca sceneViewModel sera notifiee
     }
@@ -97,6 +98,7 @@ public class ExecutionViewModel {
         currentActionIndex.bindBidirectional(mainViewModel.getSelectedIndexProperty()); // va binder l'index a celui de programView
         currentSelectedAction.bind(mainViewModel.getCurrentSelectedActionProperty());
         isLoaded.set(true);
+        reset();
     }
 
 
@@ -104,12 +106,18 @@ public class ExecutionViewModel {
         programChanged.set(false);
         isExecuted.set(false);
         currentActionIndex.set(-1); // forcer le changement d'index
-        Variable_Table.getVariables().clear(); // clear la table de variables
         runtimeError.set(false); // runtime error cleared
         if (faultyAction != null) {
             faultyAction.setHasError(false); // on dit que l'action n'a plus d'erreur
             faultyAction = null;
         }
+        reset();
+    }
+
+    private void reset() {
+        executionState.reset(); // reset de l'etat d'execution
+        refreshView();
+        Variable_Table.getVariables().clear(); // clear la table de variables
     }
 
     public void newProgram() {
@@ -117,6 +125,7 @@ public class ExecutionViewModel {
         programChanged.set(false); // changement de programme
         isExecuted.set(false); // pas d'execution
         refreshCounter.set(refreshCounter.get()+1); // signal de refresh
+        reset();
     }
 
     public void executeProgram() {
@@ -141,7 +150,7 @@ public class ExecutionViewModel {
                 return; // return pour ne pas executer l'action et passer a la suivante
             }
             currentSelectedAction.get().execute(executionState);
-            refreshCounter.set(refreshCounter.get() + 1); // envoyer un signal de refresh pour sceneview
+            refreshView(); // envoyer un signal de refresh pour sceneview
         }
         // passer a l'action suivante
         currentActionIndex.set(currentActionIndex.get() + 1);
@@ -240,7 +249,7 @@ public class ExecutionViewModel {
 
 
     private void refreshView() {
-        fireSignal.add(1);
+        refreshCounter.set(refreshCounter.get() + 1);
     }
 
 

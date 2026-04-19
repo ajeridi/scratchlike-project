@@ -53,4 +53,8 @@ public class ExecutionState {
     public void createLine(Point end) {
         scene.createLine(end);
     }
+
+    public void reset() {
+        scene.reset();
+    }
 }

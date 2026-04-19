@@ -79,7 +79,7 @@ public class MainViewModel {
     }
 
     public void newFile() {
-        sceneViewModel.newProgram();
+        executionViewModel.newProgram();
         programViewModel.newProgram();
     }
 
