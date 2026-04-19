@@ -9,6 +9,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import scratch.viewmodel.ExecutionViewModel;
 
 public class ExecutionView extends VBox {
     /*
@@ -168,7 +169,7 @@ public class ExecutionView extends VBox {
             if (automaticModeCheckBox.isSelected() ){
                 // execution automatique
                 try {
-                    sceneViewModel.automaticExecution();
+                    executionViewModel.automaticExecution();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -183,34 +184,34 @@ public class ExecutionView extends VBox {
 
         stopBtn.setOnAction( // stopper le programme
                 actionEvent -> {
-                    sceneViewModel.stopProgram();
+                    executionViewModel.stopProgram();
                 }
         );
     }
 
 
     private void loadProgram() {
-        sceneViewModel.loadProgram();
+        executionViewModel.loadProgram();
     }
 
     private void executeProgram() {
-        sceneViewModel.executeProgram();
+        executionViewModel.executeProgram();
     }
 
     private void resetProgram() {
-        sceneViewModel.resetProgram();
+        executionViewModel.resetProgram();
 
-        refreshCanvas();
+        //refreshCanvas();
     }
 
 
     private void nextAction() {
-        sceneViewModel.nextAction();
-        refreshCanvas();
+        executionViewModel.nextAction();
+        //refreshCanvas();
     }
 
     private ReadOnlyIntegerProperty currentActionIndexProperty() {
-        return sceneViewModel.getCurrentActionIndexProperty();
+        return executionViewModel.getCurrentActionIndexProperty();
     }
 
 }
