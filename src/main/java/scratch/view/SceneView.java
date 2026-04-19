@@ -45,7 +45,21 @@ public class SceneView extends VBox {
     public SceneView(SceneViewModel sceneViewModel) {
         this.sceneViewModel = sceneViewModel;
         setCanvas();
+        setListeners();
+        setBindings();
         this.getChildren().addAll(titleLbl, canvasHolder);
+    }
+
+    private void setBindings() {
+        refreshCounter.bind(sceneViewModel.getRefreshCounterProperty()); // recevra le signal de refresh de la part du VM
+    }
+
+    private void setListeners() {
+        refreshCounter.addListener(
+                ((observableValue, number, t1) -> {
+                    refreshCanvas();
+                })
+        );
     }
 
 

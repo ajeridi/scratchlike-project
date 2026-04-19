@@ -78,12 +78,12 @@ public class ExecutionView extends VBox {
 
 
     private void setBindings() {
-        isLoaded.bind(sceneViewModel.isLoadedProperty());
-        isExecuted.bind(sceneViewModel.isExecutedProperty());
-        atLastAction.bind(sceneViewModel.isAtLastAction());
-        programChanged.bind(sceneViewModel.programChangedProperty());
-        refreshCounter.bind(sceneViewModel.getRefreshCounterProperty());
-        isValidProgram.bind(sceneViewModel.isValidProgramProperty());
+        isLoaded.bind(executionViewModel.isLoadedProperty());
+        isExecuted.bind(executionViewModel.isExecutedProperty());
+        atLastAction.bind(executionViewModel.isAtLastAction());
+        programChanged.bind(executionViewModel.programChangedProperty());
+
+        isValidProgram.bind(executionViewModel.isValidProgramProperty());
 
         loadBtn.textProperty().bind(Bindings.createStringBinding(
                 () -> {
@@ -99,15 +99,15 @@ public class ExecutionView extends VBox {
                 isExecuted
         ));
 
-        automaticModeCheckBox.selectedProperty().bindBidirectional(sceneViewModel.automaticModeSelectedProperty());
-        manualModeCheckBox.selectedProperty().bindBidirectional(sceneViewModel.manualModeSelectedProperty());
+        automaticModeCheckBox.selectedProperty().bindBidirectional(executionViewModel.automaticModeSelectedProperty());
+        manualModeCheckBox.selectedProperty().bindBidirectional(executionViewModel.manualModeSelectedProperty());
         // correction iteration 1
-        executeBtn.disableProperty().bind(sceneViewModel.cannotExecute());
-        loadBtn.disableProperty().bind(sceneViewModel.canLoad().not());
+        executeBtn.disableProperty().bind(executionViewModel.cannotExecute());
+        loadBtn.disableProperty().bind(executionViewModel.canLoad().not());
 
 
-        nextActionSignal.bind(sceneViewModel.fireSignalProperty()); // signal d'execution de la prochaine action, envoye par la VM pour signaler l'execution de la prochaine Action
-        automaticExecutionSpeedSlider.valueProperty().bindBidirectional(sceneViewModel.sliderSpeedProperty()); // binding entre la valeur de la vitesse de la vue et celle dans le VM
+        nextActionSignal.bind(executionViewModel.fireSignalProperty()); // signal d'execution de la prochaine action, envoye par la VM pour signaler l'execution de la prochaine Action
+        automaticExecutionSpeedSlider.valueProperty().bindBidirectional(executionViewModel.sliderSpeedProperty()); // binding entre la valeur de la vitesse de la vue et celle dans le VM
 
         // le bouton stop doit etre visible uniquement si on est en mode execution automatique
         stopBtn.visibleProperty().bind(automaticModeCheckBox.selectedProperty());
@@ -119,18 +119,14 @@ public class ExecutionView extends VBox {
 
     private BooleanProperty programIsRunning() {
         // retourne si le programme est en cours d'execution (donc si timeline is running)
-        return sceneViewModel.programIsRunningProperty();
+        return executionViewModel.programIsRunningProperty();
 
     }
 
 
 
     private void addListeners() {
-        refreshCounter.addListener(
-                ((observableValue, number, t1) -> {
-                    refreshCanvas();
-                })
-        );
+
 
         automaticModeCheckBox.selectedProperty().addListener(
                 ((observableValue, aBoolean, t1) -> {
