@@ -20,6 +20,10 @@ public class ExecutionState {
     private final Stack<Integer> loopCounters = new Stack<>(); // pile des compteurs de boucles
 
 
+    public ExecutionState(Scene scene){
+        this.scene = scene;
+    }
+
     public int getCurrentIndex() {
         return currentIndex.get();
     }
@@ -42,4 +46,11 @@ public class ExecutionState {
         return currentLoopIndexes;
     }
 
+    public Cursor getCursor() {
+        return scene.getCursor();
+    }
+
+    public void createLine(Point end) {
+        scene.createLine(end);
+    }
 }
