@@ -92,8 +92,15 @@ public class Program {
             }
 
             // si l'action est un increment ou assign, si il est dans une boucle et que le target est le meme que la variable de la boucle, return false
-            if ((actionType.equals("INCREMENT_VARIABLE") || actionType.equals("VAR_ASSIGNMENT")) && !openLoops.isEmpty() && openLoops.peek().getVariable().getName().equals(action.getTarget())){
-                    return false;
+            if ((actionType.equals("INCREMENT_VARIABLE") || actionType.equals("VAR_ASSIGNMENT")) && !openLoops.isEmpty()){
+                // si j'ai un target action dans une boucle imbriquee, meme si je suis au dans la boucle la plus profonde, je ne peux pas modifier la variable de la boucle englobante
+                // mon target action aura une certaine profondeur, donc je dois verifier pour les repeat qui ont une profondeur <= celle de mon target action
+                for (int n = 0; n < action.getLoopDepth(); n++){
+                    if (openLoops.get(n).getVariable().getName().equals(action.getTarget())){
+                        System.out.println("Inc loop depth " + action.getLoopDepth());
+                        return false;
+                    }
+                }
             }
             i++;
         }
