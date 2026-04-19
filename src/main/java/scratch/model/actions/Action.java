@@ -36,6 +36,17 @@ public abstract class Action {
         this(DEFAULT_ACTION_VALUE, nom, color);
     }
 
+    abstract public void execute(ExecutionState executionState);
+
+    abstract public boolean isValidValue(double value);
+
+    abstract public Action create_default();
+    abstract public Action copy();
+
+    abstract public String valueUnit();
+    abstract public String getType();
+    abstract public String getDetailString();
+
     public String getNom() {
         return nom;
     }
@@ -95,16 +106,6 @@ public abstract class Action {
         this.loopDepth = loopDepth;
     }
 
-    abstract public void execute(ExecutionState executionState);
-
-    abstract public boolean isValidValue(double value);
-
-    abstract public Action create_default();
-    abstract public Action copy();
-
-    abstract public String valueUnit();
-    abstract public String getType();
-    abstract public String getDetailString();
 
     public void setColor(String color) {
         this.color = color;

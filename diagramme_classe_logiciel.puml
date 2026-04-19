@@ -84,6 +84,7 @@ scratch.model.actions.Turn_Right --|> scratch.model.actions.Turn
 
 class scratch.model.actions.Var_Assignment {
 }
+
 scratch.model.actions.Var_Assignment --|> scratch.model.actions.Target_Action
 
 
@@ -103,7 +104,7 @@ class scratch.model.ActionList {
     + add(Action) : boolean
     + getSizeProperty() : IntegerBinding
     + isEmptyProperty() : BooleanBinding
-    + swap(int i1, int i2) : void
+    + swap(int, int) : void
     + delete(Action) : void
     + deleteAll() : void
 }
@@ -111,7 +112,10 @@ class scratch.model.ActionList {
 class scratch.model.Catalogue {
     - catalogue : ActionList
     + add(Action) : boolean
+    + getCatalogue() : ObservableList<Action>
 }
+
+scratch.model.Catalogue *-- scratch.model.ActionList : has >
 
 class scratch.model.Cursor {
     - origine : Point
@@ -120,11 +124,14 @@ class scratch.model.Cursor {
     + reset() : void
 }
 
+scratch.model.Cursor *-- scratch.model.Point : has >
+
 class scratch.model.ExecutionState {
     - scene : Scene
     - currentIndex : Stack<Integer>
     - loopActions : Stack<Action>
     - loopCounters : Stack<Integer>
+    + reset() : void
 }
 
 scratch.model.ExecutionState *-- scratch.model.Scene : has >
@@ -135,6 +142,7 @@ class scratch.model.LineList {
     + clear() : void
 }
 
+scratch.model.LineList *-- scratch.model.MyLine : has >
 
 class scratch.model.MyLine {
 
@@ -149,6 +157,9 @@ class scratch.model.Point {
 
 class scratch.model.Program {
     - actionList : ActionList
+    - loops : Stack<ActionList>
+    - isValidProgram : BooleanProperty
+    - compileProgram() : boolean
     + getSizeProperty() : IntegerBinding
     + actionIsEmptyProperty() : BooleanBinding
     + addActionToList(Action action) : boolean
@@ -161,6 +172,9 @@ class scratch.model.Program {
     + saveFile(File) void
 }
 
+scratch.model.Program *-- scratch.model.ActionList : has >
+scratch.model.Program ..> scratch.model.ActionFactory : uses >
+
 class scratch.model.Scene {
     - cursor : Cursor
     - lines ; LineList
@@ -168,11 +182,16 @@ class scratch.model.Scene {
     + reset() : void
 }
 
+scratch.model.Scene *-- scratch.model.Cursor : has >
+scratch.model.Scene *-- scratch.model.LineList : has >
+
+
 class scratch.model.Variable {
     - name : SimpleStringProperty
     - value : SimpleDoubleProperty
     + hasName() : boolean
     + getValue() : double
+    + validateName(String) : String
 }
 
 scratch.model.Variable ..> scratch.model.Variable_Table : gets value from >
@@ -180,6 +199,7 @@ scratch.model.Variable ..> scratch.model.Variable_Table : gets value from >
 class scratch.model.Variable_Table {
     - variables : ObservableMap<String, StringProperty>
     + getValue(String) : double
+    + putVariable(String, SimpleStringProperty) : void
 }
 
 
@@ -196,6 +216,7 @@ class scratch.view.ExecutionView {
     - executeBtn : Button
     - automaticModeCheckBox : CheckBox
     - manualModeCheckBox : CheckBox
+    - automaticExecutinoSpeedSlider : Slider
     - stopBtn : Button
 }
 
@@ -236,8 +257,7 @@ class scratch.view.ProgramView {
     - duplicateButton : Button
     - deleteButton : Button
     - deleteAllButton : Button
-    - indexToSelect = IntegerProperty
-    - isValidValue : BooleanProperty
+    - detailActionPane : TitledPane
     - programViewModel : ProgramViewModel
 }
 
@@ -246,6 +266,7 @@ scratch.view.ProgramView ..> scratch.viewmodel.ProgramViewModel : binds to >
 class scratch.view.SceneView {
     - sceneCanvas : Canvas
     - refreshCounter : IntegerProperty
+    - sceneViewModel : SceneViewModel
 }
 scratch.view.SceneView ..> scratch.viewmodel.SceneViewModel : binds to >
 
@@ -255,7 +276,7 @@ class scratch.viewmodel.CatalogueViewModel {
     + addToProgram(Action) : boolean
 }
 
-scratch.viewmodel.CatalogueViewModel ..> scratch.model.Catalogue : uses >
+scratch.viewmodel.CatalogueViewModel ..> scratch.model.Catalogue : gets data >
 scratch.viewmodel.CatalogueViewModel ..> scratch.viewmodel.MainViewModel : uses >
 
 class scratch.viewmodel.ExecutionViewModel {
@@ -266,7 +287,10 @@ class scratch.viewmodel.ExecutionViewModel {
     - programChanged : BooleanProperty
     - isExecuted : BooleanProperty
     - isAtLastAction : BooleanProperty
-    - isValidPrograam : BooleanProperty
+    - isValidProgram : BooleanProperty
+    - faultyAction : Action
+    - runtimeError : BooleanProperty
+    - refreshCounter : IntegerProperty
     + loadProgram() : void
     + resetProgram() : void
     + newProgram() : void
@@ -283,15 +307,17 @@ class scratch.viewmodel.InformationViewModel {
 }
 
 scratch.viewmodel.InformationViewModel ..> scratch.model.Cursor : binds to
-scratch.viewmodel.InformationViewModel ..> scratch.model.Variable_Table : listens to >
+scratch.viewmodel.InformationViewModel ..> scratch.model.Variable_Table : gets data from >
 
 class scratch.viewmodel.MainViewModel {
     - catalogueViewModel : CatalogueViewModel
     - programViewModel : ProgramViewModel
     - sceneViewModel : SceneViewModel
-    - catalogue : Catalogue
+    - executionViewModel : ExcutionViewModel
+    - informationViewModel : InformationViewModel
     - program : Program
-    - scene : Scene
+    - refreshCounter : IntegerProperty
+    - runtimeError : BooleanProperty
     + addToProgram(Action) : boolean
     + getSelectedIndexProperty() : IntegerProperty
     + getCurrentSelectedActionProperty() : ReadOnlyObjectProperty<Action>
@@ -310,6 +336,7 @@ scratch.viewmodel.MainViewModel *-- scratch.viewmodel.InformationViewModel
 
 class scratch.viewmodel.ProgramViewModel {
     - program : Program
+    - mainViewModel : MainViewModel
     - selectedIndex : IntegerProperty
     - currentSelectedAction : ObjectProperty<Action>
     - isValidValue : BooleanProperty
@@ -325,7 +352,8 @@ class scratch.viewmodel.ProgramViewModel {
     + newProgram() : void
 }
 
-scratch.viewmodel.ProgramViewModel ..> scratch.model.Program : uses
+scratch.viewmodel.ProgramViewModel ..> scratch.model.Program : binds to and uses methods in>
+scratch.viewmodel.ProgramViewModel ..> scratch.viewmodel.MainViewModel : binds to >
 
 class scratch.viewmodel.SceneViewModel {
     - scene : Scene
@@ -334,6 +362,7 @@ class scratch.viewmodel.SceneViewModel {
 }
 
 scratch.viewmodel.SceneViewModel ..> scratch.model.Scene : uses
+scratch.viewmodel.SceneViewModel ..> scratch.viewmodel.MainViewModel : binds to >
 
 class scratch.App {
     - catalogue : Catalogue
@@ -342,20 +371,6 @@ class scratch.App {
     - mainViewModel : MainViewModel
     - mainView : MainView
 }
-
-
-
-
-scratch.model.LineList *-- scratch.model.MyLine
-scratch.model.Cursor *-- scratch.model.Point
-scratch.model.Program *-- scratch.model.ActionList
-scratch.model.Catalogue *-- scratch.model.ActionList
-scratch.model.Scene *-- scratch.model.Cursor
-scratch.model.Scene *-- scratch.model.LineList
-scratch.model.ActionList *-- scratch.model.actions.Action
-scratch.model.Program ..> scratch.model.ActionFactory : uses
-
-
 
 scratch.App *-- scratch.viewmodel.MainViewModel
 scratch.App *-- scratch.view.MainView

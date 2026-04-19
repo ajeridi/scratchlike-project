@@ -21,6 +21,7 @@ public class Program {
 
     private final ActionList actionList = new ActionList();
     private final Stack<ActionList> loops = new Stack<>();
+    private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
 
     public boolean isIsValidProgram() {
         return isValidProgram.get();
@@ -30,7 +31,6 @@ public class Program {
         return isValidProgram;
     }
 
-    private final BooleanProperty isValidProgram = new SimpleBooleanProperty();
 
     public Program() {
         getActions().addListener( (ListChangeListener<Action>)change -> {
