@@ -3,6 +3,7 @@ package scratch.model.actions;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import scratch.model.ActionList;
+import scratch.model.ExecutionState;
 import scratch.model.Scene;
 import scratch.model.Variable;
 
@@ -11,22 +12,11 @@ public abstract class Action {
    // private final SimpleDoubleProperty value = new SimpleDoubleProperty();
     private static final double DEFAULT_ACTION_VALUE = 0;
     private boolean hasError = false; // va servir pour encadrer l'Action dans la listView en rouge
-
-    public Variable getVariable() {
-        return variable;
-    }
-
     private final Variable variable;
     private  String color;
     private int loopDepth = 0;
 
-    public int getLoopDepth() {
-        return loopDepth;
-    }
 
-    public void setLoopDepth(int loopDepth) {
-        this.loopDepth = loopDepth;
-    }
 
 
     public Action(double value, String nom, String color) {
@@ -45,6 +35,17 @@ public abstract class Action {
     public Action(String nom, String color) {
         this(DEFAULT_ACTION_VALUE, nom, color);
     }
+
+    abstract public void execute(ExecutionState executionState);
+
+    abstract public boolean isValidValue(double value);
+
+    abstract public Action create_default();
+    abstract public Action copy();
+
+    abstract public String valueUnit();
+    abstract public String getType();
+    abstract public String getDetailString();
 
     public String getNom() {
         return nom;
@@ -92,16 +93,19 @@ public abstract class Action {
         variable.setVariable(value);
     }
 
-    abstract public void execute(Scene scene);
+    public Variable getVariable() {
+        return variable;
+    }
 
-    abstract public boolean isValidValue(double value);
 
-    abstract public Action create_default();
-    abstract public Action copy();
+    public int getLoopDepth() {
+        return loopDepth;
+    }
 
-    abstract public String valueUnit();
-    abstract public String getType();
-    abstract public String getDetailString();
+    public void setLoopDepth(int loopDepth) {
+        this.loopDepth = loopDepth;
+    }
+
 
     public void setColor(String color) {
         this.color = color;

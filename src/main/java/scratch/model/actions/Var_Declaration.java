@@ -1,6 +1,7 @@
 package scratch.model.actions;
 
 import javafx.beans.property.SimpleStringProperty;
+import scratch.model.ExecutionState;
 import scratch.model.Scene;
 import scratch.model.Variable_Table;
 
@@ -28,7 +29,7 @@ public class Var_Declaration extends Action {
     }
 
     @Override
-    public void execute(Scene scene) {
+    public void execute(ExecutionState executionState) {
         // va ajouter une nouvelle variable dans la table des variables, avec une valeur par defaut de 0
         //var variables = scene.getVariables();
         Variable_Table.putVariable(variableName(), new SimpleStringProperty(String.format("%.0f", DEFAULT_VAR_DECLARATION_VALUE)));

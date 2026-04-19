@@ -1,5 +1,6 @@
 package scratch.model.actions;
 
+import scratch.model.ExecutionState;
 import scratch.model.Scene;
 
 import java.util.Stack;
@@ -21,20 +22,20 @@ public class End_Repeat extends Action{
     }
 
     @Override
-    public void execute(Scene scene) {
+    public void execute(ExecutionState executionState) {
         /*
         * Idee du end repeat.
         * On compare la valeur du compteur de la boucle courante (a la fin de la pile de compteurs) avec la valeur du repeat (a la fin de la pile de Repeats)
         * Si la valeur du compteur est en dessous de de la valeur du repeat, on retourne a la premiere action de la boucle (a la fin de la pile des index)
         *
         * */
-        Stack<Integer> loopCounters = scene.getLoopCounters(); // pile des compteurs
+        Stack<Integer> loopCounters = executionState.getLoopCounters(); // pile des compteurs
         int counter = loopCounters.peek();
-        Stack<Action> repeats = scene.getLoopActions();
-        Stack<Integer> loopIndexes = scene.getCurrentLoopIndexes();
+        Stack<Action> repeats = executionState.getLoopActions();
+        Stack<Integer> loopIndexes = executionState.getCurrentLoopIndexes();
         Action currentLoopAction = repeats.peek();
         if (counter < currentLoopAction.getValue()){
-            scene.currentIndexProperty().set(loopIndexes.peek()); // on retourne en debut de boucle
+            executionState.currentIndexProperty().set(loopIndexes.peek()); // on retourne en debut de boucle
             loopCounters.pop(); // on retire le compteur de la pile
             counter++; // on incremente le compteur
             loopCounters.push(counter); // on le rajoute

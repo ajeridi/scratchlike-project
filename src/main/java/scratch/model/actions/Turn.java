@@ -1,6 +1,7 @@
 package scratch.model.actions;
 
 import scratch.model.Cursor;
+import scratch.model.ExecutionState;
 import scratch.model.Scene;
 
 public abstract class Turn extends Action {
@@ -31,8 +32,8 @@ public abstract class Turn extends Action {
     abstract void turnCursor(Cursor cursor);
 
     @Override
-    public void execute(Scene scene) {
-        Cursor cursor = scene.getCursor();
+    public void execute(ExecutionState executionState) {
+        Cursor cursor = executionState.getCursor();
         turnCursor(cursor);
     }
 
