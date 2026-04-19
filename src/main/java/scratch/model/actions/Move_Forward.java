@@ -1,5 +1,6 @@
 package scratch.model.actions;
 import scratch.model.Cursor;
+import scratch.model.ExecutionState;
 import scratch.model.Point;
 import scratch.model.Scene;
 
@@ -31,18 +32,12 @@ public class Move_Forward extends Action {
     }
 
     @Override
-    public void execute(Scene scene) {
-        Cursor cursor = scene.getCursor();
-
-//        double value;
-//        if (variableHasName())
-//            value = Double.parseDouble(scene.getVariables().get(variableName()).getValue().replace(",", "."));
-//        else
-//            value = getValue();
+    public void execute(ExecutionState executionState) {
+        Cursor cursor = executionState.getCursor();
 
         Point end = createEnd(cursor);
 
-        scene.createLine(end);
+        executionState.createLine(end);
         cursor.setOrigine(end);
     }
 

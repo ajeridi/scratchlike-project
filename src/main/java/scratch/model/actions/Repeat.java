@@ -1,7 +1,10 @@
 package scratch.model.actions;
 
 import scratch.model.ActionList;
+import scratch.model.ExecutionState;
 import scratch.model.Scene;
+
+import java.util.Stack;
 
 public class Repeat extends Action {
     private static final String DEFAULT_REPEAT_NAME = "Repeter";
@@ -27,14 +30,18 @@ public class Repeat extends Action {
     }
 
     @Override
-    public void execute(Scene scene) {
-        var currentLoopIndexes = scene.getCurrentLoopIndexes();
-        var repeat_index = scene.currentIndexProperty().get();
-        currentLoopIndexes.add(repeat_index);
-        int counter = 1;
-        var loopCounters = scene.getLoopCounters();
-        loopCounters.push(counter);
-        scene.getLoopActions().push(this);
+    public void execute(ExecutionState executionState) {
+        /*
+         * Quand on entre dans une boucle repeat, on a besoin d'un compteur et d'une reference vers l'action repeat (pour savoir y retourner si notre compteur n'est pas egal a la valeur de repeat
+         * donc on a besoin d'un stack de compteurs (on push quand on rentre dans une boucle et on pop une fois qu'on en sort)
+         * */
+        Stack<Integer> currentLoopIndexes = executionState.getCurrentLoopIndexes(); // pile des index des repeat
+        int repeat_index = executionState.currentIndexProperty().get(); // index du repeat
+        currentLoopIndexes.add(repeat_index); // on ajoute l'index du repeat a la pile des index des repeats, pour pouvoir y retourner
+        int counter = 1; // initalisation du compteur a 1
+        var loopCounters = executionState.getLoopCounters(); // pile des compteurs
+        loopCounters.push(counter); // on ajoute le compteur en fin de pile
+        executionState.getLoopActions().push(this); // on ajoute l'action repeat a la pile pour pouvoir retrouver sa valeur dans le end_repeat
     }
 
     @Override

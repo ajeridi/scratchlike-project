@@ -20,6 +20,7 @@ public class MainView extends VBox {
     private final CatalogueView catalogueView;
     private final ProgramView programView;
     private final SceneView sceneView;
+    private final ExecutionView executionView;
     private final InformationView informationView;
     private final MainViewModel mainViewModel;
     private final Stage stage;
@@ -40,7 +41,9 @@ public class MainView extends VBox {
         this.catalogueView = new CatalogueView(vm.getCatalogueViewModel());
         this.programView = new ProgramView(vm.getProgramViewModel());
         this.sceneView = new SceneView(vm.getSceneViewModel());
+        this.executionView = new ExecutionView(vm.getExecutionViewModel());
         this.informationView = new InformationView(vm.getInformationViewModel());
+
 
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Scratch files", "*.scr")
@@ -51,7 +54,7 @@ public class MainView extends VBox {
 
         setMenuActions();
         sceneAndInformation.setSpacing(10);
-        sceneAndInformation.getChildren().addAll(sceneView, informationView);
+        sceneAndInformation.getChildren().addAll(sceneView, informationView, executionView);
 
         mainContent.getChildren().addAll(catalogueView, programView, sceneAndInformation);
         this.getChildren().addAll(menuBar, mainContent);

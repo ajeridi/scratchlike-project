@@ -1,5 +1,6 @@
 package scratch.model.actions;
 
+import scratch.model.ExecutionState;
 import scratch.model.Scene;
 import scratch.model.Variable_Table;
 
@@ -28,7 +29,7 @@ public class Increment_Variable extends Target_Action{
     }
 
     @Override
-    public void execute(Scene scene) {
+    public void execute(ExecutionState executionState) {
         // incrementation / decrementation de la variable target
         //var varTable = scene.getVariables();
         double value = getValue();

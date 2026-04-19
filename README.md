@@ -13,8 +13,7 @@
 ### Divers
 
 ## Notes de version itération 2
-
-...
+Les diagrammes de classes sont dans le main du projet
 
 ## Notes de version itération 3
 

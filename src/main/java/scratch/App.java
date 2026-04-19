@@ -8,6 +8,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import scratch.model.Catalogue;
+import scratch.model.ExecutionState;
 import scratch.model.Program;
 import scratch.view.CatalogueView;
 import scratch.view.MainView;
@@ -28,9 +29,10 @@ public class App extends Application {
         var catalogue = new Catalogue();
         var program = new Program();
         var sceneModel = new scratch.model.Scene();
+        var executionState = new ExecutionState(sceneModel);
 
         // view model principal regroupant tous les viewModels
-        var mainViewModel = new MainViewModel(catalogue, program, sceneModel);
+        var mainViewModel = new MainViewModel(catalogue, program, sceneModel, executionState);
 
         MainView mainView = new MainView(mainViewModel, primaryStage);
 

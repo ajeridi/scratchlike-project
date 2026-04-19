@@ -2,12 +2,10 @@ package scratch.viewmodel;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import scratch.model.ExecutionState;
 import scratch.model.actions.Action;
 import scratch.model.Catalogue;
 import scratch.model.Program;
@@ -20,24 +18,28 @@ public class MainViewModel {
     private final CatalogueViewModel catalogueViewModel;
     private final ProgramViewModel programViewModel;
     private final SceneViewModel sceneViewModel;
+    private final ExecutionViewModel executionViewModel;
     private final InformationViewModel informationViewModel;
     private final Catalogue catalogue;
     private final Program program;
     private final Scene scene;
 
+
+    private final IntegerProperty refreshCounter = new SimpleIntegerProperty();
     private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
 
 
-    public MainViewModel(Catalogue catalogue, Program program, Scene scene) {
+    public MainViewModel(Catalogue catalogue, Program program, Scene scene, ExecutionState executionState) {
         this.catalogueViewModel = new CatalogueViewModel(catalogue, this);
         this.programViewModel = new ProgramViewModel(program, this);
         this.sceneViewModel = new SceneViewModel(scene, this);
+        this.executionViewModel = new ExecutionViewModel(executionState, this);
         this.informationViewModel = new InformationViewModel(scene);
         this.catalogue = catalogue;
         this.program = program;
         this.scene = scene;
 
-        runtimeError.bind(sceneViewModel.runtimeErrorProperty());
+        runtimeError.bind(executionViewModel.runtimeErrorProperty());
     }
 
     public CatalogueViewModel getCatalogueViewModel() {
@@ -77,7 +79,7 @@ public class MainViewModel {
     }
 
     public void newFile() {
-        sceneViewModel.newProgram();
+        executionViewModel.newProgram();
         programViewModel.newProgram();
     }
 
@@ -100,5 +102,13 @@ public class MainViewModel {
 
     public BooleanProperty runtimeErrorProperty() {
         return runtimeError;
+    }
+
+    public ExecutionViewModel getExecutionViewModel() {
+        return executionViewModel;
+    }
+
+    public IntegerProperty getRefreshCounterProperty() {
+        return refreshCounter;
     }
 }
