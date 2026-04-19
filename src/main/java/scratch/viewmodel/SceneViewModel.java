@@ -18,7 +18,7 @@ import java.util.List;
 public class SceneViewModel {
     private final Scene scene;
     private final MainViewModel mainViewModel;
-    private final IntegerProperty refreshCounter = new SimpleIntegerProperty(0);
+    private final IntegerProperty refreshCounter = new SimpleIntegerProperty(0); // va etre binde au viewModel et des que refreshCounter change, il faudra refresh le canvas de la vue
 
     public SceneViewModel(Scene scene, MainViewModel mainViewModel) {
         this.scene = scene;
@@ -41,19 +41,6 @@ public class SceneViewModel {
 
     public ReadOnlyIntegerProperty getRefreshCounterProperty() {
         return refreshCounter; // va bind au refresh counter de mainViewModel
-    }
-
-    public void loadProgram() {
-        resetProgram();
-    }
-
-    public void resetProgram() {
-        // reinitialiser la scene
-        scene.reset();
-    }
-
-    public void newProgram() {
-        resetProgram();
     }
 
 }

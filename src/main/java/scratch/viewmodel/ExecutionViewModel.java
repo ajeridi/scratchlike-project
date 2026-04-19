@@ -98,34 +98,29 @@ public class ExecutionViewModel {
         currentActionIndex.bindBidirectional(mainViewModel.getSelectedIndexProperty()); // va binder l'index a celui de programView
         currentSelectedAction.bind(mainViewModel.getCurrentSelectedActionProperty());
         isLoaded.set(true);
-        reset();
+        resetProgram();
     }
 
 
     public void resetProgram() {
+        executionState.reset();
         programChanged.set(false);
         isExecuted.set(false);
         currentActionIndex.set(-1); // forcer le changement d'index
+        Variable_Table.getVariables().clear(); // clear la table de variables
         runtimeError.set(false); // runtime error cleared
         if (faultyAction != null) {
             faultyAction.setHasError(false); // on dit que l'action n'a plus d'erreur
             faultyAction = null;
         }
-        reset();
-    }
-
-    private void reset() {
-        executionState.reset(); // reset de l'etat d'execution
-        refreshView();
-        Variable_Table.getVariables().clear(); // clear la table de variables
     }
 
     public void newProgram() {
+        resetProgram();
         isLoaded.set(false); // dechargement
         programChanged.set(false); // changement de programme
         isExecuted.set(false); // pas d'execution
         refreshCounter.set(refreshCounter.get()+1); // signal de refresh
-        reset();
     }
 
     public void executeProgram() {
