@@ -45,6 +45,7 @@ public class ExecutionViewModel {
         this.executionState = executionState;
         this.mainViewModel = mainViewModel;
         currentActionIndex.bindBidirectional(executionState.currentIndexProperty()); // pour les repeats
+        refreshCounter.bindBidirectional(mainViewModel.getRefreshCounterProperty()); // comme ca sceneViewModel sera notifiee
     }
 
     public ReadOnlyBooleanProperty isLoadedProperty() {
@@ -140,6 +141,7 @@ public class ExecutionViewModel {
                 return; // return pour ne pas executer l'action et passer a la suivante
             }
             currentSelectedAction.get().execute(executionState);
+            refreshCounter.set(refreshCounter.get() + 1); // envoyer un signal de refresh pour sceneview
         }
         // passer a l'action suivante
         currentActionIndex.set(currentActionIndex.get() + 1);
