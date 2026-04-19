@@ -113,6 +113,7 @@ public class ExecutionViewModel {
             faultyAction.setHasError(false); // on dit que l'action n'a plus d'erreur
             faultyAction = null;
         }
+        refreshView();
     }
 
     public void newProgram() {
