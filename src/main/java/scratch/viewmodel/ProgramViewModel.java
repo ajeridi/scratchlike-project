@@ -3,6 +3,7 @@ package scratch.viewmodel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -281,5 +282,17 @@ public class ProgramViewModel {
 
     public BooleanProperty runtimeErrorProperty() {
         return runtimeError;
+    }
+
+    public StringBinding inBetweenTextFieldLabelString() {
+        return Bindings.createStringBinding(
+                () -> {
+                    if (getCurrentSelectedAction() != null && getCurrentSelectedAction().getType().equals("VAR_ASSIGNMENT")){
+                        return "valeur :";
+                    }
+                    return "de";
+                },
+                currentSelectedAction
+        );
     }
 }

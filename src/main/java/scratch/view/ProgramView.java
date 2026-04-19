@@ -35,6 +35,7 @@ public class ProgramView extends VBox {
     private final Label valueErrorLabel = new Label("Erreur valeur");
     private final HBox targetHbox = new HBox();
     private final TextField detailTargetTextField = new TextField();
+    Label de = new Label("de"); // label entre les textFields
     private final HBox valueIncrementDecrementBox = new HBox(); // box qui va contenir les boutons + et - pour augmenter la valeur des valeur literale
     private final Button plus = new Button("+");
     private final Button minus = new Button("-");
@@ -199,6 +200,8 @@ public class ProgramView extends VBox {
 
         refreshListViewSignal.bind(programViewModel.refreshListViewSignal());
 
+        de.textProperty().bind(programViewModel.inBetweenTextFieldLabelString());
+
         setDetailElementsBindings();
         setButtonsBindings();
     }
@@ -303,7 +306,6 @@ public class ProgramView extends VBox {
 
         HBox topSection = new HBox(detailActionLabel, targetHbox, detailActionValueTextField, valueIncrementDecrementBox, detailActionUnitLabel);
 
-        Label de = new Label("de");
         targetHbox.getChildren().addAll(detailTargetTextField, de);
         targetHbox.setAlignment(Pos.CENTER_LEFT);
         targetHbox.setSpacing(5);
