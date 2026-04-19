@@ -5,16 +5,93 @@ skinparam classAttributeIconSize 0      /' Taille des icônes d'attribut de clas
 skinparam defaultFontName Consolas      /' Utilisation de la police Consolas par défaut '/
 !pragma useIntermediatePackages false   /' Désactive l'utilisation de packages intermédiaires '/
 
-abstract class scratch.model.Action {
+abstract class scratch.model.actions.Action {
     - nom : String
-    - value : SimpleDoubleProperty
+    - variable : Variable
     - color : String
-    + {abstract} execute(Scene) : void
+    - loopDepth : int
+    - hasError : boolean
+    + {abstract} execute(ExecutionState) : void
     + {abstract} create_default() : Action
     + {abstract} isValidValue(double) : boolean
     + {abstract} copy() : Action
     + {abstract} getType() : String
 }
+
+scratch.model.actions.Action ..> scratch.model.ExecutionState : executes on >
+scratch.model.actions.Action *-- scratch.model.Variable : has >
+
+class scratch.model.actions.End_Repeat{
+}
+
+scratch.model.actions.End_Repeat --|> scratch.model.actions.Action
+
+class scratch.model.actions.Increment_Variable{
+}
+
+scratch.model.actions.Increment_Variable --|> scratch.model.actions.Target_Action
+
+class scratch.model.actions.Move_Forward {
+}
+
+scratch.model.actions.Move_Forward --|> scratch.model.actions.Action
+
+
+abstract class scratch.model.actions.Pen {
+    + {abstract} movePen() : void
+}
+scratch.model.actions.Pen --|> scratch.model.actions.Action
+
+
+class scratch.model.actions.Pen_Down {
+
+}
+
+scratch.model.actions.Pen_Down --|> scratch.model.actions.Pen
+
+
+class scratch.model.actions.Pen_Up {
+
+}
+
+scratch.model.actions.Pen_Up --|> scratch.model.actions.Pen
+
+class scratch.model.actions.Repeat{
+}
+
+scratch.model.actions.Repeat --|> scratch.model.actions.Action
+
+abstract class scratch.model.actions.Target_Action{
+    - target_name : SimpleStringProperty
+}
+scratch.model.actions.Target_Action --|> scratch.model.actions.Action
+
+abstract class scratch.model.actions.Turn {
+    + turnCursor(Cursor) : void
+}
+
+scratch.model.actions.Turn --|> scratch.model.actions.Action
+
+class scratch.model.actions.Turn_Left {
+
+}
+scratch.model.actions.Turn_Left --|> scratch.model.actions.Turn
+
+class scratch.model.actions.Turn_Right {
+}
+
+scratch.model.actions.Turn_Right --|> scratch.model.actions.Turn
+
+class scratch.model.actions.Var_Assignment {
+}
+scratch.model.actions.Var_Assignment --|> scratch.model.actions.Target_Action
+
+
+class scratch.model.actions.Var_Declaration {
+}
+
+scratch.model.actions.Var_Declaration --|> scratch.model.actions.Action
+
 
 class scratch.model.ActionFactory {
      + mapStringToAction(String line) : Action
@@ -43,31 +120,26 @@ class scratch.model.Cursor {
     + reset() : void
 }
 
+class scratch.model.ExecutionState {
+    - scene : Scene
+    - currentIndex : Stack<Integer>
+    - loopActions : Stack<Action>
+    - loopCounters : Stack<Integer>
+}
+
+scratch.model.ExecutionState *-- scratch.model.Scene : has >
+
 class scratch.model.LineList {
     - lines : List<MyLine>
     + add(MyLine) : boolean
     + clear() : void
 }
 
-class scratch.model.Move_Forward {
-
-}
 
 class scratch.model.MyLine {
 
 }
 
-abstract class scratch.model.Pen {
-    + {abstract} movePen() : void
-}
-
-class scratch.model.Pen_Down {
-
-}
-
-class scratch.model.Pen_Up {
-
-}
 
 class scratch.model.Point {
     - x : double
@@ -96,17 +168,20 @@ class scratch.model.Scene {
     + reset() : void
 }
 
-abstract class scratch.model.Turn {
-    + turnCursor(Cursor) : void
+class scratch.model.Variable {
+    - name : SimpleStringProperty
+    - value : SimpleDoubleProperty
+    + hasName() : boolean
+    + getValue() : double
 }
 
-class scratch.model.Turn_Left {
+scratch.model.Variable ..> scratch.model.Variable_Table : gets value from >
 
+class scratch.model.Variable_Table {
+    - variables : ObservableMap<String, StringProperty>
+    + getValue(String) : double
 }
 
-class scratch.model.Turn_Right {
-
-}
 
 class scratch.view.CatalogueView {
     - actionListView : ListView<Action>
@@ -114,15 +189,45 @@ class scratch.view.CatalogueView {
     - addButton : Button
 }
 
+scratch.view.CatalogueView ..> scratch.viewmodel.CatalogueViewModel : uses >
+
+class scratch.view.ExecutionView {
+    - loadBtn : Button
+    - executeBtn : Button
+    - automaticModeCheckBox : CheckBox
+    - manualModeCheckBox : CheckBox
+    - stopBtn : Button
+}
+
+scratch.view.ExecutionView ..> scratch.viewmodel.ExecutionViewModel : binds to >
+
+
+class scratch.view.InformationView{
+    - cursorInformation : Label
+    - variableTable : TableView
+}
+
+scratch.view.InformationView ..> scratch.viewmodel.InformationViewModel : binds to >
+
 class scratch.view.MainView {
     - catalogueView : CatalogueView
     - programView : ProgramView
     - sceneView : SceneView
+    - executionView : executionView
+    - informationView : InformationView
     - mainViewModel : MainViewModel
     - stage : Stage
     - menu : MenuBar
     - fileChooser : FileChooser
 }
+scratch.view.MainView *-- scratch.view.CatalogueView
+scratch.view.MainView *-- scratch.view.ProgramView
+scratch.view.MainView *-- scratch.view.SceneView
+scratch.view.MainView *-- scratch.view.ExecutionView
+scratch.view.MainView *-- scratch.view.InformationView
+
+scratch.view.MainView ..> scratch.viewmodel.MainViewModel : binds to
+
 
 class scratch.view.ProgramView {
     - actions : ListView<Action>
@@ -136,24 +241,49 @@ class scratch.view.ProgramView {
     - programViewModel : ProgramViewModel
 }
 
+scratch.view.ProgramView ..> scratch.viewmodel.ProgramViewModel : binds to >
+
 class scratch.view.SceneView {
     - sceneCanvas : Canvas
-    - load/reset : Button
-    - execute/next : Button
-    - sceneViewModel : SceneViewModel
-    - isLoaded : BooleanProperty
-    - atLastAction : BooleanProperty
-    - programChanged : BooleanProperty
     - refreshCounter : IntegerProperty
-    - isExecuted : BooleanProperty
-    - isValidPrograam : BooleanProperty
 }
+scratch.view.SceneView ..> scratch.viewmodel.SceneViewModel : binds to >
 
 class scratch.viewmodel.CatalogueViewModel {
     - catalogue : Catalogue
     - mainViewModel : mainViewModel
     + addToProgram(Action) : boolean
 }
+
+scratch.viewmodel.CatalogueViewModel ..> scratch.model.Catalogue : uses >
+scratch.viewmodel.CatalogueViewModel ..> scratch.viewmodel.MainViewModel : uses >
+
+class scratch.viewmodel.ExecutionViewModel {
+    - executionState : ExecutionState
+    - mainViewModel : MainViewModel
+    - currentActionIndex : IntegerProperty
+    - isLoaded : BooleanProperty
+    - programChanged : BooleanProperty
+    - isExecuted : BooleanProperty
+    - isAtLastAction : BooleanProperty
+    - isValidPrograam : BooleanProperty
+    + loadProgram() : void
+    + resetProgram() : void
+    + newProgram() : void
+    + executeProgram() : void
+    + nextAction() : void
+}
+
+scratch.viewmodel.ExecutionViewModel ..> scratch.model.ExecutionState : binds to
+scratch.viewmodel.ExecutionViewModel ..> scratch.viewmodel.MainViewModel : binds to
+
+class scratch.viewmodel.InformationViewModel {
+    - cursor : Cursor
+    - observableListOfMap : ObservableList<Map.Entry<String, StringProperty>>
+}
+
+scratch.viewmodel.InformationViewModel ..> scratch.model.Cursor : binds to
+scratch.viewmodel.InformationViewModel ..> scratch.model.Variable_Table : listens to >
 
 class scratch.viewmodel.MainViewModel {
     - catalogueViewModel : CatalogueViewModel
@@ -172,6 +302,12 @@ class scratch.viewmodel.MainViewModel {
     + saveFile(File) : void
 }
 
+scratch.viewmodel.MainViewModel *-- scratch.viewmodel.CatalogueViewModel
+scratch.viewmodel.MainViewModel *-- scratch.viewmodel.ProgramViewModel
+scratch.viewmodel.MainViewModel *-- scratch.viewmodel.SceneViewModel
+scratch.viewmodel.MainViewModel *-- scratch.viewmodel.ExecutionViewModel
+scratch.viewmodel.MainViewModel *-- scratch.viewmodel.InformationViewModel
+
 class scratch.viewmodel.ProgramViewModel {
     - program : Program
     - selectedIndex : IntegerProperty
@@ -189,22 +325,15 @@ class scratch.viewmodel.ProgramViewModel {
     + newProgram() : void
 }
 
+scratch.viewmodel.ProgramViewModel ..> scratch.model.Program : uses
+
 class scratch.viewmodel.SceneViewModel {
     - scene : Scene
     - mainViewModel : MainViewModel
-    - currentActionIndex : IntegerProperty
-    - isLoaded : BooleanProperty
-    - programChanged : BooleanProperty
     - refreshCounter : IntegerProperty
-    - isExecuted : BooleanProperty
-    - isAtLastAction : BooleanProperty
-    - isValidPrograam : BooleanProperty
-    + loadProgram() : void
-    + resetProgram() : void
-    + newProgram() : void
-    + executeProgram() : void
-    + nextAction() : void
 }
+
+scratch.viewmodel.SceneViewModel ..> scratch.model.Scene : uses
 
 class scratch.App {
     - catalogue : Catalogue
@@ -214,13 +343,8 @@ class scratch.App {
     - mainView : MainView
 }
 
-scratch.model.Move_Forward --|> scratch.model.Action
-scratch.model.Pen --|> scratch.model.Action
-scratch.model.Turn --|> scratch.model.Action
-scratch.model.Pen_Up --|> scratch.model.Pen
-scratch.model.Pen_Down --|> scratch.model.Pen
-scratch.model.Turn_Right --|> scratch.model.Turn
-scratch.model.Turn_Left --|> scratch.model.Turn
+
+
 
 scratch.model.LineList *-- scratch.model.MyLine
 scratch.model.Cursor *-- scratch.model.Point
@@ -228,25 +352,10 @@ scratch.model.Program *-- scratch.model.ActionList
 scratch.model.Catalogue *-- scratch.model.ActionList
 scratch.model.Scene *-- scratch.model.Cursor
 scratch.model.Scene *-- scratch.model.LineList
-scratch.model.ActionList *-- scratch.model.Action
+scratch.model.ActionList *-- scratch.model.actions.Action
 scratch.model.Program ..> scratch.model.ActionFactory : uses
 
-scratch.viewmodel.MainViewModel *-- scratch.viewmodel.CatalogueViewModel
-scratch.viewmodel.MainViewModel *-- scratch.viewmodel.ProgramViewModel
-scratch.viewmodel.MainViewModel *-- scratch.viewmodel.SceneViewModel
-scratch.viewmodel.CatalogueViewModel ..> scratch.model.Catalogue : uses
-scratch.viewmodel.CatalogueViewModel ..> scratch.viewmodel.MainViewModel : uses
-scratch.viewmodel.ProgramViewModel ..> scratch.model.Program : uses
-scratch.viewmodel.SceneViewModel ..> scratch.model.Scene : uses
 
-
-scratch.view.MainView *-- scratch.view.CatalogueView
-scratch.view.MainView *-- scratch.view.ProgramView
-scratch.view.MainView *-- scratch.view.SceneView
-scratch.view.MainView ..> scratch.viewmodel.MainViewModel : binds to
-scratch.view.ProgramView ..> scratch.viewmodel.ProgramViewModel : binds to
-scratch.view.SceneView ..> scratch.viewmodel.SceneViewModel : binds to
-scratch.view.CatalogueView ..> scratch.viewmodel.CatalogueViewModel : binds to
 
 scratch.App *-- scratch.viewmodel.MainViewModel
 scratch.App *-- scratch.view.MainView

@@ -12,22 +12,11 @@ public abstract class Action {
    // private final SimpleDoubleProperty value = new SimpleDoubleProperty();
     private static final double DEFAULT_ACTION_VALUE = 0;
     private boolean hasError = false; // va servir pour encadrer l'Action dans la listView en rouge
-
-    public Variable getVariable() {
-        return variable;
-    }
-
     private final Variable variable;
     private  String color;
     private int loopDepth = 0;
 
-    public int getLoopDepth() {
-        return loopDepth;
-    }
 
-    public void setLoopDepth(int loopDepth) {
-        this.loopDepth = loopDepth;
-    }
 
 
     public Action(double value, String nom, String color) {
@@ -91,6 +80,19 @@ public abstract class Action {
     public void setValue(String value){
         // prend un string (nombre ou nom) en parametre et set la variable
         variable.setVariable(value);
+    }
+
+    public Variable getVariable() {
+        return variable;
+    }
+
+
+    public int getLoopDepth() {
+        return loopDepth;
+    }
+
+    public void setLoopDepth(int loopDepth) {
+        this.loopDepth = loopDepth;
     }
 
     abstract public void execute(ExecutionState executionState);
