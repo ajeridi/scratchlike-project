@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.util.Duration;
@@ -17,10 +18,13 @@ import java.util.List;
 public class SceneViewModel {
     private final Scene scene;
     private final MainViewModel mainViewModel;
+    private final IntegerProperty refreshCounter = new SimpleIntegerProperty(0);
 
     public SceneViewModel(Scene scene, MainViewModel mainViewModel) {
         this.scene = scene;
         this.mainViewModel = mainViewModel;
+
+        refreshCounter.bind(mainViewModel.getRefreshCounterProperty());
     }
 
     public Cursor getCursor() {
@@ -35,6 +39,9 @@ public class SceneViewModel {
         return mainViewModel.getCurrentSelectedActionProperty();
     }
 
+    public ReadOnlyIntegerProperty getRefreshCounterProperty() {
+        return refreshCounter; // va bind au refresh counter de mainViewModel
+    }
 
     public void loadProgram() {
         resetProgram();
@@ -47,6 +54,6 @@ public class SceneViewModel {
 
     public void newProgram() {
         resetProgram();
-
     }
+
 }
