@@ -95,6 +95,7 @@ src/main/java/scratch/
 
 ### Core Architectural Highlights
 * **Command Pattern:** Each instruction (`Move_Forward`, `Turn_Right`, `Repeat`, `Var_Assignment`, etc.) extends the abstract `Action` base class, encapsulating its own parameters, validation logic, and runtime behavior inside `execute(ExecutionState)`. Adding a new instruction does not require changing the execution engine (Open/Closed Principle).
+* **Composite Structure (partial):** A `Repeat` block is itself an `Action` that also holds its own `ActionList` of child actions, built by `Program` while the script is edited. This tree is used to compute the nesting depth and indentation in the editor. For execution, I chose a linear approach (program counter + loop stacks, see below) rather than having each `Repeat` execute its children recursively, because it was easier to reason about and fits the step-by-step mode.
 * **Loop Stacks:** Nested loops are handled with stacks (`Stack<Integer>` for loop indices and iteration counters inside `ExecutionState`), without recursion.
 * **Pre-Execution Validation (`Program.compileProgram()`):** The script is checked before it runs:
   * Variables must be declared before use.
