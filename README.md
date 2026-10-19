@@ -6,15 +6,15 @@
 ![Patterns](https://img.shields.io/badge/Design%20Patterns-Command%20%7C%20Composite-blueviolet?style=for-the-badge)
 ![Modeling](https://img.shields.io/badge/Design-PlantUML-orange?style=for-the-badge)
 
-An extensible visual programming environment and execution engine inspired by **Scratch** and **Logo Turtle Graphics**, built with modern **Java** and **JavaFX**.
+A visual programming environment and interpreter inspired by **Scratch** and **Logo Turtle Graphics**, built with **Java 21** and **JavaFX**.
 
-This project was engineered for the **"Software Analysis & Design Project"** (*Projet d'Analyse et de Conception Logicielle*) course within the Bachelor in Applied Computer Science program at **EPFC (Brussels)**. It demonstrates a formal software engineering methodology where domain modeling and UML design systematically guided the entire implementation phase.
+This project was developed for the **"Software Analysis & Design Project"** (*Projet d'Analyse et de Conception Logicielle*) course within the Bachelor in Applied Computer Science program at **EPFC (Brussels)**. The domain model and UML class diagrams were designed before the implementation and guided it.
 
 ---
 
 ## 📽️ Live Demonstration
 
-Real-time automated execution of an algorithmic geometric vortex script (`examples/demo_spirale.scr`): synchronized step-by-step instruction tracking, reactive vector canvas rendering, and dynamic symbol table evaluation.
+Automatic execution of a spiral-drawing script (`examples/demo_spirale.scr`): the current instruction is highlighted while the drawing and the variable table update in real time.
 
 <p align="center">
   <img src="docs/assets/demo-spiral.gif" alt="Scratch Engine Execution Demo" width="850">
@@ -22,19 +22,19 @@ Real-time automated execution of an algorithmic geometric vortex script (`exampl
 
 ---
 
-## 🎯 Engineering Objectives & Pedagogy
+## 🎯 Objectives
 
-Rather than simply assembling a graphical UI, this project focuses on robust software engineering fundamentals:
-1. **Domain-Driven Understanding:** Formalizing the semantics of imperative execution (sequences, loops, variables, Cartesian geometry) before writing code.
-2. **Prior UML Architectural Design:** Specifying object relationships, polymorphic contracts, and state management via formal PlantUML diagrams prior to implementation.
-3. **Strict MVVM Decoupling:** Isolating the core domain execution model from JavaFX UI controls through reactive bidirectional data binding (`ObservableList`, `DoubleProperty`, `BooleanBinding`).
-4. **Compile-Time Semantic Analysis:** Implementing a static verification pass to detect unbalanced control structures, scope conflicts, and runtime illegal states before program execution.
+The project focuses on software design fundamentals:
+1. **Domain Analysis:** Defining the semantics of the language (sequences, loops, variables, Cartesian geometry) before writing code.
+2. **UML Design First:** Specifying classes, relationships and state management with PlantUML diagrams before implementation.
+3. **MVVM Separation:** Keeping the domain model independent from the JavaFX controls through data binding (`ObservableList`, `DoubleProperty`, `BooleanBinding`).
+4. **Pre-Execution Checks:** A validation pass detects unbalanced control structures, scope conflicts and invalid states before the program runs.
 
 ---
 
 ## 📐 1. Analysis & UML Design Phase
 
-In accordance with software engineering best practices, design preceded code implementation through two complementary views:
+The design was done before the implementation, in two complementary views:
 
 ### A. Domain Model (Conceptual Business View)
 * Captures high-level business concepts: an executable `Program` aggregates an ordered list of `Action` commands running against an `ExecutionState` that manages a vector `Cursor`, geometric lines, and a `VariableTable`.
@@ -74,8 +74,8 @@ src/main/java/scratch/
 ├── model/                     # Independent domain core & execution runtime
 │   ├── actions/               # Command Pattern: concrete executable instructions
 │   ├── ActionFactory.java     # Script serialization & deserialization (.scr)
-│   ├── ExecutionState.java    # Stack-based runtime (Call stack & program counter)
-│   ├── Program.java           # Static semantic analyzer / pre-compiler
+│   ├── ExecutionState.java    # Execution state (loop stacks & program counter)
+│   ├── Program.java           # Pre-execution validation of the script
 │   ├── Scene.java             # Vector geometry model & turtle cursor state
 │   └── Variable_Table.java    # Dynamic symbol table store
 ├── viewmodel/                 # Presentation logic & reactive state bindings
@@ -83,23 +83,23 @@ src/main/java/scratch/
 │   ├── ProgramViewModel.java  # Script hierarchy, selection, and mutation bindings
 │   ├── ExecutionViewModel.java# Timeline ticker, speed controls, and execution signals
 │   ├── SceneViewModel.java    # Vector canvas rendering state
-│   └── InformationViewModel.java # Telemetry and symbol table synchronization
+│   └── InformationViewModel.java # Cursor position and variable table
 └── view/                      # JavaFX presentation layer
     ├── MainView.java          # Primary application layout & menu bar
-    ├── SceneView.java         # Double-buffered vector canvas renderer
+    ├── SceneView.java         # Canvas rendering of the drawing
     ├── ProgramView.java       # Visual script editor with automatic indentation
     ├── ExecutionView.java     # Execution dashboard (Auto/Manual controls, slider)
-    └── InformationView.java   # Real-time turtle telemetry and TableView of variables
+    └── InformationView.java   # Live cursor position and TableView of variables
 ```
 ---
 
 ### Core Architectural Highlights
-* **Command Pattern:** Each instruction (`Move_Forward`, `Turn_Right`, `Repeat`, `Var_Assignment`, etc.) extends the abstract `Action` base class, encapsulating its own parameters, validation logic, and runtime behavior inside `execute(ExecutionState)`. Adding new operations requires zero modifications to the execution engine (Open/Closed Principle).
-* **Call Stack Virtual Machine:** Nested loop resolution is governed by dedicated call stacks (`Stack<Integer>` for loop indices and iteration counters inside `ExecutionState`), supporting arbitrary loop nesting depths without recursion overhead.
-* **Static Semantic Compiler (`Program.compileProgram()`):** Protects the runtime environment by validating script integrity before execution:
-  * Strict declaration-before-use variable placement.
-  * Structural balance of control blocks (`Repeat` vs. `End_Repeat`).
-  * Safety invariants preventing loop counters from being modified within their nested scopes.
+* **Command Pattern:** Each instruction (`Move_Forward`, `Turn_Right`, `Repeat`, `Var_Assignment`, etc.) extends the abstract `Action` base class, encapsulating its own parameters, validation logic, and runtime behavior inside `execute(ExecutionState)`. Adding a new instruction does not require changing the execution engine (Open/Closed Principle).
+* **Loop Stacks:** Nested loops are handled with stacks (`Stack<Integer>` for loop indices and iteration counters inside `ExecutionState`), without recursion.
+* **Pre-Execution Validation (`Program.compileProgram()`):** The script is checked before it runs:
+  * Variables must be declared before use.
+  * Control blocks must be balanced (`Repeat` vs. `End_Repeat`).
+  * Loop counters cannot be modified inside their own loop.
 * **Dual Execution Modes:**
   * *Manual Mode:* Step-by-step interactive inspection and debugging.
   * *Automated Mode:* Continuous real-time execution governed by a JavaFX `Timeline`, dynamically synchronized with an execution speed slider.
